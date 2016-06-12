@@ -20,9 +20,11 @@ public class Pion{
 		setCaseDepart(numAncienneCase);
 		setCaseArrivee(numNouvelleCase);
 	}
+	
 	public Pion(int couleur){
 		this.couleur = couleur;
 	}
+	
 	public Pion(){
 		
 	}
@@ -67,7 +69,7 @@ public class Pion{
 		return this.numeroCaseArrivee;
 	}
 
-	
+	/// maps
 	public static void creationMapCaseIDCoord() {
 		/// créé une map de clé/valeurs
 		/// les clés sont le NUMERO de la case

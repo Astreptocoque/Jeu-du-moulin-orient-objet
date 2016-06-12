@@ -1,5 +1,4 @@
 import java.text.DecimalFormat;
-
 import lejos.hardware.lcd.LCD;
 import lejos.internal.ev3.EV3Battery;
 import lejos.utility.Delay;

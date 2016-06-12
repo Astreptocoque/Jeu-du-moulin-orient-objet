@@ -1,11 +1,7 @@
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
-import lejos.hardware.port.MotorPort;
-import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3TouchSensor;
-import lejos.hardware.sensor.NXTTouchSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
@@ -14,12 +10,10 @@ public class Deplacements extends Pion{
 
 	public Deplacements(int couleur, int numAncienneCase, int numNouvelleCase) {
 		super(couleur, numAncienneCase, numNouvelleCase);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Deplacements(int couleur) {
 		super(couleur);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Deplacements(){
@@ -30,7 +24,21 @@ public class Deplacements extends Pion{
 	public static int couleurRobot = 0;
 	public static int couleurJoueur = 0;
 
-	
+	/// moteurs
+	EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
+	EV3LargeRegulatedMotor moteurY2 = Hardware.moteurY2;
+	EV3MediumRegulatedMotor moteurX = Hardware.moteurX;
+	EV3LargeRegulatedMotor moteurPince = Hardware.moteurPince;
+	RegulatedMotor moteurLevePince = Hardware.moteurLevePince;
+	/// capteurs
+	SampleProvider tactilePince = Hardware.tactilePince;
+	float[] sampleTactilePince = Hardware.sampleTactilePince;
+	SampleProvider toucheX = Hardware.toucheX;
+	float[] sampleToucheX = Hardware.sampleToucheX;
+	SampleProvider toucheY = Hardware.toucheY;
+	float[] sampleToucheY = Hardware.sampleToucheY;
+	EV3ColorSensor capteurCouleur = Hardware.sensorCouleur;
+	float[] sampleCouleur = Hardware.sampleCapteurCouleur;
 	
 	/// synchronisation des moteurs B et C
 	private EV3LargeRegulatedMotor[] synchro = new EV3LargeRegulatedMotor[1];
@@ -42,16 +50,6 @@ public class Deplacements extends Pion{
 		float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.5f }; // y
 		Boolean infini = true;
 
-		EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
-		EV3LargeRegulatedMotor moteurY2 = Hardware.moteurY2;
-		EV3MediumRegulatedMotor moteurX = Hardware.moteurX;
-		EV3LargeRegulatedMotor moteurPince = Hardware.moteurPince;
-		RegulatedMotor moteurLevePince = Hardware.moteurLevePince;
-		SampleProvider tactilePince = Hardware.tactilePince;
-		float[] sampleTactilePince = Hardware.sampleTactilePince;
-
-		
-		
 		synchro[0] = moteurY2;
 		moteurY1.synchronizeWith(synchro);
 		int distanceY = 0;
@@ -163,9 +161,6 @@ public class Deplacements extends Pion{
 	/// regle la vitesse de chaque axe pour une diagonale parfaite
 	private void reglageVitesse(float distanceX, float distanceY, float vitesse) {
 		
-		EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
-		EV3LargeRegulatedMotor moteurY2 = Hardware.moteurY2;
-		EV3MediumRegulatedMotor moteurX = Hardware.moteurX;
 		
 		float distancex = Math.abs(distanceX);
 		float distancey = Math.abs(distanceY);
@@ -188,17 +183,8 @@ public class Deplacements extends Pion{
 
 	public void cadrage() {
 		
-		EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
-		EV3LargeRegulatedMotor moteurY2 = Hardware.moteurY2;
-		EV3MediumRegulatedMotor moteurX = Hardware.moteurX;
-		RegulatedMotor moteurLevePince = Hardware.moteurLevePince;
-		SampleProvider toucheX = Hardware.toucheX;
-		float[] sampleToucheX = Hardware.sampleToucheX;
-		SampleProvider toucheY = Hardware.toucheY;
-		float[] sampleToucheY = Hardware.sampleToucheY;
-		SampleProvider tactilePince = Hardware.tactilePince;
-		float[] sampleTactilePince = Hardware.sampleTactilePince;
 		
+	
 		
 		/// variable de méthode
 		Boolean infini = true; // défini si le robot roule à l'inifini
@@ -259,15 +245,7 @@ public class Deplacements extends Pion{
 	}
 
 	public void detecteCouleur() {
-		EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
-		EV3LargeRegulatedMotor moteurY2 = Hardware.moteurY2;
-		EV3MediumRegulatedMotor moteurX = Hardware.moteurX;
-		EV3LargeRegulatedMotor moteurPince = Hardware.moteurPince;
-		RegulatedMotor moteurLevePince = Hardware.moteurLevePince;
-		SampleProvider tactilePince = Hardware.tactilePince;
-		float[] sampleTactilePince = Hardware.sampleTactilePince;
-		SampleProvider couleur = Hardware.couleur;
-		float[] sampleCouleur = Hardware.sampleCouleur;
+		
 		
 		cadrage();
 		
@@ -295,7 +273,8 @@ public class Deplacements extends Pion{
 		moteurLevePince.rotate(450);
 
 		/// regarde la couleur du pion
-		couleur.fetchSample(sampleCouleur, 0);
+		capteurCouleur.fetchSample(sampleCouleur, 0);
+		capteurCouleur.close();
 		/// règle les couleurs au joueurs
 		if (sampleCouleur[0] == 6){
 			couleurRobot = 6;

@@ -13,7 +13,8 @@ import lejos.remote.ev3.RemoteRequestEV3;
 public class Outils {
 
 	AfficheBatterie batterie = new AfficheBatterie();
-
+	
+	/// permet la connection à la seconde brique
 	public static  String[] names = { "EV1", "EV2" };
 	public static  RemoteRequestEV3[] brique = new RemoteRequestEV3[names.length];
 

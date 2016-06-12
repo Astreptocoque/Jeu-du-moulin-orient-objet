@@ -79,6 +79,11 @@ public class ModeDeJeu {
 
 		LCD.drawString("coucou", 0, 0);
 		deplacementsOutils.cadrage();
+		
+		/// buzz pour annoncer au joueur qu'il peut joueur (si c'est son tour)
+		if (couleur == Deplacements.couleurJoueur) {
+			Sound.beep();
+		}
 
 		for (int i = 0; i < 18; i++) {
 			
