@@ -21,10 +21,13 @@ public class Hardware {
 	/// capteurs
 	public static SampleProvider toucheX = new NXTTouchSensor(SensorPort.S2).getTouchMode();
 	public static float[] sampleToucheX = new float[toucheX.sampleSize()];
+	
 	public static SampleProvider toucheY = new NXTTouchSensor(SensorPort.S1).getTouchMode();
 	public static float[] sampleToucheY = new float[toucheY.sampleSize()];
+
 	public static SampleProvider tactilePince = new EV3TouchSensor(SensorPort.S4).getTouchMode();
 	public static float[] sampleTactilePince = new float[tactilePince.sampleSize()];
+	
 	public static EV3ColorSensor sensorCouleur = new EV3ColorSensor(SensorPort.S3);
 	public static SensorMode capteurCouleur = sensorCouleur.getRedMode();
 	public static float[] sampleCapteurCouleur = new float[capteurCouleur.sampleSize()];

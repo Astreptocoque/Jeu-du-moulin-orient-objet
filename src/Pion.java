@@ -1,72 +1,132 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class Pion{
+public class Pion {
+
+	/// variables générales à tout le programme
+	private static int couleurRobot;
+	private static int couleurJoueur;
+	/// Donne la couleur du joueur qui joue
+	private static int couleurActuelle;
+	/// couleurs
+	public final static int blanc = 6;
+	public final static int noir = 1;
+	/// couleur dominante, donc qui commence. Blanc = 6, noir = 1
+	public final static int couleurDominante = blanc;
+	/// nbr de pions restant pour chaque joueur
+	private static int nbrPionsJoueur = 9;
+	private static int nbrPionsRobot = 9;
+
+	/// variables pour les objets pions
 	int couleur; /// couleur du pion
 	int numeroCaseDepart; /// N° de la case départ du pion
 	int numeroCaseArrivee; /// N° de la case arrivée du pion
 	int[] coordCaseDepart; /// Case départ en coordonnées
 	int[] coordCaseArrivee; /// Case arrivée en coordonnées
-	
-	/// map contenant les coordonnées de chaques cases. Origine en haut à droite.
+
+	/// map contenant les coordonnées de chaques cases. Origine en haut à
+	/// droite.
 	/// clé : numéro de la case. Valeur : coordonées
-	public static  Map<Integer, int[]> caseIDCoord = new HashMap<Integer, int[]>();
+	public static Map<Integer, int[]> caseIDCoord = new HashMap<Integer, int[]>();
 	/// map contenant les cases en clé et la couleur des pions en valeur
-	public static  Map<Integer, Integer> caseID = new HashMap<Integer, Integer>();
-	
-	
-	public Pion(int couleur, int numAncienneCase, int numNouvelleCase){
+	public static Map<Integer, Integer> caseID = new HashMap<Integer, Integer>();
+
+	public Pion(int couleur, int numAncienneCase, int numNouvelleCase) {
 		this.couleur = couleur;
 		setCaseDepart(numAncienneCase);
 		setCaseArrivee(numNouvelleCase);
 	}
-	
-	public Pion(int couleur){
+
+	public Pion(int couleur) {
 		this.couleur = couleur;
 	}
-	
-	public Pion(){
-		
+
+	public Pion() {
+
 	}
-	
-	
+
 	/// getter et setter
-	public void setCouleurPion(int pCouleur){
+	public void setCouleurPion(int pCouleur) {
 		this.couleur = pCouleur;
 	}
-	
-	public void setCaseDepart(int numeroCase){
+
+	public void setCaseDepart(int numeroCase) {
 		this.numeroCaseDepart = numeroCase;
 		this.coordCaseDepart = caseIDCoord.get(numeroCase).clone();
-		/// modifie l'emplacement du nouveau pion dans CaseID en tant que vide
-		/// le if est là pour empecher une erreur lors de la pose initiale des pions
-		if (numeroCase > 0 && numeroCase < 25){
+		/// modifie l'emplacement du nouveau pion dans CaseID en tant
+		/// que vide
+		/// le if est là pour empecher une erreur lors de la pose
+		/// initiale des pions
+		if (numeroCase > 0 && numeroCase < 25) {
 			caseID.remove(numeroCase);
 			caseID.put(numeroCase, 0);
 		}
 	}
 
-	public void setCaseArrivee(int numeroCase){
+	public void setCaseArrivee(int numeroCase) {
 		this.numeroCaseArrivee = numeroCase;
 		this.coordCaseArrivee = caseIDCoord.get(numeroCase).clone();
 		/// modifie l'emplacement du nouveau pion dans CaseID
-		/// le if est là pour empecher une erreur lors de la pose initiale des pions
-		if (numeroCase > 0 && numeroCase < 25){
+		/// le if est là pour empecher une erreur lors de la pose
+		/// initiale des pions
+		if (numeroCase > 0 && numeroCase < 25) {
 			caseID.remove(numeroCase);
 			caseID.put(numeroCase, this.couleur);
 		}
 	}
-	
-	public int getCouleurPion(){
+
+	public int getCouleurPion() {
 		return this.couleur;
 	}
-	
-	public int getCaseDepart(){
+
+	public int getCaseDepart() {
 		return this.numeroCaseDepart;
 	}
 
-	public int getCaseArrivee(){
+	public int getCaseArrivee() {
 		return this.numeroCaseArrivee;
+	}
+
+	/// getter et setter couleur robot
+	public static void setCouleurRobot(int couleur) {
+		couleurRobot = couleur;
+	}
+
+	public static void setCouleurJoueur(int couleur) {
+		couleurJoueur = couleur;
+	}
+
+	public static void setCouleurActuelle(int couleur) {
+		couleurActuelle = couleur;
+	}
+
+	public static int getCouleurRobot() {
+		return couleurRobot;
+	}
+
+	public static int getCouleurJoueur() {
+		return couleurJoueur;
+	}
+
+	public static int getCouleurActuelle() {
+		return couleurActuelle;
+	}
+
+	/// gère le total des pions
+	public static void enlevePionJoueur() {
+		nbrPionsJoueur = nbrPionsJoueur - 1;
+	}
+
+	public static void enlevePionRobot() {
+		nbrPionsRobot = nbrPionsRobot - 1;
+	}
+
+	public static int getNbrPionsJoueur() {
+		return nbrPionsJoueur;
+	}
+
+	public static int getNbrPionsRobot() {
+		return nbrPionsRobot;
 	}
 
 	/// maps
@@ -121,4 +181,22 @@ public class Pion{
 		}
 	}
 
+	/// pour entrer des cases dès le départ.
+	public static void tests() {
+		caseID.remove(9);
+		caseID.put(9, 6);
+		caseID.remove(8);
+		caseID.put(8, 6);
+		caseID.remove(14);
+		caseID.put(14, 1);
+		// caseID.remove(2);
+		// caseID.put(2, 1);
+		// caseID.remove(3);
+		// caseID.put(3, 1);
+		// caseID.remove(8);
+		// caseID.put(8, 1);
+		// caseID.replace(7, 1);
+		// caseID.replace(8, 1);
+		// caseID.replace(14, 6);
+	}
 }

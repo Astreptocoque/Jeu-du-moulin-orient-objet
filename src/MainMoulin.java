@@ -6,8 +6,9 @@ public class MainMoulin {
 		Outils outils = new Outils();
 		outils.initialisation();
 		
+		Pion.tests();
+		
 		ModeDeJeu mode = new ModeDeJeu();
-		//mode.tests();
 		mode.detecteCouleur();
 		mode.joue();
 

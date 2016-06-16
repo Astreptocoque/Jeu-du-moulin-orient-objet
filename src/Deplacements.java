@@ -4,10 +4,10 @@ import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
-import lejos.utility.Delay;
 
 public class Deplacements extends Pion{
 
+	/// constructeurs pour la création des pions
 	public Deplacements(int couleur, int numAncienneCase, int numNouvelleCase) {
 		super(couleur, numAncienneCase, numNouvelleCase);
 	}
@@ -19,11 +19,23 @@ public class Deplacements extends Pion{
 	public Deplacements(){
 		
 	}
-
-	/// variable public
-	public static int couleurRobot = 0;
-	public static int couleurJoueur = 0;
-
+	
+	/// Degrés a faire en moins sur la distance de retour
+	/// Sécurité pour ne pas "défoncer" le capteur tactile
+	private final static int degreMoins = 80;
+	/// vitesse de déplacements
+	private final static int vitesseMax = 700;
+	/// vitesse du cadrage
+	private final static int vitesseCadrage = 400;
+	
+	/// vitesse de la pince
+	private final static int vitessePince = 200;
+	/// vitesse pour le moteur "descend pince" pour les endroits ralentits
+	private final static int vitesseLentePince = 200;
+	private final static int vitesseRapidePince = 400;
+	/// acceleration de base
+	private final static int acceleration = 900;
+	
 	/// moteurs
 	EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
 	EV3LargeRegulatedMotor moteurY2 = Hardware.moteurY2;
@@ -48,37 +60,31 @@ public class Deplacements extends Pion{
 		
 		float colonne[] = { 3.5f, 9f, 14f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
 		float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.5f }; // y
-		Boolean infini = true;
 
 		synchro[0] = moteurY2;
 		moteurY1.synchronizeWith(synchro);
-		int distanceY = 0;
-		int distanceX = 0;
+		int distanceY;
+		int distanceX;
 		/// echelle de converstion cm/degré. Pareil pour X et Y
 		float echelle = 96;
-		/// vitesse donnée au moteur devant etre le plus rapide, l'autre
-		/// s'adaptant
-		/// il est possible de monter jusqu'à 800 !
-		float vitesse = 700;
-		int vitessePince = 400;
-		int acceleration = 900;
 		int degreDescendLevePince = 550;
+		Boolean infini = true;
 
 		/// intilialisation des moteurs
-		moteurPince.setSpeed(200);
+		moteurPince.setSpeed(vitessePince);
 		moteurY1.resetTachoCount();
 		moteurY2.resetTachoCount();
 		moteurX.resetTachoCount();
 		moteurX.setAcceleration(acceleration);
 		moteurY1.setAcceleration(acceleration);
 		moteurY2.setAcceleration(acceleration);
-		moteurLevePince.setSpeed(vitessePince);
+		moteurLevePince.setSpeed(vitesseRapidePince);
 
 		/// premier trajet, du départ à la première case
 		distanceY = (int) (ligne[this.coordCaseDepart[1]] * echelle * -1); /// -1 pour que le moteur tourne à l'envers
 		distanceX = (int) (colonne[this.coordCaseDepart[0]] * echelle);
-		/// règle la vitesse, pour que chaque axe arrive en même temps
-		reglageVitesse(distanceX, distanceY, vitesse);
+		/// regle la vitesse, pour que chaque axe arrive en même temps à l'emplacement choisi
+		reglageVitesse(distanceX, distanceY);
 		/// avance
 		moteurY1.startSynchronization();
 		moteurY1.rotate(distanceY);
@@ -95,9 +101,10 @@ public class Deplacements extends Pion{
 		/// saisi le pion
 		moteurPince.rotate(75);
 		/// la pince remonte
-		/// manoeuvre pour ne pas défoncer le capteur tactile
-		moteurLevePince.rotate(-degreDescendLevePince + 50);
-		moteurLevePince.setSpeed(200);
+		/// Monte tout d'abord avec une vitesse élevée et s'arrête juste avant le tactile
+		moteurLevePince.rotate(-degreDescendLevePince + degreMoins);
+		/// ralentit et termine la montée, et se cadre sur le tactile
+		moteurLevePince.setSpeed(vitesseLentePince);
 		moteurLevePince.backward();
 		while (infini == true) {
 			tactilePince.fetchSample(sampleTactilePince, 0);
@@ -107,12 +114,12 @@ public class Deplacements extends Pion{
 			}
 		}
 		infini = true;
-		Delay.msDelay(500);
+//		Delay.msDelay(500);
 		/// second trajet, du premier point au second point
 		distanceY = (int) ((ligne[this.coordCaseArrivee[1]] - ligne[this.coordCaseDepart[1]]) * echelle * -1);
 		distanceX = (int) ((colonne[this.coordCaseArrivee[0]] - colonne[this.coordCaseDepart[0]]) * echelle);
 
-		reglageVitesse(distanceX, distanceY, vitesse);
+		reglageVitesse(distanceX, distanceY);
 
 		moteurY1.startSynchronization();
 		moteurY1.rotate(distanceY);
@@ -122,13 +129,13 @@ public class Deplacements extends Pion{
 		moteurY2.waitComplete();
 
 		/// la pince descend
-		moteurLevePince.setSpeed(vitessePince);
+		moteurLevePince.setSpeed(vitesseRapidePince);
 		moteurLevePince.rotate(degreDescendLevePince);
 		/// pose le pion
 		moteurPince.rotate(-75);
 		/// la pince remonte
-		moteurLevePince.rotate(-degreDescendLevePince + 50);
-		moteurLevePince.setSpeed(200);
+		moteurLevePince.rotate(-degreDescendLevePince + degreMoins);
+		moteurLevePince.setSpeed(vitesseLentePince);
 		moteurLevePince.backward();
 		while (infini == true) {
 			tactilePince.fetchSample(sampleTactilePince, 0);
@@ -144,36 +151,37 @@ public class Deplacements extends Pion{
 		distanceX = moteurX.getTachoCount();
 		distanceY = moteurY1.getTachoCount();
 
-		reglageVitesse(distanceX, distanceY, vitesse);
+		reglageVitesse(distanceX, distanceY);
 
 		/// retourne en biais au point de départ
 		moteurY1.startSynchronization();
-		moteurY1.rotate(-distanceY - 70);
-		moteurY2.rotate(-distanceY - 70);
+		moteurY1.rotate(-distanceY - degreMoins);
+		moteurY2.rotate(-distanceY - degreMoins);
 		moteurY1.endSynchronization();
-		moteurX.rotate(-distanceX + 50);
+		moteurX.rotate(-distanceX + degreMoins);
 		moteurY1.waitComplete();
 
+		/// le robot se cadre parfaitement avec les capteurs tactiles.
 		cadrage();
 
 	}
 
 	/// regle la vitesse de chaque axe pour une diagonale parfaite
-	private void reglageVitesse(float distanceX, float distanceY, float vitesse) {
+	private void reglageVitesse(float distanceX, float distanceY) {
 		
-		
-		float distancex = Math.abs(distanceX);
-		float distancey = Math.abs(distanceY);
-		float vitessex = 0;
-		float vitessey = 0;
-		/// calcule le rapport de vitesse entre les distances, et met la
-		/// plus grande vitesse à la plus grande distance
+		float distancex = Math.abs(distanceX); /// distance (vecteur) que parcours l'axe x
+		float distancey = Math.abs(distanceY); /// distance (vecteur) que parcours l'axe y
+		float vitessex;
+		float vitessey;
+		/// calcule le rapport de vitesse entre les distances, et donne la
+		/// vitesse de base (la plus rapide) à la plus grande distance
+		/// l'autre distance reçoit la vitesse ralentie pour arriver en même temps
 		float rapport = distancey / distancex;
 		if (rapport >= 1) {
-			vitessey = vitesse;
+			vitessey = vitesseMax;
 			vitessex = vitessey / rapport;
 		} else {
-			vitessex = vitesse;
+			vitessex = vitesseMax;
 			vitessey = vitessex * rapport;
 		}
 		moteurX.setSpeed(vitessex);
@@ -182,10 +190,6 @@ public class Deplacements extends Pion{
 	}
 
 	public void cadrage() {
-		
-		
-	
-		
 		/// variable de méthode
 		Boolean infini = true; // défini si le robot roule à l'inifini
 					// ou s'arrête
@@ -194,15 +198,15 @@ public class Deplacements extends Pion{
 		synchro[0] = moteurY1;
 		moteurY2.synchronizeWith(synchro);
 
-		moteurX.setSpeed(400);
-		moteurY1.setSpeed(400);
-		moteurY2.setSpeed(400);
+		moteurX.setSpeed(vitesseCadrage);
+		moteurY1.setSpeed(vitesseCadrage);
+		moteurY2.setSpeed(vitesseCadrage);
 		moteurX.setAcceleration(5500);
 		moteurY1.setAcceleration(5500);
 		moteurY2.setAcceleration(5500);
 
 		/// cadre le remonte pince
-		moteurLevePince.setSpeed(200);
+		moteurLevePince.setSpeed(vitesseLentePince);
 		moteurLevePince.backward();
 		while (infini == true) {
 			tactilePince.fetchSample(sampleTactilePince, 0);
@@ -249,21 +253,21 @@ public class Deplacements extends Pion{
 		
 		cadrage();
 		
-		int acceleration = 900;
 		Boolean infini = true;
 		synchro[0] = moteurY2;
 		moteurY1.synchronizeWith(synchro);
 		
 		
-		moteurPince.setSpeed(200);
+		moteurPince.setSpeed(vitessePince);
 		moteurY1.resetTachoCount();
 		moteurY2.resetTachoCount();
 		moteurX.resetTachoCount();
 		moteurX.setAcceleration(acceleration);
 		moteurY1.setAcceleration(acceleration);
 		moteurY2.setAcceleration(acceleration);
-		moteurLevePince.setSpeed(200);
+		moteurLevePince.setSpeed(vitesseLentePince);
 
+		/// effectue les mouvements nécessaire afin de se placer sur le 1er pion
 		moteurY1.startSynchronization();
 		moteurY1.rotate(-160);
 		moteurY2.rotate(-160);
@@ -276,13 +280,13 @@ public class Deplacements extends Pion{
 		capteurCouleur.fetchSample(sampleCouleur, 0);
 		capteurCouleur.close();
 		/// règle les couleurs au joueurs
-		if (sampleCouleur[0] == 6){
-			couleurRobot = 6;
-			couleurJoueur = 1;
+		if (sampleCouleur[0] == Pion.couleurDominante){
+			Pion.setCouleurRobot(blanc);
+			Pion.setCouleurJoueur(noir);
 		}
 		else{
-			couleurRobot = 1;
-			couleurJoueur = 6;
+			Pion.setCouleurRobot(noir);
+			Pion.setCouleurJoueur(blanc);
 		}
 		
 		/// la pince remonte
@@ -303,13 +307,8 @@ public class Deplacements extends Pion{
 		moteurY2.waitComplete();
 		
 		LCD.clear();
-		LCD.drawInt(couleurRobot, 0, 3);
-		LCD.drawInt(couleurJoueur,2,3);
-		
-//		moteurY1.close();
-//		moteurY2.close();
-//		moteurX.close();
-//		moteurLevePince.close();
+		LCD.drawInt(Pion.getCouleurRobot(), 0, 3);
+		LCD.drawInt(Pion.getCouleurJoueur(),2,3);
 		
 	}
 
