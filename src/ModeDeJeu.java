@@ -13,10 +13,8 @@ public class ModeDeJeu {
 	public static int joueurElimine = 43; /// variable pour sortir les pions
 						/// que
 						/// le joueur mange
-	
 
 	///
-	static Random random = new Random();
 	Deplacements deplacementsOutils = new Deplacements();
 	///
 
@@ -25,7 +23,7 @@ public class ModeDeJeu {
 	public void joue() throws IOException {
 		/// variable pour sortir du jeu s'il un joueur fini
 		boolean fin = false;
-		///blanc commence
+		/// blanc commence
 		Pion.setCouleurActuelle(Pion.couleurDominante);
 		/// première partie, les joueurs posent leurs pions.
 		modePose();
@@ -50,7 +48,7 @@ public class ModeDeJeu {
 			}
 
 			/// effectue le changement de joueur
-			Pion.setCouleurActuelle((Pion.getCouleurActuelle() == Pion.blanc ? Pion.noir : Pion.blanc)) ;
+			Pion.setCouleurActuelle((Pion.getCouleurActuelle() == Pion.blanc ? Pion.noir : Pion.blanc));
 
 		}
 
@@ -172,7 +170,7 @@ public class ModeDeJeu {
 
 			/// vérifie que la case choisie est libre
 			ok = caseLibre(caseChoisie);
-
+			/// renvoie un message de d'acceptation ou de rejet
 			if (ok == false) {
 				Communication.PCOutputStream(2);
 			} else {
@@ -188,7 +186,7 @@ public class ModeDeJeu {
 		int caseChoisie;
 
 		do {
-			caseChoisie = random.nextInt(24) + 1;
+			caseChoisie = Robot.robotJoue();
 			/// vérifie que la case choisie est libre
 			ok = caseLibre(caseChoisie);
 		} while (ok);
@@ -214,43 +212,33 @@ public class ModeDeJeu {
 		return caseChoisie;
 	}
 
-	/// pour manger des pions
-	public static int joueurChoisit() throws IOException {
-		boolean ok = true;
+	public static int mange() throws IOException {
+		boolean ok = false;
 		int caseChoisie;
-		do {
-			// if(server.isClosed() == false){
-			// server.close();
-			// }
-			caseChoisie = Communication.PCInputStream();
 
-			/// vérifie que la case choisie est occupée
+		/// répète jusqu'à que la case soit correctement choisie
+		do {
+			/// regarde qui joue est fait en conséquence
+			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()) {
+				caseChoisie = Communication.PCInputStream();
+			} else {
+				caseChoisie = Robot.robotJoue();
+			}
+			/// ok doit être true pour continuer. Veut dire que la case est occupée
 			ok = caseLibre(caseChoisie);
-			if (ok == false) {
+			/// buzz pour le joueur s'il faut rejouer
+			if (ok == false && Pion.getCouleurActuelle() == Pion.getCouleurJoueur()){
 				Communication.PCOutputStream(4);
 				Sound.beep();
 			}
-
+			
 		} while (ok == false);
 		return caseChoisie;
-	}
-
-	public static int robotChoisit() {
-		boolean ok = true;
-		int caseChoisie;
-
-		do {
-			caseChoisie = random.nextInt(24) + 1;
-			/// vérifie que la case choisie est libre
-			ok = caseLibre(caseChoisie);
-		} while (ok == false);
-
-		return caseChoisie;
-
 	}
 
 	/// ******* outils pour les modes********
 
+	// à tester si je le met dans outils
 	public void detecteCouleur() {
 		deplacementsOutils.detecteCouleur();
 	}

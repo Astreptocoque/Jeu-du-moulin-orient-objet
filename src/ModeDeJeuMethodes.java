@@ -80,7 +80,7 @@ public class ModeDeJeuMethodes {
 		if (couleurAManger == Pion.getCouleurJoueur()) {
 			do {
 				LCD.drawString("robot mange", 0, 5);
-				caseChoisie = ModeDeJeu.robotChoisit();
+				caseChoisie = ModeDeJeu.mange();
 				/// vérifie que la case choisie est occupée par
 				/// un pion adverse
 				if (moulinCompareCase(caseChoisie, couleurAManger) == false && ModeDeJeu.caseLibre(caseChoisie) == true && Pion.caseID.get(caseChoisie) == couleurAManger)
@@ -98,7 +98,7 @@ public class ModeDeJeuMethodes {
 				Sound.beep();
 
 				LCD.drawString("joueur mange", 0, 5);
-				caseChoisie =ModeDeJeu.joueurChoisit();
+				caseChoisie =ModeDeJeu.mange();
 				/// vérifie que la case choisie est occupée par
 				/// un pion adverse
 				if (moulinCompareCase(caseChoisie, couleurAManger) == false
@@ -118,8 +118,6 @@ public class ModeDeJeuMethodes {
 		return caseChoisie;
 	}
 
-
-	
 	private static boolean moulinCompareCase(int caseDeposee, int couleur) {
 		/// vérifie si un moulin est créé
 		/// la variable couleur désigne la couleur du joueur
