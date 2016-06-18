@@ -69,7 +69,7 @@ public class Deplacements extends Pion{
 		float echelle = 96;
 		int degreDescendLevePince = 550;
 		Boolean infini = true;
-
+		
 		/// intilialisation des moteurs
 		moteurPince.setSpeed(vitessePince);
 		moteurY1.resetTachoCount();

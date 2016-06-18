@@ -9,7 +9,6 @@ public class MainMoulin {
 		Pion.tests();
 		
 		ModeDeJeu mode = new ModeDeJeu();
-		mode.detecteCouleur();
 		mode.joue();
 
 	}

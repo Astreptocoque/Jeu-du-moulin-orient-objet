@@ -29,7 +29,11 @@ public class Outils {
 		/// création des map pour les cases
 		Pion.creationMapCaseIDCoord();
 		Pion.creationMapCaseID();
+		/// regarde quelle couleur est qui
+		Deplacements outils = new Deplacements();
+		outils.detecteCouleur();
 		
+
 
 	}
 
