@@ -5,6 +5,14 @@ import lejos.hardware.lcd.LCD;
 
 public class ModeDeJeuMethodes {
 
+	/// liste pour vérifier si le pion est glissé au bon endroit
+	/// un groupe de parenthèse représente la case de départ
+	/// les nbr à l'intérieur les possibilités de déplacement
+	private final static int[][] listeCases = { { 2, 10 }, { 1, 3, 5 }, { 2, 15 }, { 5, 11 }, { 2, 4, 6, 8 },
+			{ 5, 14 }, { 8, 12 }, { 5, 7, 9 }, { 8, 13 }, { 1, 11, 22 }, { 4, 10, 12, 19 }, { 7, 11, 16 },
+			{ 9, 14, 18 }, { 6, 13, 15, 21 }, { 3, 14, 24 }, { 12, 17 }, { 16, 18, 20 }, { 13, 17 },
+			{ 11, 20 }, { 17, 19, 21, 23 }, { 14, 20 }, { 10, 23 }, { 20, 22, 24 }, { 15, 23 } };
+
 	public static void verifieMoulin(int IDCaseTestee) throws IOException {
 		int couleurAdversaire = 0; /// couleur de l'adversaire
 		boolean peutManger = false;
@@ -74,7 +82,7 @@ public class ModeDeJeuMethodes {
 			if (moulinCompareCase(caseChoisie, couleurAManger) == false
 					/// c.2 : si la case est occupée, true.
 					/// c'est ce qu'on veut
-					&& ModeDeJeu.caseLibre(caseChoisie) == true
+					&& caseLibre(caseChoisie) == true
 					/// c.3 : vérifie la couleur du pion
 					&& Pion.caseID.get(caseChoisie) == couleurAManger) {
 				ok = true;
@@ -106,13 +114,12 @@ public class ModeDeJeuMethodes {
 		return caseChoisie;
 	}
 
-
-	private static boolean moulinCompareCase(int caseDeposee, int couleur) {
+	private static boolean moulinCompareCase(int caseTestee, int couleur) {
 		/// vérifie si un moulin est créé
 		/// la variable couleur désigne la couleur du joueur
 		boolean oui_non = false;
 
-		switch (caseDeposee) {
+		switch (caseTestee) {
 		case 1:
 			if (Pion.caseID.get(10) == couleur && Pion.caseID.get(22) == couleur)
 				oui_non = true;
@@ -309,5 +316,42 @@ public class ModeDeJeuMethodes {
 		}
 
 		return oui_non;
+	}
+
+	public static boolean modeGlisseVerifie(Pion pion, int caseArrivee) {
+		boolean ok = false;
+		/// prend la série de cases possibles pour le pion choisi
+		int casesPossibles[] = listeCases[pion.getCaseDepart() - 1];
+		/// regarde si la case choisie par le joueur est comprise dans
+		/// le tableau
+		for (int casePossible : casesPossibles) {
+			/// si la case d'arrivée est dans celle disponible et
+			/// qu'elle est libre
+			if (casePossible == pion.getCaseArrivee() && caseLibre(casePossible) == true)
+				ok = true;
+			else
+				ok = false;
+		}
+
+		return ok;
+
+	}
+
+	public static boolean modeGlisseVerifiePosePossible(){
+		return false;
+		
+	}
+	
+	public static boolean caseLibre(int caseTestee) {
+		boolean ok = true;
+
+		/// regarde si la case est occupée par un pion
+		/// inoccupee = 0 , occupee = 1 ou 6 (noir ou blanc)
+		if (Pion.caseID.get(caseTestee) == Pion.noir || Pion.caseID.get(caseTestee) == Pion.blanc)
+			ok = true;
+		else
+			ok = false;
+
+		return ok;
 	}
 }

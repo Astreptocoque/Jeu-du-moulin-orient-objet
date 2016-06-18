@@ -6,14 +6,13 @@ import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 
 public class ModeDeJeu {
-
-	public static int robotElimine = 24; /// variable pour sortir les pions
-						/// que le
-						/// robot mange
-	public static int joueurElimine = 43; /// variable pour sortir les pions
-						/// que
-						/// le joueur mange
-
+	/// variable pour sortir les pions que le robot mange
+	public static int robotElimine = 24; 
+	 /// variable pour sortir les pions que le joueur mange
+	public static int joueurElimine = 43;
+	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut
+	private int mode;
+	
 	///
 	Deplacements deplacementsOutils = new Deplacements();
 	///
@@ -83,7 +82,7 @@ public class ModeDeJeu {
 				/// case départ, avance à chaque tour de 1 dans la ligne de départ
 				pion.setCaseDepart(iDepartRobot + 25);
 				/// choisi une case libre et attribue case d'arrivée
-				pion.setCaseArrivee(robotPose());
+				pion.setCaseArrivee(robotPose(pion));
 				/// incrémente 1 dans la ligne de départ des pions
 				iDepartRobot++;
 				
@@ -91,7 +90,7 @@ public class ModeDeJeu {
 				/// case départ, avance à chaque tour de 1 dans la ligne de départ
 				pion.setCaseDepart(42 - iDepartJoueur);
 				/// choisi une case libre, et attibue la case d'arrivée
-				pion.setCaseArrivee(joueurPose());
+				pion.setCaseArrivee(joueurPose(pion));
 				/// incrémente 1 dans la ligne de départ des pions
 				iDepartJoueur++;
 			}
@@ -110,13 +109,31 @@ public class ModeDeJeu {
 	public void modeGlisse() throws IOException {
 		/// création d'un pion avec attribution de la couleur
 		Deplacements pion = new Deplacements(Pion.getCouleurActuelle());
-
+		
+		/// séléctionne le pion à bouger et la case d'arrivée
 		if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
-			pion.setCaseDepart(robotPrend());
-			pion.setCaseArrivee(robotPose());
+			/// vérifie que le robot puisse déplacer un pion
+			if(ModeDeJeuMethodes.modeGlisseVerifiePosePossible() == true){
+				/// si oui, fait le nécessaire pour en déplacer un
+				pion.setCaseDepart(robotPrend());
+				pion.setCaseArrivee(robotPose(pion));
+			}
+			else{
+				/// si non, la partie est finie
+				modeFin();
+			}
+			
 		} else {
-			pion.setCaseDepart(joueurPrend());
-			pion.setCaseArrivee(joueurPose());
+			/// vérifie que le robot puisse déplacer un pion
+			if(ModeDeJeuMethodes.modeGlisseVerifiePosePossible() == true){
+				/// si oui, fait le nécessaire pour en déplacer un
+				pion.setCaseDepart(joueurPrend());
+				pion.setCaseArrivee(joueurPose(pion));
+			}
+			else{
+				/// si non, la partie est finie
+				modeFin();
+			}
 		}
 		
 		/// déplace le pion
@@ -135,7 +152,7 @@ public class ModeDeJeu {
 	}
 
 	/// ******* tour des joueurs ************
-	public int joueurPose() throws IOException {
+	public int joueurPose(Pion pion) throws IOException {
 		boolean ok = true;
 		int caseChoisie;
 		do {
@@ -143,7 +160,13 @@ public class ModeDeJeu {
 			caseChoisie = Communication.PCInputStream();
 
 			/// vérifie que la case choisie est libre
-			ok = caseLibre(caseChoisie);
+			if(mode == 1){ /// pose
+				ok = ModeDeJeuMethodes.caseLibre(caseChoisie);
+			}
+			else if (mode == 2){ /// glisse
+				ok = ModeDeJeuMethodes.modeGlisseVerifie(pion, caseChoisie);
+			}
+			
 			/// renvoie un message de d'acceptation ou de rejet
 			if (ok == false) {
 				Communication.PCOutputStream(2);
@@ -155,14 +178,20 @@ public class ModeDeJeu {
 		return caseChoisie;
 	}
 
-	public int robotPose() {
+	public int robotPose(Pion pion) {
 		boolean ok = true;
 		int caseChoisie;
 
 		do {
 			caseChoisie = Robot.robotJoue();
 			/// vérifie que la case choisie est libre
-			ok = caseLibre(caseChoisie);
+			if(mode == 1){ /// pose
+				ok = ModeDeJeuMethodes.caseLibre(caseChoisie);
+			}
+			else if (mode == 2){ /// glisse
+				ok = ModeDeJeuMethodes.modeGlisseVerifie(pion, caseChoisie);
+			}
+			
 		} while (ok);
 
 		return caseChoisie;
@@ -170,8 +199,9 @@ public class ModeDeJeu {
 
 	public int joueurPrend() {
 		int caseChoisie;
-		LCD.clear(6);
-		LCD.drawString("joueur", 0, 6);
+		/// doit vérifier que la case est occupée par un pion de la bonne couleur
+		
+		
 		Button.waitForAnyPress();
 		caseChoisie = 0;
 		return caseChoisie;
@@ -187,26 +217,7 @@ public class ModeDeJeu {
 	}
 
 	
-	/// ******* outils pour les modes********
-
 	
-	public static boolean caseLibre(int caseTestee) {
-		boolean ok = true;
 
-		/// regarde si la case est occupée par un pion
-		/// inoccupee = 0 , occupee = 1 ou 6 (noir ou blanc)
-		if (Pion.caseID.get(caseTestee) == Pion.noir || Pion.caseID.get(caseTestee) == Pion.blanc)
-			ok = true;
-		else
-			ok = false;
-
-		return ok;
-	}
-
-	public boolean caseOccupee(int caseTestee, int couleur) {
-
-		return false;
-
-	}
 
 }
