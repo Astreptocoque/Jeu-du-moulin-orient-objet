@@ -318,32 +318,77 @@ public class ModeDeJeuMethodes {
 		return oui_non;
 	}
 
-	public static boolean modeGlisseVerifie(Pion pion, int caseArrivee) {
+	public static boolean modeGlisseVerifiePose(Pion pion, int caseArrivee) {
 		boolean ok = false;
 		/// prend la série de cases possibles pour le pion choisi
 		int casesPossibles[] = listeCases[pion.getCaseDepart() - 1];
 		/// regarde si la case choisie par le joueur est comprise dans
 		/// le tableau
 		for (int casePossible : casesPossibles) {
-			/// si la case d'arrivée est dans celle disponible et
+			/// si la case d'arrivée est dans les cases disponibles
+			/// et
 			/// qu'elle est libre
-			if (casePossible == pion.getCaseArrivee() && caseLibre(casePossible) == true)
+			if (caseArrivee == casePossible && caseLibre(caseArrivee) == false) {
 				ok = true;
-			else
+				break;
+			} else {
 				ok = false;
+			}
+		}
+
+		return ok;
+	}
+
+	public static boolean modeGlisseVerifiePrend(Pion pion, int caseDepart) {
+		boolean ok = false;
+		/// prend la série de cases possibles pour le pion choisi
+		int casesPossibles[] = listeCases[caseDepart - 1];
+		/// regarde si la case choisie par le joueur peut être déplacée
+		for (int casePossible : casesPossibles) {
+			/// si une case est inoccupée
+			if (caseLibre(casePossible) == false) {
+				ok = true;
+				break;
+			} else {
+				ok = false;
+			}
 		}
 
 		return ok;
 
 	}
 
-	public static boolean modeGlisseVerifiePosePossible(){
-		return false;
-		
+	public static boolean modeGlisseVerifieDeplacementPossible() {
+		/// vérifie si le joueur peut déplacer un pion, où s'il est
+		/// coincé
+		boolean ok = false;
+		/// numero de la case testee
+		int caseTestee = 1;
+		/// prend chaque case l'une après l'autre
+		for (int[] casesAutours : listeCases) {
+			/// si la case contient un pion qui appartient au joueur
+			if (Pion.caseID.get(caseTestee) == Pion.getCouleurActuelle()) {
+				/// regarde si le pion est bloqué, ou non
+				for (int caseAutours : casesAutours) {
+					/// si elle est libre...
+					if (caseLibre(caseAutours) == false) {
+						/// si oui, alors le joueur
+						/// n'est pas bloqué, le jeu
+						/// continu
+						ok = true;
+						break;
+					}
+				}
+			}
+			/// ajoute 1 à caseTestee car on passe à la suivante
+			caseTestee++;
+		}
+
+		return ok;
 	}
-	
+
 	public static boolean caseLibre(int caseTestee) {
-		boolean ok = true;
+		boolean ok;
 
 		/// regarde si la case est occupée par un pion
 		/// inoccupee = 0 , occupee = 1 ou 6 (noir ou blanc)
@@ -354,4 +399,5 @@ public class ModeDeJeuMethodes {
 
 		return ok;
 	}
+
 }

@@ -13,8 +13,6 @@ public class Communication {
 	public static Socket socket;
 	
 	public static  int PCInputStream() throws IOException {
-
-		LCD.drawString("attente", 0, 5);
 		int input;
 		boolean erreur = false;
 

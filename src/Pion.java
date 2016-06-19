@@ -183,20 +183,23 @@ public class Pion {
 
 	/// pour entrer des cases dès le départ.
 	public static void tests() {
-		caseID.remove(9);
-		caseID.put(9, 6);
-		caseID.remove(8);
-		caseID.put(8, 6);
-		caseID.remove(14);
-		caseID.put(14, 1);
-		// caseID.remove(2);
-		// caseID.put(2, 1);
-		// caseID.remove(3);
-		// caseID.put(3, 1);
-		// caseID.remove(8);
-		// caseID.put(8, 1);
-		// caseID.replace(7, 1);
-		// caseID.replace(8, 1);
-		// caseID.replace(14, 6);
+		caseID.remove(4);
+		caseID.put(4, 1);
+		caseID.remove(10);
+		caseID.put(10, 1);
+		caseID.remove(19);
+		caseID.put(19, 6);
+		 caseID.remove(11);
+		 caseID.put(11, 6);
+		 caseID.remove(1);
+		 caseID.put(1, 1);
+		 caseID.remove(22);
+		 caseID.put(22, 6);
+		 caseID.remove(12);
+		 caseID.put(12, 1);
+		 caseID.remove(20);
+		 caseID.put(20, 1);
+		 caseID.remove(23);
+		 caseID.put(23, 1);
 	}
 }

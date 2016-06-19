@@ -6,11 +6,12 @@ public class MainMoulin {
 		Outils outils = new Outils();
 		outils.initialisation();
 		
-		Pion.tests();
+//		Pion.tests();
 		
 		ModeDeJeu mode = new ModeDeJeu();
 		mode.joue();
-
+//		Pion.setCouleurActuelle(Pion.couleurDominante);
+//		mode.modeGlisse();
 	}
 
 }
