@@ -1,7 +1,6 @@
 import java.io.IOException;
 import lejos.hardware.Sound;
 
-
 public class ModeDeJeuMethodes {
 
 	/// liste pour vérifier si le pion est glissé au bon endroit
@@ -50,22 +49,31 @@ public class ModeDeJeuMethodes {
 				/// ligne de départ suivante
 				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 					pion.setCaseArrivee(ModeDeJeu.robotElimine += 1);
+					/// sort le pion
 					pion.deplacementPionRobot();
-//					pion.deplacementSecondPion();
+					/// se replace à l'origine pour le
+					/// joueur
 					pion.deplacementOrigine();
 				} else {
 					pion.setCaseArrivee(ModeDeJeu.joueurElimine -= 1);
+					/// sort le pion
 					pion.deplacementPionJoueur();
 				}
-				/// sort le pion
-				// pion.deplacementPion();
 
 			} else {
 				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
+					/// pas de moulin, le robot se met à
+					/// l'origine pour le joueur
 					pion.deplacementOrigine();
 				}
 			}
 
+		} else {
+			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
+				/// pas de moulin possible, le robot se met à
+				/// l'origine pour le joueur
+				pion.deplacementOrigine();
+			}
 		}
 
 	}
@@ -74,10 +82,6 @@ public class ModeDeJeuMethodes {
 		int caseChoisie;
 		boolean ok = false;
 
-		/// replace le robot à l'origine si c'est le joueur qui mouline
-		// if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()){
-		// pion.deplacementOrigine();
-		// }
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
 		/// choisi
 		do {
@@ -87,7 +91,6 @@ public class ModeDeJeuMethodes {
 				Sound.beep();
 				caseChoisie = Communication.PCInputStream();
 			} else {
-				// pion.deplacementRobotProchainPion();
 				caseChoisie = Robot.robotJoue();
 			}
 
@@ -119,10 +122,10 @@ public class ModeDeJeuMethodes {
 		if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle()) {
 			/// soustrait le pion mangé au nbr total de pion du
 			/// joueur
-			Pion.enlevePionJoueur();
+			Pion.enlevePionRobot();
 		} else {
 			/// soustrait le pion au nbr total de pion du robot
-			Pion.enlevePionRobot();
+			Pion.enlevePionJoueur();
 		}
 
 		return caseChoisie;

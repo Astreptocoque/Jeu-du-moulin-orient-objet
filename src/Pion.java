@@ -1,6 +1,8 @@
 import java.util.HashMap;
 import java.util.Map;
 
+import lejos.hardware.lcd.LCD;
+
 public class Pion {
 
 	/// variables générales à tout le programme
@@ -119,10 +121,14 @@ public class Pion {
 	/// gère le total des pions
 	public static void enlevePionJoueur() {
 		nbrPionsJoueur = nbrPionsJoueur - 1;
+		LCD.clear(0);
+		LCD.drawString("nbr J. : " + getNbrPionsJoueur(),  0, 0);
 	}
 
 	public static void enlevePionRobot() {
 		nbrPionsRobot = nbrPionsRobot - 1;
+		LCD.clear(1);
+		LCD.drawString("nbr R. : " + getNbrPionsRobot(),  0, 1);
 	}
 
 	public static int getNbrPionsJoueur() {
@@ -186,7 +192,58 @@ public class Pion {
 	}
 
 	/// pour entrer des cases dès le départ.
-	public static void tests() {
+	public static void sautille() {
+		/// partie pour tester la glisse
+//		caseID.remove(1);
+//		caseID.put(1, 6);
+		caseID.remove(2);
+		caseID.put(2, 6);
+//		caseID.remove(3);
+//		caseID.put(3, 6);
+		caseID.remove(4);
+		caseID.put(4, 6);
+		caseID.remove(5);
+		caseID.put(5, 6);
+		caseID.remove(6);
+		caseID.put(6, 6);
+//		caseID.remove(7);
+//		caseID.put(7, 1);
+		caseID.remove(8);
+		caseID.put(8, 6);
+//		caseID.remove(9);
+//		caseID.put(9, 1);
+		caseID.remove(10);
+		caseID.put(10, 6);
+//		caseID.remove(11);
+//		caseID.put(11, 1);
+		caseID.remove(12);
+		caseID.put(12, 6);
+		caseID.remove(13);
+		caseID.put(13, 6);
+		caseID.remove(14);
+		caseID.put(14, 1);
+//		caseID.remove(15);
+//		caseID.put(15, 6);
+//		caseID.remove(16);
+//		caseID.put(16, 6);
+		caseID.remove(17);
+		caseID.put(17, 1);
+//		caseID.remove(18);
+//		caseID.put(18, 1);
+		caseID.remove(19);
+		caseID.put(19, 1);
+//		caseID.remove(20);
+//		caseID.put(20,6);
+		caseID.remove(21);
+		caseID.put(21, 6);
+//		caseID.remove(22);
+//		caseID.put(22, 6);
+//		caseID.remove(23);
+//		caseID.put(23, 1);
+//		caseID.remove(24);
+//		caseID.put(24, 6);
+	}
+	public static void partieGlisse() {
 		/// partie pour tester la glisse
 		caseID.remove(1);
 		caseID.put(1, 6);

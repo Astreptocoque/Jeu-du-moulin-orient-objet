@@ -451,9 +451,6 @@ public class Deplacements extends Pion {
 		moteurX.rotate(-350, true);
 		moteurY2.waitComplete();
 
-		LCD.clear();
-		LCD.drawInt(Pion.getCouleurRobot(), 0, 3);
-		LCD.drawInt(Pion.getCouleurJoueur(), 2, 3);
 
 	}
 

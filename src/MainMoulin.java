@@ -6,7 +6,10 @@ public class MainMoulin {
 		Outils outils = new Outils();
 		outils.initialisation();
 		
-//		Pion.tests();
+		Pion.sautille();
+		for(int i = 0; i < 6; i ++){
+			Pion.enlevePionRobot();
+		}
 		
 		ModeDeJeu mode = new ModeDeJeu();
 		mode.joue();
