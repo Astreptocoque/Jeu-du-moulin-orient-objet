@@ -20,9 +20,6 @@ public class Deplacements extends Pion {
 
 	}
 
-	/// coordonnee du robot, en degrés
-	private static int coordonneeX = 0;
-	private static int coordonneeY = 0;
 	/// Degrés a faire en moins sur la distance de retour
 	/// Sécurité pour ne pas "défoncer" le capteur tactile
 	private final static int degreMoins = 80;
@@ -38,6 +35,10 @@ public class Deplacements extends Pion {
 	private final static int vitesseRapidePince = 400;
 	/// acceleration de base
 	private final static int acceleration = 900;
+	/// échelle de conversion cm/degrés
+	private final static float echelle = 96;
+	/// degrés pour faire descendre la pince
+	private final static int degreDescendLevePince = 550;
 	/// distance en cm des cases par rapport à l'origine
 	private final float colonne[] = { 3.5f, 9f, 14f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
 	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.5f }; // y
@@ -68,9 +69,6 @@ public class Deplacements extends Pion {
 		moteurY1.synchronizeWith(synchro);
 		int distanceY;
 		int distanceX;
-		/// echelle de converstion cm/degré. Pareil pour X et Y
-		float echelle = 96;
-		int degreDescendLevePince = 550;
 		Boolean infini = true;
 
 		/// intilialisation des moteurs
@@ -124,6 +122,7 @@ public class Deplacements extends Pion {
 			}
 		}
 		infini = true;
+		
 		/// second trajet, du premier point au second point
 		distanceY = (int) ((ligne[this.coordCaseArrivee[1]] - ligne[this.coordCaseDepart[1]]) * echelle * -1);
 		distanceX = (int) ((colonne[this.coordCaseArrivee[0]] - colonne[this.coordCaseDepart[0]]) * echelle);
@@ -161,27 +160,6 @@ public class Deplacements extends Pion {
 		coordDernierPion[0] = distanceX;
 		coordDernierPion[1] = distanceY;
 
-		/// ouvre totalement la pince (uniqu. pour le style)
-		// moteurPince.rotate(-175, true);
-
-		/// si c'est le robot qui a joué, il se remet en position de
-		/// départ
-		/// si c'est le joueur qui a joué, le robot va directement sur
-		/// son pion
-		/// --> voir méthode deplacement robot debut
-		/*
-		 * reglageVitesse(distanceX, distanceY);
-		 * 
-		 * /// retourne en biais au point de départ
-		 * moteurY1.startSynchronization(); moteurY1.rotate(-distanceY -
-		 * degreMoins); moteurY2.rotate(-distanceY - degreMoins);
-		 * moteurY1.endSynchronization(); moteurX.rotate(-distanceX +
-		 * degreMoins); moteurY1.waitComplete(); moteurX.waitComplete();
-		 * moteurPince.waitComplete();
-		 * 
-		 * /// le robot se cadre parfaitement avec les capteurs ///
-		 * tactiles. cadrage();
-		 */
 
 	}
 
@@ -190,9 +168,6 @@ public class Deplacements extends Pion {
 		moteurY1.synchronizeWith(synchro);
 		int distanceY;
 		int distanceX;
-		/// echelle de converstion cm/degré. Pareil pour X et Y
-		float echelle = 96;
-		int degreDescendLevePince = 550;
 		Boolean infini = true;
 
 		/// intilialisation des moteurs
@@ -205,11 +180,11 @@ public class Deplacements extends Pion {
 		moteurY2.setAcceleration(acceleration);
 		moteurLevePince.setSpeed(vitesseRapidePince);
 
+		/// baisse la pince si c'est le 1er tour et le robot commence
 		if (coordDernierPion[0] == 0 && coordDernierPion[1] == 0) {
 			moteurPince.rotate(175, true);
 		}
 		
-		/// -1 pour que le moteur tourne à l'envers
 		/// pour se rendre au premier pion
 		distanceY = (int) ((ligne[this.coordCaseDepart[1]]) * echelle * -1 - coordDernierPion[1]);
 		distanceX = (int) ((colonne[this.coordCaseDepart[0]]) * echelle - coordDernierPion[0]);
@@ -221,7 +196,6 @@ public class Deplacements extends Pion {
 		/// l'emplacement choisi
 		reglageVitesse(distanceX, distanceY);
 		
-
 		/// avance
 		moteurY1.startSynchronization();
 		moteurY1.rotate(distanceY);
@@ -252,9 +226,6 @@ public class Deplacements extends Pion {
 		infini = true;
 
 		/// deplacement au second pion
-
-		/// -1 pour que le moteur tourne à l'envers
-		/// pour se rendre au premier pion
 		distanceY = (int) ((ligne[this.coordCaseArrivee[1]] - ligne[this.coordCaseDepart[1]]) * echelle * -1);
 		distanceX = (int) ((colonne[this.coordCaseArrivee[0]] - colonne[this.coordCaseDepart[0]]) * echelle);
 		/// ajuste les coordonnées
@@ -298,8 +269,6 @@ public class Deplacements extends Pion {
 		moteurY1.synchronizeWith(synchro);
 		int distanceY;
 		int distanceX;
-		/// echelle de converstion cm/degré. Pareil pour X et Y
-		float echelle = 96;
 		/// intilialisation des moteurs
 		moteurY1.resetTachoCount();
 		moteurY2.resetTachoCount();

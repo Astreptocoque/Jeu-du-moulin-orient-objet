@@ -16,8 +16,8 @@ public class Pion {
 	/// nbr de pions restant pour chaque joueur
 	private static int nbrPionsJoueur = 9;
 	private static int nbrPionsRobot = 9;
-	/// pour l'optimisation des dépla. du robot
-	public static int[] coordDernierPion = {0,0};
+	/// pour l'optimisation des dépla. du robot, en degrés
+	public static int[] coordDernierPion = { 0, 0 };
 
 	/// variables pour les objets pions
 	int couleur; /// couleur du pion
@@ -76,7 +76,7 @@ public class Pion {
 			caseID.put(numeroCase, this.couleur);
 		}
 		/// pour optimiser les déplacements du robot
-//		coordDernierPion = caseIDCoord.get(numeroCase).clone();
+		// coordDernierPion = caseIDCoord.get(numeroCase).clone();
 	}
 
 	public int getCouleurPion() {
@@ -187,23 +187,54 @@ public class Pion {
 
 	/// pour entrer des cases dès le départ.
 	public static void tests() {
+		/// partie pour tester la glisse
+		caseID.remove(1);
+		caseID.put(1, 6);
+		caseID.remove(2);
+		caseID.put(2, 1);
+		caseID.remove(3);
+		caseID.put(3, 6);
+		caseID.remove(4);
+		caseID.put(4, 6);
+		caseID.remove(5);
+		caseID.put(5, 6);
+		caseID.remove(6);
+		caseID.put(6, 1);
+		caseID.remove(7);
+		caseID.put(7, 1);
+//		caseID.remove(8);
+//		caseID.put(8, 1);
+//		caseID.remove(9);
+//		caseID.put(9, 1);
 		caseID.remove(10);
-		caseID.put(10, 6);
+		caseID.put(10, 1);
 		caseID.remove(11);
-		caseID.put(11, 6);
+		caseID.put(11, 1);
+//		caseID.remove(12);
+//		caseID.put(12, 6);
+		caseID.remove(13);
+		caseID.put(13, 1);
+		caseID.remove(14);
+		caseID.put(14, 1);
+		caseID.remove(15);
+		caseID.put(15, 6);
+//		caseID.remove(16);
+//		caseID.put(16, 1);
+		caseID.remove(17);
+		caseID.put(17, 1);
+//		caseID.remove(18);
+//		caseID.put(18, 1);
 		caseID.remove(19);
-		caseID.put(19, 1);
-		 caseID.remove(20);
-		 caseID.put(20, 1);
-		 caseID.remove(24);
-		 caseID.put(24, 6);
-		 caseID.remove(1);
-		 caseID.put(1, 1);
-//		 caseID.remove(12);
-//		 caseID.put(12, 1);
-//		 caseID.remove(20);
-//		 caseID.put(20, 1);
-//		 caseID.remove(23);
-//		 caseID.put(23, 1);
+		caseID.put(19, 6);
+		caseID.remove(20);
+		caseID.put(20,6);
+		caseID.remove(21);
+		caseID.put(21, 1);
+		caseID.remove(22);
+		caseID.put(22, 6);
+//		caseID.remove(23);
+//		caseID.put(23, 1);
+		caseID.remove(24);
+		caseID.put(24, 6);
 	}
 }

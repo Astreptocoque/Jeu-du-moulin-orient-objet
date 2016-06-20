@@ -1,7 +1,6 @@
 import java.io.IOException;
-
 import lejos.hardware.Sound;
-import lejos.hardware.lcd.LCD;
+
 
 public class ModeDeJeuMethodes {
 

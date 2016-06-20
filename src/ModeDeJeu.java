@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.util.Random;
-
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
