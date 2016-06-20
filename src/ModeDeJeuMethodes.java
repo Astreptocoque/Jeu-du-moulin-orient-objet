@@ -13,7 +13,7 @@ public class ModeDeJeuMethodes {
 			{ 9, 14, 18 }, { 6, 13, 15, 21 }, { 3, 14, 24 }, { 12, 17 }, { 16, 18, 20 }, { 13, 17 },
 			{ 11, 20 }, { 17, 19, 21, 23 }, { 14, 20 }, { 10, 23 }, { 20, 22, 24 }, { 15, 23 } };
 
-	public static void verifieMoulin(int IDCaseTestee) throws IOException {
+	public static void verifieMoulin(int IDCaseTestee, Deplacements pion) throws IOException {
 		int couleurAdversaire = 0; /// couleur de l'adversaire
 		boolean peutManger = false;
 
@@ -42,40 +42,55 @@ public class ModeDeJeuMethodes {
 			if (moulinCompareCase(IDCaseTestee, Pion.getCouleurActuelle()) == true) {
 				/// si oui, le joueur choisi un pion à manger
 				/// création du pion à manger
-				Deplacements pion = new Deplacements(couleurAdversaire);
+				pion.setCouleurPion(couleurAdversaire);
+
 				/// set la case départ, avec mangePion
-				pion.setCaseDepart(mangePion(couleurAdversaire));
+				pion.setCaseDepart(mangePion(couleurAdversaire, pion));
 
 				/// attribue la case d'arrivée sur la case de la
 				/// ligne de départ suivante
-				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot())
+				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 					pion.setCaseArrivee(ModeDeJeu.robotElimine += 1);
-				else
+					pion.deplacementPionRobot();
+//					pion.deplacementSecondPion();
+					pion.deplacementOrigine();
+				} else {
 					pion.setCaseArrivee(ModeDeJeu.joueurElimine -= 1);
+					pion.deplacementPionJoueur();
+				}
 				/// sort le pion
-				pion.deplacementPion();
+				// pion.deplacementPion();
 
+			} else {
+				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
+					pion.deplacementOrigine();
+				}
 			}
 
 		}
 
 	}
 
-	private static int mangePion(int couleurAManger) throws IOException {
+	private static int mangePion(int couleurAManger, Deplacements pion) throws IOException {
 		int caseChoisie;
 		boolean ok = false;
+
+		/// replace le robot à l'origine si c'est le joueur qui mouline
+		// if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()){
+		// pion.deplacementOrigine();
+		// }
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
 		/// choisi
 		do {
-			/// pour le joueur
-			if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle())
-				Sound.beep();
-
 			/// choisi la case à manger
-			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur())
+			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()) {
+				pion.deplacementOrigine();
+				Sound.beep();
 				caseChoisie = Communication.PCInputStream();
-			else
+			} else {
+				// pion.deplacementRobotProchainPion();
 				caseChoisie = Robot.robotJoue();
+			}
 
 			/// condition 1 : vérifie que le pion choisi ne
 			/// soit pas dans un moulin
@@ -339,7 +354,7 @@ public class ModeDeJeuMethodes {
 		return ok;
 	}
 
-	public static boolean modeGlisseVerifiePrend(Pion pion, int caseDepart) {
+	public static boolean modeGlisseVerifiePrend(int caseDepart) {
 		boolean ok = false;
 		/// prend la série de cases possibles pour le pion choisi
 		int casesPossibles[] = listeCases[caseDepart - 1];

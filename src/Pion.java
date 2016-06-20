@@ -16,6 +16,8 @@ public class Pion {
 	/// nbr de pions restant pour chaque joueur
 	private static int nbrPionsJoueur = 9;
 	private static int nbrPionsRobot = 9;
+	/// pour l'optimisation des dépla. du robot
+	public static int[] coordDernierPion = {0,0};
 
 	/// variables pour les objets pions
 	int couleur; /// couleur du pion
@@ -73,6 +75,8 @@ public class Pion {
 			caseID.remove(numeroCase);
 			caseID.put(numeroCase, this.couleur);
 		}
+		/// pour optimiser les déplacements du robot
+//		coordDernierPion = caseIDCoord.get(numeroCase).clone();
 	}
 
 	public int getCouleurPion() {
@@ -183,23 +187,23 @@ public class Pion {
 
 	/// pour entrer des cases dès le départ.
 	public static void tests() {
-		caseID.remove(4);
-		caseID.put(4, 1);
 		caseID.remove(10);
-		caseID.put(10, 1);
+		caseID.put(10, 6);
+		caseID.remove(11);
+		caseID.put(11, 6);
 		caseID.remove(19);
-		caseID.put(19, 6);
-		 caseID.remove(11);
-		 caseID.put(11, 6);
-		 caseID.remove(1);
-		 caseID.put(1, 1);
-		 caseID.remove(22);
-		 caseID.put(22, 6);
-		 caseID.remove(12);
-		 caseID.put(12, 1);
+		caseID.put(19, 1);
 		 caseID.remove(20);
 		 caseID.put(20, 1);
-		 caseID.remove(23);
-		 caseID.put(23, 1);
+		 caseID.remove(24);
+		 caseID.put(24, 6);
+		 caseID.remove(1);
+		 caseID.put(1, 1);
+//		 caseID.remove(12);
+//		 caseID.put(12, 1);
+//		 caseID.remove(20);
+//		 caseID.put(20, 1);
+//		 caseID.remove(23);
+//		 caseID.put(23, 1);
 	}
 }
