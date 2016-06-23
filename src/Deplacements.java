@@ -1,4 +1,5 @@
-import lejos.hardware.lcd.LCD;
+import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
@@ -41,7 +42,7 @@ public class Deplacements extends Pion {
 	private final static int degreDescendLevePince = 550;
 	/// distance en cm des cases par rapport à l'origine
 	private final float colonne[] = { 3.5f, 9f, 14f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
-	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.5f }; // y
+	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.2f }; // y
 
 	/// moteurs
 	EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
@@ -58,7 +59,6 @@ public class Deplacements extends Pion {
 	float[] sampleToucheY = Hardware.sampleToucheY;
 	EV3ColorSensor capteurCouleur = Hardware.sensorCouleur;
 	float[] sampleCouleur = Hardware.sampleCapteurCouleur;
-
 	/// synchronisation des moteurs B et C
 	private EV3LargeRegulatedMotor[] synchro = new EV3LargeRegulatedMotor[1];
 
@@ -122,7 +122,7 @@ public class Deplacements extends Pion {
 			}
 		}
 		infini = true;
-		
+
 		/// second trajet, du premier point au second point
 		distanceY = (int) ((ligne[this.coordCaseArrivee[1]] - ligne[this.coordCaseDepart[1]]) * echelle * -1);
 		distanceX = (int) ((colonne[this.coordCaseArrivee[0]] - colonne[this.coordCaseDepart[0]]) * echelle);
@@ -160,7 +160,6 @@ public class Deplacements extends Pion {
 		coordDernierPion[0] = distanceX;
 		coordDernierPion[1] = distanceY;
 
-
 	}
 
 	public void deplacementPionRobot() {
@@ -184,7 +183,7 @@ public class Deplacements extends Pion {
 		if (coordDernierPion[0] == 0 && coordDernierPion[1] == 0) {
 			moteurPince.rotate(175, true);
 		}
-		
+
 		/// pour se rendre au premier pion
 		distanceY = (int) ((ligne[this.coordCaseDepart[1]]) * echelle * -1 - coordDernierPion[1]);
 		distanceX = (int) ((colonne[this.coordCaseDepart[0]]) * echelle - coordDernierPion[0]);
@@ -195,7 +194,7 @@ public class Deplacements extends Pion {
 		/// regle la vitesse, pour que chaque axe arrive en même temps à
 		/// l'emplacement choisi
 		reglageVitesse(distanceX, distanceY);
-		
+
 		/// avance
 		moteurY1.startSynchronization();
 		moteurY1.rotate(distanceY);
@@ -263,7 +262,6 @@ public class Deplacements extends Pion {
 
 	}
 
-
 	public void deplacementOrigine() {
 		synchro[0] = moteurY2;
 		moteurY1.synchronizeWith(synchro);
@@ -304,8 +302,8 @@ public class Deplacements extends Pion {
 		cadrage();
 	}
 
-	/// regle la vitesse de chaque axe pour une diagonale parfaite
 	private void reglageVitesse(float distanceX, float distanceY) {
+		/// regle la vitesse de chaque axe pour une diagonale parfaite
 
 		float distancex = Math.abs(distanceX); /// distance (vecteur)
 							/// que parcours l'axe x
@@ -400,6 +398,8 @@ public class Deplacements extends Pion {
 		cadrage();
 
 		Boolean infini = true;
+		Boolean ok = false;
+
 		synchro[0] = moteurY2;
 		moteurY1.synchronizeWith(synchro);
 
@@ -424,8 +424,7 @@ public class Deplacements extends Pion {
 
 		/// regarde la couleur du pion
 		capteurCouleur.fetchSample(sampleCouleur, 0);
-		capteurCouleur.close();
-		/// règle les couleurs au joueurs
+
 		if (sampleCouleur[0] == Pion.couleurDominante) {
 			Pion.setCouleurRobot(blanc);
 			Pion.setCouleurJoueur(noir);
@@ -433,6 +432,9 @@ public class Deplacements extends Pion {
 			Pion.setCouleurRobot(noir);
 			Pion.setCouleurJoueur(blanc);
 		}
+
+		/// éteint le capteur
+		capteurCouleur.close();
 
 		/// la pince remonte
 		moteurLevePince.backward();
@@ -450,7 +452,6 @@ public class Deplacements extends Pion {
 		moteurY1.endSynchronization();
 		moteurX.rotate(-350, true);
 		moteurY2.waitComplete();
-
 
 	}
 

@@ -1,6 +1,6 @@
 import java.util.Random;
 
-/// tout ce qui est en lien avec le tour du robot
+/// tout ce qui est en lien avec l'intelligence du robot
 public class Robot {
 
 	private static Random random = new Random();
@@ -8,9 +8,18 @@ public class Robot {
 	public static int robotJoue() {
 		int caseChoisie;
 
-		
-		caseChoisie = random.nextInt(24) + 1;
+		caseChoisie = cretin();
 		
 		return caseChoisie;
+	}
+	
+	private static int cretin(){
+		/// prend une case au hasard sur le plateau
+		return random.nextInt(24) + 1;
+	}
+
+	private static int casesVides(){
+		return 0;
+		
 	}
 }

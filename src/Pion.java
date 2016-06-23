@@ -13,6 +13,7 @@ public class Pion {
 	/// couleurs
 	public final static int blanc = 6;
 	public final static int noir = 1;
+	public final static int vide = 0;
 	/// couleur dominante, donc qui commence. Blanc = 6, noir = 1
 	public final static int couleurDominante = blanc;
 	/// nbr de pions restant pour chaque joueur
@@ -20,6 +21,8 @@ public class Pion {
 	private static int nbrPionsRobot = 9;
 	/// pour l'optimisation des dépla. du robot, en degrés
 	public static int[] coordDernierPion = { 0, 0 };
+	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut
+	public static int mode;
 
 	/// variables pour les objets pions
 	int couleur; /// couleur du pion
@@ -35,6 +38,7 @@ public class Pion {
 	/// map contenant les cases en clé et la couleur des pions en valeur
 	public static Map<Integer, Integer> caseID = new HashMap<Integer, Integer>();
 
+	/// constructeurs
 	public Pion(int couleur, int numAncienneCase, int numNouvelleCase) {
 		this.couleur = couleur;
 		setCaseDepart(numAncienneCase);
@@ -49,7 +53,7 @@ public class Pion {
 
 	}
 
-	/// getter et setter
+	/// getter et setter pour les déplacements
 	public void setCouleurPion(int pCouleur) {
 		this.couleur = pCouleur;
 	}
@@ -63,7 +67,7 @@ public class Pion {
 		/// initiale des pions
 		if (numeroCase > 0 && numeroCase < 25) {
 			caseID.remove(numeroCase);
-			caseID.put(numeroCase, 0);
+			caseID.put(numeroCase, vide);
 		}
 	}
 
@@ -77,8 +81,6 @@ public class Pion {
 			caseID.remove(numeroCase);
 			caseID.put(numeroCase, this.couleur);
 		}
-		/// pour optimiser les déplacements du robot
-		// coordDernierPion = caseIDCoord.get(numeroCase).clone();
 	}
 
 	public int getCouleurPion() {
@@ -93,7 +95,7 @@ public class Pion {
 		return this.numeroCaseArrivee;
 	}
 
-	/// getter et setter couleur robot
+	/// getter et setter pour les couleurs
 	public static void setCouleurRobot(int couleur) {
 		couleurRobot = couleur;
 	}
@@ -143,14 +145,14 @@ public class Pion {
 	public static void creationMapCaseIDCoord() {
 		/// créé une map de clé/valeurs
 		/// les clés sont le NUMERO de la case
-		/// les valeurs sont COORDONNEES de chaque case
+		/// les valeurs sont les COORDONNEES de chaque case
 		int numeroCase = 1;
 		int max = 3;
 		int[] tableauMomentane = new int[2];
 
 		/// valeurs pour créer le couple de coord. x/y des cases
-		int[][] valeurs = { { 1, 4, 7 }, { 2, 4, 6 }, { 3, 4, 5 }, { 1, 2, 3, 5, 6, 7 }, { 3, 4, 5 },
-				{ 2, 4, 6 }, { 1, 4, 7 } };
+		int[][] valeurs = { { 7, 4, 1 }, { 6, 4, 2 }, { 5, 4, 3 }, { 7, 6, 5, 3, 2, 1}, { 5, 4, 3 },
+				{ 6, 4, 2 }, { 7, 4, 1 } };
 
 		/// ajoute les cases du plateau
 		for (int i = 0; i < 7; i++) {
@@ -187,7 +189,7 @@ public class Pion {
 		/// la valeur est la COULEUR de la case
 		/// 0 = rien, 1 = noir, 6 = blanc
 		for (int i = 0; i < 24; i++) {
-			caseID.put(i + 1, 0);
+			caseID.put(i + 1, vide);
 		}
 	}
 

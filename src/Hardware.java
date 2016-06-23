@@ -16,7 +16,7 @@ public class Hardware {
 	public static EV3LargeRegulatedMotor moteurY2 = new EV3LargeRegulatedMotor(MotorPort.C);
 	public static EV3MediumRegulatedMotor moteurX = new EV3MediumRegulatedMotor(MotorPort.D);
 	public static EV3LargeRegulatedMotor moteurPince = new EV3LargeRegulatedMotor(MotorPort.A);
-	public static RegulatedMotor moteurLevePince = Outils.brique[1].createRegulatedMotor("B", 'L');
+	public static RegulatedMotor moteurLevePince = Reglages.brique[1].createRegulatedMotor("B", 'L');
 
 	/// capteurs
 	public static SampleProvider toucheX = new NXTTouchSensor(SensorPort.S2).getTouchMode();

@@ -12,7 +12,7 @@ public class AfficheBatterie implements Runnable {
 
 		while (stopBatterie) {
 			float pourcentage = batt.getVoltage();
-			String nombre = df.format((pourcentage - 6) / 2 * 100);
+			String nombre = df.format(100 / 1.5 * (pourcentage - 6.5));
 			LCD.refresh();
 			LCD.drawString("batterie restante :", 0, 6);
 			LCD.drawString(String.valueOf(nombre) + " %", 5, 7);

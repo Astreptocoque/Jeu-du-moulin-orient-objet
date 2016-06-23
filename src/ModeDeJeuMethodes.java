@@ -3,13 +3,6 @@ import lejos.hardware.Sound;
 
 public class ModeDeJeuMethodes {
 
-	/// liste pour vérifier si le pion est glissé au bon endroit
-	/// un groupe de parenthèse représente la case de départ
-	/// les nbr à l'intérieur les possibilités de déplacement
-	private final static int[][] listeCases = { { 2, 10 }, { 1, 3, 5 }, { 2, 15 }, { 5, 11 }, { 2, 4, 6, 8 },
-			{ 5, 14 }, { 8, 12 }, { 5, 7, 9 }, { 8, 13 }, { 1, 11, 22 }, { 4, 10, 12, 19 }, { 7, 11, 16 },
-			{ 9, 14, 18 }, { 6, 13, 15, 21 }, { 3, 14, 24 }, { 12, 17 }, { 16, 18, 20 }, { 13, 17 },
-			{ 11, 20 }, { 17, 19, 21, 23 }, { 14, 20 }, { 10, 23 }, { 20, 22, 24 }, { 15, 23 } };
 
 	public static void verifieMoulin(int IDCaseTestee, Deplacements pion) throws IOException {
 		int couleurAdversaire = 0; /// couleur de l'adversaire
@@ -24,7 +17,7 @@ public class ModeDeJeuMethodes {
 		/// vérifie si min. une pièce adverse est disponible
 		for (int i = 1; i < 25; i++) {
 			if (Pion.caseID.containsKey(i)) {
-				if (moulinCompareCase(i, couleurAdversaire) == false
+				if (moulinVerifie(i, couleurAdversaire) == false
 						&& Pion.caseID.get(i) == couleurAdversaire) {
 					peutManger = true;
 					break;
@@ -37,7 +30,7 @@ public class ModeDeJeuMethodes {
 		/// le programme saute l'étape
 		if (peutManger == true) {
 			/// vérifie ensuite si un moulin est créé
-			if (moulinCompareCase(IDCaseTestee, Pion.getCouleurActuelle()) == true) {
+			if (moulinVerifie(IDCaseTestee, Pion.getCouleurActuelle()) == true) {
 				/// si oui, le joueur choisi un pion à manger
 				/// création du pion à manger
 				pion.setCouleurPion(couleurAdversaire);
@@ -96,7 +89,7 @@ public class ModeDeJeuMethodes {
 
 			/// condition 1 : vérifie que le pion choisi ne
 			/// soit pas dans un moulin
-			if (moulinCompareCase(caseChoisie, couleurAManger) == false
+			if (moulinVerifie(caseChoisie, couleurAManger) == false
 					/// c.2 : si la case est occupée, true.
 					/// c'est ce qu'on veut
 					&& caseLibre(caseChoisie) == true
@@ -131,7 +124,7 @@ public class ModeDeJeuMethodes {
 		return caseChoisie;
 	}
 
-	private static boolean moulinCompareCase(int caseTestee, int couleur) {
+	public static boolean moulinVerifie(int caseTestee, int couleur) {
 		/// vérifie si un moulin est créé
 		/// la variable couleur désigne la couleur du joueur
 		boolean oui_non = false;
@@ -335,10 +328,35 @@ public class ModeDeJeuMethodes {
 		return oui_non;
 	}
 
-	public static boolean modeGlisseVerifiePose(Pion pion, int caseArrivee) {
+	public static boolean modeGlisseVerifiePrend(int caseDepart) {
+		/// vérifie si le joueur à le droit de prendre
+		/// le pion qu'il choisit
+
 		boolean ok = false;
 		/// prend la série de cases possibles pour le pion choisi
-		int casesPossibles[] = listeCases[pion.getCaseDepart() - 1];
+		int casesPossibles[] = Outils.listeCasesAdjacentes[caseDepart - 1];
+		/// regarde si la case choisie par le joueur peut être déplacée
+		for (int casePossible : casesPossibles) {
+			/// si une case est inoccupée
+			if (caseLibre(casePossible) == false) {
+				ok = true;
+				break;
+			} else {
+				ok = false;
+			}
+		}
+
+		return ok;
+
+	}
+
+	public static boolean modeGlisseVerifiePose(Pion pion, int caseArrivee) {
+		/// vérifie si le joueur a le droit de poser son pion à
+		/// l'endroit choisi
+
+		boolean ok = false;
+		/// prend la série de cases possibles pour le pion choisi
+		int casesPossibles[] = Outils.listeCasesAdjacentes[pion.getCaseDepart() - 1];
 		/// regarde si la case choisie par le joueur est comprise dans
 		/// le tableau
 		for (int casePossible : casesPossibles) {
@@ -356,25 +374,6 @@ public class ModeDeJeuMethodes {
 		return ok;
 	}
 
-	public static boolean modeGlisseVerifiePrend(int caseDepart) {
-		boolean ok = false;
-		/// prend la série de cases possibles pour le pion choisi
-		int casesPossibles[] = listeCases[caseDepart - 1];
-		/// regarde si la case choisie par le joueur peut être déplacée
-		for (int casePossible : casesPossibles) {
-			/// si une case est inoccupée
-			if (caseLibre(casePossible) == false) {
-				ok = true;
-				break;
-			} else {
-				ok = false;
-			}
-		}
-
-		return ok;
-
-	}
-
 	public static boolean modeGlisseVerifieDeplacementPossible() {
 		/// vérifie si le joueur peut déplacer un pion, où s'il est
 		/// coincé
@@ -382,7 +381,7 @@ public class ModeDeJeuMethodes {
 		/// numero de la case testee
 		int caseTestee = 1;
 		/// prend chaque case l'une après l'autre
-		for (int[] casesAutours : listeCases) {
+		for (int[] casesAutours : Outils.listeCasesAdjacentes) {
 			/// si la case contient un pion qui appartient au joueur
 			if (Pion.caseID.get(caseTestee) == Pion.getCouleurActuelle()) {
 				/// regarde si le pion est bloqué, ou non
