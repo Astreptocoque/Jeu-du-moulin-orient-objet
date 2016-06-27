@@ -1,5 +1,8 @@
 import java.io.IOException;
+
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
 
 public class ModeDeJeu {
 	/// variable pour sortir les pions que le robot mange
@@ -17,7 +20,7 @@ public class ModeDeJeu {
 		/// première partie, les joueurs posent leurs pions.
 		modePose();
 
-		while (fin == false) {
+		while (!fin) {
 
 			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 				/// si le nombre de poins est supérieur à 3,
@@ -205,7 +208,7 @@ public class ModeDeJeu {
 			}
 
 			/// renvoie un message de d'acceptation ou de rejet
-			if (ok == false) {
+			if (!ok) {
 				/// si un moulin est créé, le joueur est averti
 				if (ModeDeJeuMethodes.moulinVerifie(caseChoisie, Pion.getCouleurActuelle()) == true) {
 					Communication.PCOutputStream(8);
@@ -220,7 +223,7 @@ public class ModeDeJeu {
 					Communication.PCOutputStream(7);
 			}
 
-		} while (ok == true);
+		} while (ok);
 		return caseChoisie;
 
 	}
@@ -230,7 +233,7 @@ public class ModeDeJeu {
 		int caseChoisie;
 		do {
 			caseChoisie = Robot.robotJoue();
-
+			
 			/// vérifie que la case choisie est possible
 			if (Pion.mode == 1 || Pion.mode == 3) { /// pose ou saut
 				if (ModeDeJeuMethodes.caseLibre(caseChoisie) == false) {
@@ -241,7 +244,7 @@ public class ModeDeJeu {
 					ok = false;
 				}
 			}
-		} while (ok == true);
+		} while (ok);
 		return caseChoisie;
 	}
 
@@ -270,13 +273,13 @@ public class ModeDeJeu {
 			}
 
 			/// renvoie un message de d'acceptation ou de rejet
-			if (ok == true) {
+			if (ok) {
 				Communication.PCOutputStream(6);
 			} else {
 				Communication.PCOutputStream(5);
 			}
 
-		} while (ok == false);
+		} while (!ok);
 		return caseChoisie;
 	}
 
@@ -303,7 +306,7 @@ public class ModeDeJeu {
 					ok = false;
 				}
 			}
-		} while (ok == false);
+		} while (!ok);
 
 		return caseChoisie;
 	}

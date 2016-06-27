@@ -5,6 +5,8 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 
 public class Communication {
@@ -21,10 +23,13 @@ public class Communication {
 				server = new ServerSocket(1111);
 				erreur = false;
 			} catch (BindException e) {
-				// TODO Auto-generated catch block
-				LCD.clear();
-				e.printStackTrace();
 				erreur = true;
+				LCD.drawString("erreur", 0, 3);
+				Sound.beep();
+				if(! server.isClosed())
+					server.close();
+				Button.waitForAnyPress();
+
 			}
 		} while (erreur == true);
 

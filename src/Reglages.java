@@ -26,7 +26,7 @@ public class Reglages {
 		Pion.creationMapCaseIDCoord();
 		Pion.creationMapCaseID();
 		
-		Outils.initialiseSchema1();
+		Outils.initialiseSchemas();
 		
 		/// regarde quelle est la couleur du robot
 		Deplacements outils = new Deplacements();

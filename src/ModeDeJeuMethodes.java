@@ -74,7 +74,9 @@ public class ModeDeJeuMethodes {
 	private static int mangePion(int couleurAManger, Deplacements pion) throws IOException {
 		int caseChoisie;
 		boolean ok = false;
-
+		
+		Pion.mode = 4;
+		
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
 		/// choisi
 		do {

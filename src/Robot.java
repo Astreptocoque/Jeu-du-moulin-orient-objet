@@ -1,25 +1,34 @@
-import java.util.Random;
-
 /// tout ce qui est en lien avec l'intelligence du robot
 public class Robot {
 
-	private static Random random = new Random();
+	private static int caseChoisie;
 
 	public static int robotJoue() {
-		int caseChoisie;
 
-		caseChoisie = cretin();
-		
+		if (Pion.mode == 1) { /// pose
+
+			IntelligencePose go = new IntelligencePose();
+			caseChoisie = go.intelligencePose();
+
+		} else if (Pion.mode == 2) { /// glisse
+
+			IntelligenceGlisse go = new IntelligenceGlisse();
+			caseChoisie = go.hasard();
+
+		} else if (Pion.mode == 3) {/// saut
+
+			IntelligenceSaut go = new IntelligenceSaut();
+			caseChoisie = go.hasard();
+
+		} else { /// mange
+			robotMange();
+		}
 		return caseChoisie;
 	}
-	
-	private static int cretin(){
-		/// prend une case au hasard sur le plateau
-		return random.nextInt(24) + 1;
+
+	public static void robotMange() {
+		IntelligenceMange go = new IntelligenceMange();
+		caseChoisie = go.hasard();
 	}
 
-	private static int casesVides(){
-		return 0;
-		
-	}
 }

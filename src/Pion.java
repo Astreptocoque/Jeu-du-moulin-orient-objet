@@ -23,7 +23,10 @@ public class Pion {
 	public static int[] coordDernierPion = { 0, 0 };
 	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut
 	public static int mode;
-
+	/// enregistre le dernier coup du joueur
+	private static int derniereCaseJoueur;
+	///
+	
 	/// variables pour les objets pions
 	int couleur; /// couleur du pion
 	int numeroCaseDepart; /// N° de la case départ du pion
@@ -81,6 +84,12 @@ public class Pion {
 			caseID.remove(numeroCase);
 			caseID.put(numeroCase, this.couleur);
 		}
+		/// enregistre la dernière case. La condition est là pour
+		/// empêcher de changer la case si le joueur mange un pion
+		if(mode != 4){
+			derniereCaseJoueur = numeroCase;
+		}
+	
 	}
 
 	public int getCouleurPion() {
@@ -120,17 +129,20 @@ public class Pion {
 		return couleurActuelle;
 	}
 
+	/// pour la dernière case jouée, pour l'intelligence
+	public static int getDerniereCaseJoueur(){
+		return derniereCaseJoueur;
+	}
+	
 	/// gère le total des pions
 	public static void enlevePionJoueur() {
 		nbrPionsJoueur = nbrPionsJoueur - 1;
-		LCD.clear(0);
-		LCD.drawString("nbr J. : " + getNbrPionsJoueur(),  0, 0);
+	
 	}
 
 	public static void enlevePionRobot() {
 		nbrPionsRobot = nbrPionsRobot - 1;
-		LCD.clear(1);
-		LCD.drawString("nbr R. : " + getNbrPionsRobot(),  0, 1);
+	
 	}
 
 	public static int getNbrPionsJoueur() {
@@ -151,7 +163,7 @@ public class Pion {
 		int[] tableauMomentane = new int[2];
 
 		/// valeurs pour créer le couple de coord. x/y des cases
-		int[][] valeurs = { { 7, 4, 1 }, { 6, 4, 2 }, { 5, 4, 3 }, { 7, 6, 5, 3, 2, 1}, { 5, 4, 3 },
+		int[][] valeurs = { { 7, 4, 1 }, { 6, 4, 2 }, { 5, 4, 3 }, { 7, 6, 5, 3, 2, 1 }, { 5, 4, 3 },
 				{ 6, 4, 2 }, { 7, 4, 1 } };
 
 		/// ajoute les cases du plateau
@@ -196,55 +208,56 @@ public class Pion {
 	/// pour entrer des cases dès le départ.
 	public static void sautille() {
 		/// partie pour tester la glisse
-//		caseID.remove(1);
-//		caseID.put(1, 6);
+		// caseID.remove(1);
+		// caseID.put(1, 6);
 		caseID.remove(2);
 		caseID.put(2, 6);
-//		caseID.remove(3);
-//		caseID.put(3, 6);
+		// caseID.remove(3);
+		// caseID.put(3, 6);
 		caseID.remove(4);
 		caseID.put(4, 6);
 		caseID.remove(5);
 		caseID.put(5, 6);
 		caseID.remove(6);
 		caseID.put(6, 6);
-//		caseID.remove(7);
-//		caseID.put(7, 1);
+		// caseID.remove(7);
+		// caseID.put(7, 1);
 		caseID.remove(8);
 		caseID.put(8, 6);
-//		caseID.remove(9);
-//		caseID.put(9, 1);
+		// caseID.remove(9);
+		// caseID.put(9, 1);
 		caseID.remove(10);
 		caseID.put(10, 6);
-//		caseID.remove(11);
-//		caseID.put(11, 1);
+		// caseID.remove(11);
+		// caseID.put(11, 1);
 		caseID.remove(12);
 		caseID.put(12, 6);
 		caseID.remove(13);
 		caseID.put(13, 6);
 		caseID.remove(14);
 		caseID.put(14, 1);
-//		caseID.remove(15);
-//		caseID.put(15, 6);
-//		caseID.remove(16);
-//		caseID.put(16, 6);
+		// caseID.remove(15);
+		// caseID.put(15, 6);
+		// caseID.remove(16);
+		// caseID.put(16, 6);
 		caseID.remove(17);
 		caseID.put(17, 1);
-//		caseID.remove(18);
-//		caseID.put(18, 1);
+		// caseID.remove(18);
+		// caseID.put(18, 1);
 		caseID.remove(19);
 		caseID.put(19, 1);
-//		caseID.remove(20);
-//		caseID.put(20,6);
+		// caseID.remove(20);
+		// caseID.put(20,6);
 		caseID.remove(21);
 		caseID.put(21, 6);
-//		caseID.remove(22);
-//		caseID.put(22, 6);
-//		caseID.remove(23);
-//		caseID.put(23, 1);
-//		caseID.remove(24);
-//		caseID.put(24, 6);
+		// caseID.remove(22);
+		// caseID.put(22, 6);
+		// caseID.remove(23);
+		// caseID.put(23, 1);
+		// caseID.remove(24);
+		// caseID.put(24, 6);
 	}
+
 	public static void partieGlisse() {
 		/// partie pour tester la glisse
 		caseID.remove(1);
@@ -261,38 +274,38 @@ public class Pion {
 		caseID.put(6, 1);
 		caseID.remove(7);
 		caseID.put(7, 1);
-//		caseID.remove(8);
-//		caseID.put(8, 1);
-//		caseID.remove(9);
-//		caseID.put(9, 1);
+		// caseID.remove(8);
+		// caseID.put(8, 1);
+		// caseID.remove(9);
+		// caseID.put(9, 1);
 		caseID.remove(10);
 		caseID.put(10, 1);
 		caseID.remove(11);
 		caseID.put(11, 1);
-//		caseID.remove(12);
-//		caseID.put(12, 6);
+		// caseID.remove(12);
+		// caseID.put(12, 6);
 		caseID.remove(13);
 		caseID.put(13, 1);
 		caseID.remove(14);
 		caseID.put(14, 1);
 		caseID.remove(15);
 		caseID.put(15, 6);
-//		caseID.remove(16);
-//		caseID.put(16, 1);
+		// caseID.remove(16);
+		// caseID.put(16, 1);
 		caseID.remove(17);
 		caseID.put(17, 1);
-//		caseID.remove(18);
-//		caseID.put(18, 1);
+		// caseID.remove(18);
+		// caseID.put(18, 1);
 		caseID.remove(19);
 		caseID.put(19, 6);
 		caseID.remove(20);
-		caseID.put(20,6);
+		caseID.put(20, 6);
 		caseID.remove(21);
 		caseID.put(21, 1);
 		caseID.remove(22);
 		caseID.put(22, 6);
-//		caseID.remove(23);
-//		caseID.put(23, 1);
+		// caseID.remove(23);
+		// caseID.put(23, 1);
 		caseID.remove(24);
 		caseID.put(24, 6);
 	}

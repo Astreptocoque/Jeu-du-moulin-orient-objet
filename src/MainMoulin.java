@@ -10,6 +10,9 @@ public class MainMoulin {
 //		for(int i = 0; i < 6; i ++){
 //			Pion.enlevePionRobot();
 //		}
+//		Pion.caseID.remove(20);
+		
+//		Pion.caseID.put(20,6);
 		
 		ModeDeJeu mode = new ModeDeJeu();
 		mode.joue();

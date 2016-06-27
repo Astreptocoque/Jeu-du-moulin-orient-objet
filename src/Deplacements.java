@@ -41,7 +41,7 @@ public class Deplacements extends Pion {
 	/// degrés pour faire descendre la pince
 	private final static int degreDescendLevePince = 550;
 	/// distance en cm des cases par rapport à l'origine
-	private final float colonne[] = { 3.5f, 9f, 14f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
+	private final float colonne[] = { 3.5f, 9f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
 	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.2f }; // y
 
 	/// moteurs
