@@ -14,66 +14,59 @@ public class IntelligencePose extends Outils {
 	public int intelligencePose() {
 		boolean testSuivant = false;
 		int hasard;
-		/// regarde si le robot peut faire un moulin
+		/// regarde si le robot peut faire un moulin testSuivant =
 		testSuivant = poseEffectueMoulinDirect();
 		/// si non, vérifie s'il peut bloquer un moulin
 		if (testSuivant) {
-			LCD.clear();
+			LCD.refresh();
 			LCD.drawString("Pose : 2", 0, 0);
 			LCD.drawInt(caseChoisie, 0, 1);
-
-			Button.waitForAnyPress();
-
 			testSuivant = poseBloqueMoulinDirect();
 		}
-		/// si non, il regarde si le joueur fait un schéma
-		if (testSuivant) {
-			LCD.clear();
-			LCD.drawString("Pose : 3", 0, 0);
-			LCD.drawInt(caseChoisie, 0, 1);
-
-			Button.waitForAnyPress();
-
-			testSuivant = poseBloqueSchema();
+		if (yatilUnPion()) {
+			hasard = random.nextInt(5);
+			if (testSuivant && hasard > 3) {
+				LCD.refresh();
+				LCD.drawString("Pose : 5", 6, 0);
+				LCD.drawInt(caseChoisie, 0, 1);
+				testSuivant = poseEffectueMoulinIndirect();
+			}
 		}
+
+		/// si non, il regarde sinle joueur fait un schéma
+
 		/// si non, fait un schema
 		if (yatilUnPion()) {
 			if (testSuivant) {
 				hasard = random.nextInt(2);
 				if (hasard == 0) {
-					LCD.clear();
-					LCD.drawString("Pose : 4", 0, 0);
+					LCD.refresh();
+					LCD.drawString("Pose : 4", 6, 0);
 					LCD.drawInt(caseChoisie, 0, 1);
-
-					Button.waitForAnyPress();
 					testSuivant = poseEffectueSchema();
 				} else {
-					LCD.clear();
-					LCD.drawString("Pose : 5", 0, 0);
+					LCD.refresh();
+					LCD.drawString("Pose : 3", 0, 0);
 					LCD.drawInt(caseChoisie, 0, 1);
-					Button.waitForAnyPress();
-					testSuivant = poseEffectueMoulinIndirect();
+					testSuivant = poseBloqueSchema();
 
 				}
 			}
-		}
-		/// si non, pose stratégiquement
-		if (testSuivant) {
-			LCD.clear();
-			LCD.drawString("Pose : 6", 0, 0);
-			Button.waitForAnyPress();
+		} /// si non, pose stratégiquement if (testSuivant) {
 
+		if (testSuivant) {
+			LCD.refresh();
+			LCD.drawString("Pose : 6", 0, 0);
 			testSuivant = poseStrategique();
 		}
 		/// en dernier recours, au hasard
 		if (testSuivant) {
-			LCD.clear();
+			LCD.refresh();
 			LCD.drawString("Pose : 7", 0, 0);
-			Button.waitForAnyPress();
 			LCD.drawInt(caseChoisie, 0, 1);
 
-			/// on n'est pas sensé arriver ici,
-			/// mais c'est une sécurité
+			/// on n'est pas sensé arriver ici, /// mais c'est une
+			/// sécurité
 			hasard();
 		}
 		return caseChoisie;
@@ -282,7 +275,7 @@ public class IntelligencePose extends Outils {
 						caseChoisie = tabSchemaValeurs[0];
 					}
 				}
-				if(affirmatif == false){
+				if (affirmatif == false) {
 					break;
 				}
 			}
@@ -291,35 +284,35 @@ public class IntelligencePose extends Outils {
 		/// si affirmatif = true, c'est qu'il n'y avait pas de schéma a
 		/// terminer. Ici, on commence alors un schema, à partir d'une
 		/// case déjà sur le plateau
-		
+
 		if (affirmatif == true) {
 			LCD.clear(0);
-			LCD.drawString("Pose : 4,5", 0, 0);
-			Button.waitForAnyPress();
-			
-			ArrayList <Integer> schemaValeursTestee = new ArrayList <Integer>();
-			
+			LCD.drawString("Pose : 4,5", 6, 0);
+
+			ArrayList<Integer> schemaValeursTestee = new ArrayList<Integer>();
+
 			/// on prend le premier schema de la liste qui est ok
 			for (int i = 0; i < casesSchemas.length; i++) {
 				tabSchemaCles = casesSchemas[i].clone();
 				/// si le schéma contient une case sur le
 				/// plateau
 				if (pionsRobot.contains(tabSchemaCles[0]) || pionsRobot.contains(tabSchemaCles[1])) {
+
 					/// ajoute les valeurs dans la liste
-					for(int elements : casesNecessairesSchemas[i]){
+					for (int elements : casesNecessairesSchemas[i]) {
 						schemaValeursTestee.add(elements);
 					}
-					
+
 					/// ajoute la case clé du schéma qui
 					/// n'est pas là dans les cases
 					/// tabSchemaValeurs, qui sont à testé
 					/// si elles sont vides
-					if(tabSchemaCles[0] == Pion.getCouleurRobot()){
+					if (Pion.caseID.get(tabSchemaCles[0]) == Pion.getCouleurRobot()) {
 						schemaValeursTestee.add(tabSchemaCles[1]);
-					}else{
+					} else {
 						schemaValeursTestee.add(tabSchemaCles[0]);
 					}
-					
+
 					/// vérifie que toutes les cases soient
 					/// libres
 					for (int j = 0; j < schemaValeursTestee.size(); j++) {
@@ -337,9 +330,12 @@ public class IntelligencePose extends Outils {
 							} else {
 								caseChoisie = tabSchemaCles[0];
 							}
+
 						}
 					}
-					if (affirmatif == false){
+
+					if (affirmatif == false) {
+
 						break;
 					}
 				}
@@ -363,10 +359,10 @@ public class IntelligencePose extends Outils {
 		///
 		/// les cases potentiellement libres
 		ArrayList<Integer> casesPossibles = new ArrayList<Integer>();
-		int tour = 1;
+		int tour = random.nextInt(2);
 		do {
 
-			if (tour == 1) {
+			if (tour == 0) {
 				for (int i = 0; i < cases4intersections.length; i++) {
 					casesPossibles.add(cases4intersections[i]);
 				}
@@ -413,11 +409,8 @@ public class IntelligencePose extends Outils {
 
 		int[] casesMoulins = new int[3];
 
-		int indiceCasesMoulins = 0;
-		
-		
-
-		/// enregiste toutes les pions du robot actuellement sur le plateau
+		/// enregiste toutes les pions du robot actuellement sur le
+		/// plateau
 		ArrayList<Integer> pionsRobot = new ArrayList<Integer>();
 		/// récupère tout les cases ou il y a un pion du robot sur le
 		/// plateau
@@ -426,36 +419,37 @@ public class IntelligencePose extends Outils {
 				pionsRobot.add(i + 1);
 			}
 		}
-		
-		
+
 		Collections.shuffle(pionsRobot);
-		
-		do{
-			
+
+		do {
+
 			/// prend au hasard une case dans les pions déjà sur le
 			/// plateau
 			/// ajoute du hasard dans le jeu, pour ne pas prendre le
 			/// premier
 			/// moulin disponible dans la liste.
-//			indicePionsRobot = random.nextInt(pionsRobot.size());
-			
-			
+			// indicePionsRobot = random.nextInt(pionsRobot.size());
+
 			/// cherche une possibilité de moulin
 			for (int i = 0; i < listeMoulins.length; i++) {
 				/// copie le moulin à tester
 				tabMoulin = listeMoulins[i].clone();
 				/// indice pour choisir plus tard une case
-				indiceCasesMoulins = 0;
 				nbrPionsOk = 0;
 				/// verifie que la ligne testée soit libre pour
 				/// faire un
 				/// moulin
+
 				for (int j = 0; j < tabMoulin.length; j++) {
 					/// si la case est vide
 					if (Pion.caseID.get(tabMoulin[j]) == Pion.vide) {
 						nbrPionsOk += 2;
-						casesMoulins[indiceCasesMoulins] = tabMoulin[j];
-						indiceCasesMoulins++;
+						if (casesMoulins[0] == 0)
+							casesMoulins[0] = tabMoulin[j];
+						else
+							casesMoulins[1] = tabMoulin[j];
+
 						/// si la case est la même que
 						/// celle tirée au hasard
 					} else if (tabMoulin[j] == pionsRobot.get(indicePionsRobot)) {
@@ -466,14 +460,16 @@ public class IntelligencePose extends Outils {
 					}
 
 				}
+
 				if (nbrPionsOk == 5) {
 					affirmatif = false;
 					caseChoisie = casesMoulins[random.nextInt(2)];
+
 					break;
 				}
 			}
 			pionsRobot.remove(indicePionsRobot);
-			indicePionsRobot ++;
+			indicePionsRobot++;
 		} while (pionsRobot.size() > 0 && affirmatif == true);
 		return affirmatif;
 	}

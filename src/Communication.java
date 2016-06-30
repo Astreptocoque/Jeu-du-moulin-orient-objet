@@ -26,9 +26,6 @@ public class Communication {
 				erreur = true;
 				LCD.drawString("erreur", 0, 3);
 				Sound.beep();
-				if(! server.isClosed())
-					server.close();
-				Button.waitForAnyPress();
 
 			}
 		} while (erreur == true);
