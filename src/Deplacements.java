@@ -6,20 +6,23 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 
-public class Deplacements extends Pion {
+public class Deplacements extends Pion{
 
+	int coordDepartX;
+	int coordDepartY;
+	int coordArriveeX;
+	int coordArriveeY;
+	
 	/// constructeurs pour la création des pions
-	public Deplacements(int couleur, int numAncienneCase, int numNouvelleCase) {
-		super(couleur, numAncienneCase, numNouvelleCase);
-	}
-
 	public Deplacements(int couleur) {
 		super(couleur);
+		coordDepartX = super.tabCases[this.getCaseDepart()].coordX;
+		coordDepartY = super.tabCases[this.getCaseDepart()].coordY;
+		coordArriveeX = super.tabCases[this.getCaseArrivee()].coordX;
+		coordArriveeY = super.tabCases[this.getCaseArrivee()].coordY;
+
 	}
 
-	public Deplacements() {
-
-	}
 
 	/// Degrés a faire en moins sur la distance de retour
 	/// Sécurité pour ne pas "défoncer" le capteur tactile
@@ -84,8 +87,8 @@ public class Deplacements extends Pion {
 		/// premier trajet, du départ à la première case
 		/// -1 pour que le moteur tourne à l'envers
 
-		distanceY = (int) ((ligne[this.coordCaseDepart[1]]) * echelle * -1);
-		distanceX = (int) ((colonne[this.coordCaseDepart[0]]) * echelle);
+		distanceY = (int) ((ligne[this.coordDepartY]) * echelle * -1);
+		distanceX = (int) ((colonne[this.coordDepartX]) * echelle);
 
 		/// regle la vitesse, pour que chaque axe arrive en même
 		/// temps à
@@ -124,8 +127,8 @@ public class Deplacements extends Pion {
 		infini = true;
 
 		/// second trajet, du premier point au second point
-		distanceY = (int) ((ligne[this.coordCaseArrivee[1]] - ligne[this.coordCaseDepart[1]]) * echelle * -1);
-		distanceX = (int) ((colonne[this.coordCaseArrivee[0]] - colonne[this.coordCaseDepart[0]]) * echelle);
+		distanceY = (int) ((ligne[this.coordArriveeY] - ligne[this.coordDepartY]) * echelle * -1);
+		distanceX = (int) ((colonne[this.coordArriveeX] - colonne[this.coordDepartX]) * echelle);
 
 		reglageVitesse(distanceX, distanceY);
 
@@ -185,8 +188,8 @@ public class Deplacements extends Pion {
 		}
 
 		/// pour se rendre au premier pion
-		distanceY = (int) ((ligne[this.coordCaseDepart[1]]) * echelle * -1 - coordDernierPion[1]);
-		distanceX = (int) ((colonne[this.coordCaseDepart[0]]) * echelle - coordDernierPion[0]);
+		distanceY = (int) ((ligne[this.coordDepartY]) * echelle * -1 - coordDernierPion[1]);
+		distanceX = (int) ((colonne[this.coordDepartX]) * echelle - coordDernierPion[0]);
 		/// ajuste les coordonnées
 		coordDernierPion[0] = coordDernierPion[0] + distanceX;
 		coordDernierPion[1] = coordDernierPion[1] + distanceY;
@@ -225,11 +228,11 @@ public class Deplacements extends Pion {
 		infini = true;
 
 		/// deplacement au second pion
-		distanceY = (int) ((ligne[this.coordCaseArrivee[1]] - ligne[this.coordCaseDepart[1]]) * echelle * -1);
-		distanceX = (int) ((colonne[this.coordCaseArrivee[0]] - colonne[this.coordCaseDepart[0]]) * echelle);
+		distanceY = (int) ((ligne[this.coordArriveeY] - ligne[this.coordDepartY]) * echelle * -1);
+		distanceX = (int) ((colonne[this.coordArriveeX] - colonne[this.coordDepartX]) * echelle);
 		/// ajuste les coordonnées
-		coordDernierPion[0] = (int) (colonne[this.coordCaseArrivee[0]] * echelle);
-		coordDernierPion[1] = (int) (ligne[this.coordCaseArrivee[1]] * echelle * -1);
+		coordDernierPion[0] = (int) (colonne[this.coordArriveeX] * echelle);
+		coordDernierPion[1] = (int) (ligne[this.coordArriveeY] * echelle * -1);
 		/// regle la vitesse, pour que chaque axe arrive en même temps à
 		/// l'emplacement choisi
 		reglageVitesse(distanceX, distanceY);

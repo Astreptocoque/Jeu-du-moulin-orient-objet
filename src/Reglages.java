@@ -21,10 +21,6 @@ public class Reglages {
 		/// création du thread pour afficher la batterie à l'écran
 		Thread threadBatterie = new Thread(batterie);
 		threadBatterie.start();
-
-		/// création des map pour les cases
-		Pion.creationMapCaseIDCoord();
-		Pion.creationMapCaseID();
 		
 		Outils.initialiseSchemas();
 		

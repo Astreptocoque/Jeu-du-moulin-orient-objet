@@ -6,13 +6,9 @@ public class MainMoulin {
 		Reglages outils = new Reglages();
 		outils.initialisation();
 		
-//		Pion.partieGlisse();
-//		for(int i = 0; i < 6; i ++){
-//			Pion.enlevePionRobot();
-//		}
-//		Pion.caseID.remove(2);
 		
-//		Pion.caseID.put(2,6);
+		Plateau plateau = new Plateau();
+		ModeDeJeu.joue(plateau);
 		
 		ModeDeJeu mode = new ModeDeJeu();
 		mode.joue();
