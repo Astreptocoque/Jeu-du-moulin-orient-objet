@@ -91,7 +91,6 @@ public class Cases {
 		for (int i = 0; i < casesAdjacentes.length; i++) {
 			/// si la case est occupée...
 			if(plateau.mapCases.get(casesAdjacentes[i]).pion != Pion.vide){
-//			if (plateau.tabCases[casesAdjacentes[i]].pion != Pion.vide) {
 				///... on ajoute 1 à nbrCasesBloquees
 				nbrCasesBloquees++;
 			}

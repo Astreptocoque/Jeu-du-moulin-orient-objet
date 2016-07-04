@@ -10,7 +10,6 @@ public class Plateau {
 	int nbrMoulinsFermesJoueur;
 	int nbrMoulinsOuvertsRobot;
 	int nbrMoulinsFermesRobot;
-//	Cases[] tabCases;
 	HashMap <Integer,Cases> mapCases;
 	/// nbr de pions restant pour chaque joueur
 	int nbrPionsJoueur;

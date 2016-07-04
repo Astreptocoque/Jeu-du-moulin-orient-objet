@@ -3,6 +3,11 @@ import lejos.hardware.Sound;
 
 public class ModeDeJeuMethodes {
 
+	/// variable pour sortir les pions que le robot mange
+	public static int robotElimine = 24;
+	/// variable pour sortir les pions que le joueur mange
+	public static int joueurElimine = 43;
+	
 	public static void verifieMoulin(int IDCaseTestee, Deplacements pion, Plateau plateau) throws IOException {
 		int couleurAdversaire = 0; /// couleur de l'adversaire
 
@@ -29,14 +34,14 @@ public class ModeDeJeuMethodes {
 				/// attribue la case d'arrivée sur la case de la
 				/// ligne de départ suivante
 				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
-					pionAManger.setCaseArrivee(ModeDeJeu.robotElimine += 1, plateau);
+					pionAManger.setCaseArrivee(robotElimine += 1, plateau);
 					/// sort le pion
 					pionAManger.deplacementPionRobot();
 					/// se replace à l'origine pour le
 					/// joueur
 					pionAManger.deplacementOrigine();
 				} else {
-					pionAManger.setCaseArrivee(ModeDeJeu.joueurElimine -= 1, plateau);
+					pionAManger.setCaseArrivee(joueurElimine -= 1, plateau);
 					/// sort le pion
 					pionAManger.deplacementPionJoueur();
 				}

@@ -125,7 +125,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 
 	}
-
+	
 	private boolean poseBloqueMoulinDirect(Plateau plateau) {
 
 		boolean affirmatif = true;
