@@ -78,7 +78,6 @@ public class Deplacements {
 	private final float colonne[] = { 3.5f, 9f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
 	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.2f }; // y
 
-	private int[] coordDernierPion = { 0, 0 };
 
 	/// moteurs
 	EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
@@ -193,8 +192,8 @@ public class Deplacements {
 		distanceX = moteurX.getTachoCount();
 		distanceY = moteurY1.getTachoCount();
 		/// ajuste les coordonnées
-		coordDernierPion[0] = distanceX;
-		coordDernierPion[1] = distanceY;
+		Pion.coordDernierPion[0] = distanceX;
+		Pion.coordDernierPion[1] = distanceY;
 
 	}
 
@@ -216,16 +215,16 @@ public class Deplacements {
 		moteurLevePince.setSpeed(vitesseRapidePince);
 
 		/// baisse la pince si c'est le 1er tour et le robot commence
-		if (coordDernierPion[0] == 0 && coordDernierPion[1] == 0) {
+		if (Pion.coordDernierPion[0] == 0 && Pion.coordDernierPion[1] == 0) {
 			moteurPince.rotate(175, true);
 		}
 
 		/// pour se rendre au premier pion
-		distanceY = (int) ((ligne[this.coordDepartY]) * echelle * -1 - coordDernierPion[1]);
-		distanceX = (int) ((colonne[this.coordDepartX]) * echelle - coordDernierPion[0]);
+		distanceY = (int) ((ligne[this.coordDepartY]) * echelle * -1 - Pion.coordDernierPion[1]);
+		distanceX = (int) ((colonne[this.coordDepartX]) * echelle - Pion.coordDernierPion[0]);
 		/// ajuste les coordonnées
-		coordDernierPion[0] = coordDernierPion[0] + distanceX;
-		coordDernierPion[1] = coordDernierPion[1] + distanceY;
+		Pion.coordDernierPion[0] = Pion.coordDernierPion[0] + distanceX;
+		Pion.coordDernierPion[1] = Pion.coordDernierPion[1] + distanceY;
 
 		/// regle la vitesse, pour que chaque axe arrive en même temps à
 		/// l'emplacement choisi
@@ -264,8 +263,8 @@ public class Deplacements {
 		distanceY = (int) ((ligne[this.coordArriveeY] - ligne[this.coordDepartY]) * echelle * -1);
 		distanceX = (int) ((colonne[this.coordArriveeX] - colonne[this.coordDepartX]) * echelle);
 		/// ajuste les coordonnées
-		coordDernierPion[0] = (int) (colonne[this.coordArriveeX] * echelle);
-		coordDernierPion[1] = (int) (ligne[this.coordArriveeY] * echelle * -1);
+		Pion.coordDernierPion[0] = (int) (colonne[this.coordArriveeX] * echelle);
+		Pion.coordDernierPion[1] = (int) (ligne[this.coordArriveeY] * echelle * -1);
 		/// regle la vitesse, pour que chaque axe arrive en même temps à
 		/// l'emplacement choisi
 		reglageVitesse(distanceX, distanceY);
@@ -312,10 +311,10 @@ public class Deplacements {
 		moteurY2.setAcceleration(acceleration);
 
 		/// empêche des mouvements inutiles
-		if (coordDernierPion[0] != 0 && coordDernierPion[1] != 0) {
+		if (Pion.coordDernierPion[0] != 0 && Pion.coordDernierPion[1] != 0) {
 			/// retour à l'origine
-			distanceY = (int) (coordDernierPion[1]);
-			distanceX = (int) (coordDernierPion[0]);
+			distanceY = (int) (Pion.coordDernierPion[1]);
+			distanceX = (int) (Pion.coordDernierPion[0]);
 
 			/// regle la vitesse, pour que chaque axe arrive en même
 			/// temps à
@@ -424,8 +423,8 @@ public class Deplacements {
 
 		/// réinitialise les coordonnées du robot
 		/// pour être sur qu'elles soient justes
-		coordDernierPion[0] = 0;
-		coordDernierPion[1] = 0;
+		Pion.coordDernierPion[0] = 0;
+		Pion.coordDernierPion[1] = 0;
 
 	}
 

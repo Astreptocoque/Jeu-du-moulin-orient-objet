@@ -17,8 +17,9 @@ public class Cases {
 		this.numero = numero;
 		/// lors de l'initialisation, la case est vide
 		this.pion = Pion.vide;
-
-		attributionListesCases(numero);
+		
+		if(numero < 25)
+			attributionListesCases(numero);
 
 	}
 
@@ -39,7 +40,7 @@ public class Cases {
 		/// attribution des cases adjacentes, ne change pas
 		this.casesAdjacentes = new ArrayList<Integer>();
 		for (int elements : listeCasesAdjacentes[numero - 1]) {
-			this.casesAdjacentes.add(listeCasesAdjacentes[numero - 1][elements]);
+			this.casesAdjacentes.add(elements);
 		}
 
 		/// attribution des moulins que peut former chaque case
@@ -48,6 +49,7 @@ public class Cases {
 		this.casesMoulins = new int[2][2];
 		/// pour chaque moulin possible...
 		for (int i = 0; i < listeMoulins.length; i++) {
+			indiceCasesMoulins2 = 0;
 			/// vérifie si la case est inclue dans ce moulin
 			for (int j = 0; j < listeMoulins[i].length; j++) {
 				/// si la case est inclue dans le moulin...

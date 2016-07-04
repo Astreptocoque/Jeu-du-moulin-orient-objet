@@ -5,15 +5,13 @@ public class Plateau {
 	/// contient les informations du plateau comme le nombre de moulins
 	/// ouverts/fermés de chaque joueur, etc...
 
-	/// pour attribuer les cases dans le constructeur
-	private static int numeroCase = 1;
-
 	/// pour l'objet plateau
 	int nbrMoulinsOuvertsJoueur;
 	int nbrMoulinsFermesJoueur;
 	int nbrMoulinsOuvertsRobot;
 	int nbrMoulinsFermesRobot;
 	Cases[] tabCases;
+	HashMap <Integer,Cases> mapCases;
 	/// nbr de pions restant pour chaque joueur
 	int nbrPionsJoueur;
 	int nbrPionsRobot;
@@ -76,9 +74,6 @@ public class Plateau {
 				nbrPions++;
 			}
 		}
-		
-		
-		
 		return nbrPions;
 	}
 
@@ -94,39 +89,45 @@ public class Plateau {
 	
 	/// pour ajouter les cases, fait partie du constructeur
 	public void ajouteCases() {
+		/// pour attribuer les cases dans le constructeur
+		int numeroCase = 1;
 		/// valeurs pour créer le couple de coord. x/y des cases
 		int[][] valeurs = { { 7, 4, 1 }, { 6, 4, 2 }, { 5, 4, 3 }, { 7, 6, 5, 3, 2, 1 }, { 5, 4, 3 },
 				{ 6, 4, 2 }, { 7, 4, 1 } };
 		
 		/// crée le tableau qui accueillera toutes les cases pour tout le jeu
 		this.tabCases = new Cases[42];
+		HashMap<Integer, Cases> coucou = new HashMap<Integer,Cases>();
 
 		/// ajoute les 24 cases
 		for (int i = 0; i < valeurs.length; i++) {
 			for (int j = 0; j < valeurs[i].length; j++) {
 				/// crée la case et lui attribue son numéro
 				Cases cases = new Cases(numeroCase);
-				numeroCase++;
 				/// attribue les coordonnées à la case
 				cases.coordX = valeurs[i][j];
 				cases.coordY = i + 1;
 				/// ajoute la case au tableau des cases
-				this.tabCases[i] = cases;
+				this.tabCases[numeroCase -1] = cases;
+				numeroCase++;
 			}
 		}
 		/// ajoute les cases de depart du robot
-		for (int i = 25; i < 34; i++) {
-			Cases cases = new Cases(i);
+		for (int i = 0; i < 9; i++) {
+			Cases cases = new Cases(numeroCase);
 			cases.coordX = i;
 			cases.coordY = 0;
-			this.tabCases[i] = cases;
+			this.tabCases[numeroCase -1] = cases;
+			numeroCase++;
 		}
 		/// ajoute les cases de depart du joueur
-		for (int i = 34; i < 43; i++) {
-			Cases cases = new Cases(i);
+		for (int i = 0; i < 9; i++) {
+			Cases cases = new Cases(numeroCase);
 			cases.coordX = i;
 			cases.coordY = 8;
-			this.tabCases[i] = cases;
+			this.tabCases[numeroCase -1] = cases;
+			numeroCase++;
+
 		}
 	}
 

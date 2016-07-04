@@ -19,6 +19,8 @@ public class Pion{
 	/// enregistre le dernier coup du joueur
 	public static int derniereCaseJoueur;
 	///
+	public static int[] coordDernierPion = { 0, 0 };
+
 
 	/// getter et setter pour les couleurs
 	public static void setCouleurRobot(int couleur) {

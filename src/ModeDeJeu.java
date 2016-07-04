@@ -1,14 +1,12 @@
 import java.io.IOException;
 
-import lejos.hardware.Button;
 import lejos.hardware.Sound;
-import lejos.hardware.lcd.LCD;
 
 public class ModeDeJeu {
 	/// variable pour sortir les pions que le robot mange
 	public static int robotElimine = 24;
 	/// variable pour sortir les pions que le joueur mange
-	public static int joueurElimine = 43;
+	public static int joueurElimine = 42;
 
 	/// ******* mode de jeu **********
 
@@ -78,7 +76,7 @@ public class ModeDeJeu {
 			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 				/// case départ, avance à chaque tour de 1 dans
 				/// la ligne de départ
-				pion.setCaseDepart(iDepartRobot + 25, plateau);
+				pion.setCaseDepart(iDepartRobot + 24, plateau);
 				/// choisi une case libre et attribue case
 				/// d'arrivée
 				pion.setCaseArrivee(robotPose(pion, plateau), plateau);
@@ -90,7 +88,7 @@ public class ModeDeJeu {
 			} else {
 				/// case départ, avance à chaque tour de 1 dans
 				/// la ligne de départ
-				pion.setCaseDepart(42 - iDepartJoueur,plateau);
+				pion.setCaseDepart(41 - iDepartJoueur,plateau);
 				/// choisi une case libre, et attibue la case
 				/// d'arrivée
 				pion.setCaseArrivee(joueurPose(pion, plateau),plateau);
