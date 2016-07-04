@@ -7,14 +7,14 @@ import lejos.remote.ev3.RemoteRequestEV3;
 
 public class Reglages {
 
-	AfficheBatterie batterie = new AfficheBatterie();
+	static AfficheBatterie batterie = new AfficheBatterie();
 
 	/// permet la connection à la seconde brique
 	public static String[] names = { "EV1", "EV2" };
 	public static RemoteRequestEV3[] brique = new RemoteRequestEV3[names.length];
 
 	
-	public void initialisation() throws IOException {
+	public static void initialisation() throws IOException {
 
 		connectionEV2();
 
@@ -25,8 +25,8 @@ public class Reglages {
 		Outils.initialiseSchemas();
 		
 		/// regarde quelle est la couleur du robot
-		Deplacements outils = new Deplacements();
-		outils.detecteCouleur();
+		Deplacements d = new Deplacements();
+		d.detecteCouleur();
 
 	}
 
@@ -39,7 +39,7 @@ public class Reglages {
 		brique[1].disConnect();
 	}
 
-	private void connectionEV2() {
+	private static void connectionEV2() {
 		/// connection à la brique EV2
 		LCD.drawString("Connection a EV2...", 0, 0);
 

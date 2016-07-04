@@ -1,9 +1,6 @@
-import java.util.HashMap;
-import java.util.Map;
 
-import lejos.hardware.lcd.LCD;
 
-public class Pion extends Cases {
+public class Pion{
 
 	/// variables générales à tout le programme
 	private static int couleurRobot;
@@ -18,62 +15,10 @@ public class Pion extends Cases {
 	public final static int couleurDominante = blanc;
 
 	/// pour l'optimisation des dépla. du robot, en degrés
-	public static int[] coordDernierPion = { 0, 0 };
+//	public static int[] coordDernierPion = { 0, 0 };
 	/// enregistre le dernier coup du joueur
-	private static int derniereCaseJoueur;
+	public static int derniereCaseJoueur;
 	///
-
-	/// variables pour les objets pions
-	int couleur; /// couleur du pion
-	int numeroCaseDepart; /// N° de la case départ du pion
-	int numeroCaseArrivee; /// N° de la case arrivée du pion
-
-	/// constructeurs
-	public Pion(int couleur) {
-		super(couleur);
-		this.couleur = couleur;
-	}
-
-	/// getter et setter pour les déplacements
-
-	public void setCaseDepart(int numeroCase) {
-		this.numeroCaseDepart = numeroCase;
-		/// modifie l'emplacement du nouveau pion en tant
-		/// que vide
-		/// le if est là pour empecher une erreur lors de la pose
-		/// initiale des pions
-		if (numeroCase > 0 && numeroCase < 25) {
-			super.tabCases[numeroCase - 1].pion = vide;
-		}
-	}
-
-	public void setCaseArrivee(int numeroCase) {
-		this.numeroCaseArrivee = numeroCase;
-		/// modifie l'emplacement du nouveau pion
-		/// le if est là pour empecher une erreur lors de la pose
-		/// initiale des pions
-		if (numeroCase > 0 && numeroCase < 25) {
-			super.tabCases[numeroCase].pion = Pion.getCouleurActuelle();
-		}
-		/// enregistre la dernière case. La condition est là pour
-		/// empêcher de changer la case si le joueur mange un pion
-		if (super.getMode() != 4) {
-			derniereCaseJoueur = numeroCase;
-		}
-
-	}
-
-	public int getCouleurPion() {
-		return this.couleur;
-	}
-
-	public int getCaseDepart() {
-		return this.numeroCaseDepart;
-	}
-
-	public int getCaseArrivee() {
-		return this.numeroCaseArrivee;
-	}
 
 	/// getter et setter pour les couleurs
 	public static void setCouleurRobot(int couleur) {

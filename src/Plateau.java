@@ -69,12 +69,17 @@ public class Plateau {
 
 	}
 
-	public int getNbrPionsJoueur() {
-		return this.nbrPionsJoueur;
-	}
-
-	public int getNbrPionsRobot() {
-		return this.nbrPionsRobot;
+	public int getNbrPionsSurLePlateau(int couleur) {
+		int nbrPions = 0;
+		for(Cases caseTestee : this.tabCases){
+			if(caseTestee.pion == couleur){
+				nbrPions++;
+			}
+		}
+		
+		
+		
+		return nbrPions;
 	}
 
 	/// gère le mode
@@ -86,6 +91,7 @@ public class Plateau {
 		return this.mode;
 	}
 
+	
 	/// pour ajouter les cases, fait partie du constructeur
 	public void ajouteCases() {
 		/// valeurs pour créer le couple de coord. x/y des cases

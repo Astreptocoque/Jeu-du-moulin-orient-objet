@@ -3,10 +3,8 @@ import lejos.hardware.Sound;
 
 public class ModeDeJeuMethodes {
 
-
-	public static void verifieMoulin(int IDCaseTestee, Deplacements pion) throws IOException {
+	public static void verifieMoulin(int IDCaseTestee, Deplacements pion, Plateau plateau) throws IOException {
 		int couleurAdversaire = 0; /// couleur de l'adversaire
-		boolean peutManger = false;
 
 		if (Pion.getCouleurActuelle() == Pion.couleurDominante) {
 			couleurAdversaire = Pion.noir;
@@ -15,45 +13,37 @@ public class ModeDeJeuMethodes {
 		}
 
 		/// vérifie si min. une pièce adverse est disponible
-		for (int i = 1; i < 25; i++) {
-			if (Pion.caseID.containsKey(i)) {
-				if (moulinVerifie(i, couleurAdversaire) == false
-						&& Pion.caseID.get(i) == couleurAdversaire) {
-					peutManger = true;
-					break;
-				} else
-					peutManger = false;
-			}
-		}
-
 		/// si aucune pièce adverse est diponible
 		/// le programme saute l'étape
-		if (peutManger == true) {
+		if (plateau.getNbrPionsSurLePlateau(couleurAdversaire) > 0) {
 			/// vérifie ensuite si un moulin est créé
-			if (moulinVerifie(IDCaseTestee, Pion.getCouleurActuelle()) == true) {
+			if (moulinVerifie(IDCaseTestee, Pion.getCouleurActuelle(), plateau) == true) {
+
 				/// si oui, le joueur choisi un pion à manger
 				/// création du pion à manger
-				pion.setCouleurPion(couleurAdversaire);
+				Deplacements pionAManger = new Deplacements();
 
 				/// set la case départ, avec mangePion
-				pion.setCaseDepart(mangePion(couleurAdversaire, pion));
+				pionAManger.setCaseDepart(mangePion(couleurAdversaire, pionAManger, plateau), plateau);
 
 				/// attribue la case d'arrivée sur la case de la
 				/// ligne de départ suivante
 				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
-					pion.setCaseArrivee(ModeDeJeu.robotElimine += 1);
+					pionAManger.setCaseArrivee(ModeDeJeu.robotElimine += 1, plateau);
 					/// sort le pion
-					pion.deplacementPionRobot();
+					pionAManger.deplacementPionRobot();
 					/// se replace à l'origine pour le
 					/// joueur
-					pion.deplacementOrigine();
+					pionAManger.deplacementOrigine();
 				} else {
-					pion.setCaseArrivee(ModeDeJeu.joueurElimine -= 1);
+					pionAManger.setCaseArrivee(ModeDeJeu.joueurElimine -= 1, plateau);
 					/// sort le pion
-					pion.deplacementPionJoueur();
+					pionAManger.deplacementPionJoueur();
 				}
 
-			} else {
+			} else
+
+			{
 				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 					/// pas de moulin, le robot se met à
 					/// l'origine pour le joueur
@@ -71,12 +61,12 @@ public class ModeDeJeuMethodes {
 
 	}
 
-	private static int mangePion(int couleurAManger, Deplacements pion) throws IOException {
+	private static int mangePion(int couleurAManger, Deplacements pion, Plateau plateau) throws IOException {
 		int caseChoisie;
 		boolean ok = false;
-		
-		Pion.mode = 4;
-		
+
+		plateau.mode = 4;
+
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
 		/// choisi
 		do {
@@ -86,17 +76,17 @@ public class ModeDeJeuMethodes {
 				Sound.beep();
 				caseChoisie = Communication.PCInputStream();
 			} else {
-				caseChoisie = Robot.robotJoue();
+				caseChoisie = Robot.robotJoue(plateau);
 			}
 
 			/// condition 1 : vérifie que le pion choisi ne
 			/// soit pas dans un moulin
-			if (moulinVerifie(caseChoisie, couleurAManger) == false
+			if (moulinVerifie(caseChoisie, couleurAManger, plateau) == false
 					/// c.2 : si la case est occupée, true.
 					/// c'est ce qu'on veut
-					&& caseLibre(caseChoisie) == true
+					&&plateau.tabCases[caseChoisie].pion != Pion.vide
 					/// c.3 : vérifie la couleur du pion
-					&& Pion.caseID.get(caseChoisie) == couleurAManger) {
+					&& plateau.tabCases[caseChoisie].pion == couleurAManger) {
 				ok = true;
 				/// pour le joueur
 				if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle()) {
@@ -117,255 +107,51 @@ public class ModeDeJeuMethodes {
 		if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle()) {
 			/// soustrait le pion mangé au nbr total de pion du
 			/// joueur
-			Pion.enlevePionRobot();
+			plateau.enlevePionRobot();
 		} else {
 			/// soustrait le pion au nbr total de pion du robot
-			Pion.enlevePionJoueur();
+			plateau.enlevePionJoueur();
 		}
 
 		return caseChoisie;
 	}
 
-	public static boolean moulinVerifie(int caseTestee, int couleur) {
+	public static boolean moulinVerifie(int caseTestee, int couleur, Plateau plateau) {
 		/// vérifie si un moulin est créé
 		/// la variable couleur désigne la couleur du joueur
 		boolean oui_non = false;
 
-		switch (caseTestee) {
-		case 1:
-			if (Pion.caseID.get(10) == couleur && Pion.caseID.get(22) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(2) == couleur && Pion.caseID.get(3) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 2:
-			if (Pion.caseID.get(3) == couleur && Pion.caseID.get(1) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(5) == couleur && Pion.caseID.get(8) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 3:
-			if (Pion.caseID.get(2) == couleur && Pion.caseID.get(1) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(15) == couleur && Pion.caseID.get(24) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 4:
-			if (Pion.caseID.get(5) == couleur && Pion.caseID.get(6) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(11) == couleur && Pion.caseID.get(19) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 5:
-			if (Pion.caseID.get(2) == couleur && Pion.caseID.get(8) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(6) == couleur & Pion.caseID.get(4) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 6:
-			if (Pion.caseID.get(4) == couleur && Pion.caseID.get(5) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(14) == couleur && Pion.caseID.get(21) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 7:
-			if (Pion.caseID.get(12) == couleur && Pion.caseID.get(16) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(8) == couleur && Pion.caseID.get(9) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 8:
-			if (Pion.caseID.get(7) == couleur && Pion.caseID.get(9) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(5) == couleur && Pion.caseID.get(2) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 9:
-			if (Pion.caseID.get(8) == couleur && Pion.caseID.get(7) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(13) == couleur && Pion.caseID.get(18) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 10:
-			if (Pion.caseID.get(1) == couleur && Pion.caseID.get(22) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(11) == couleur && Pion.caseID.get(12) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 11:
-			if (Pion.caseID.get(4) == couleur && Pion.caseID.get(19) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(12) == couleur && Pion.caseID.get(10) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 12:
-			if (Pion.caseID.get(11) == couleur && Pion.caseID.get(10) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(7) == couleur && Pion.caseID.get(16) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 13:
-			if (Pion.caseID.get(9) == couleur && Pion.caseID.get(18) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(14) == couleur && Pion.caseID.get(15) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 14:
-			if (Pion.caseID.get(6) == couleur && Pion.caseID.get(21) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(13) == couleur && Pion.caseID.get(15) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 15:
-			if (Pion.caseID.get(14) == couleur && Pion.caseID.get(13) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(3) == couleur && Pion.caseID.get(24) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 16:
-			if (Pion.caseID.get(17) == couleur && Pion.caseID.get(18) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(12) == couleur && Pion.caseID.get(7) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 17:
-			if (Pion.caseID.get(16) == couleur && Pion.caseID.get(18) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(20) == couleur && Pion.caseID.get(23) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 18:
-			if (Pion.caseID.get(17) == couleur && Pion.caseID.get(16) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(13) == couleur && Pion.caseID.get(9) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 19:
-			if (Pion.caseID.get(11) == couleur && Pion.caseID.get(4) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(20) == couleur && Pion.caseID.get(21) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 20:
-			if (Pion.caseID.get(19) == couleur && Pion.caseID.get(21) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(17) == couleur && Pion.caseID.get(23) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 21:
-			if (Pion.caseID.get(20) == couleur && Pion.caseID.get(19) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(14) == couleur && Pion.caseID.get(6) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 22:
-			if (Pion.caseID.get(10) == couleur && Pion.caseID.get(1) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(23) == couleur && Pion.caseID.get(24) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 23:
-			if (Pion.caseID.get(22) == couleur && Pion.caseID.get(24) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(20) == couleur && Pion.caseID.get(17) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
-		case 24:
-			if (Pion.caseID.get(23) == couleur && Pion.caseID.get(22) == couleur)
-				oui_non = true;
-			else if (Pion.caseID.get(15) == couleur && Pion.caseID.get(3) == couleur)
-				oui_non = true;
-			else
-				oui_non = false;
-			break;
+		/// on récupère les moulins possibles avec la case testée
+		int[] moulin1 = plateau.tabCases[caseTestee].casesMoulins[0].clone();
+		int[] moulin2 = plateau.tabCases[caseTestee].casesMoulins[1].clone();
 
+		/// et on regarde s'ils font un moulins
+		if (plateau.tabCases[moulin1[0]].pion == couleur && plateau.tabCases[moulin1[1]].pion == couleur) {
+			oui_non = true;
+		} else if (plateau.tabCases[moulin2[0]].pion == couleur
+				&& plateau.tabCases[moulin2[1]].pion == couleur) {
+			oui_non = true;
+		} else {
+			oui_non = false;
 		}
 
 		return oui_non;
-	}
-
-	public static boolean modeGlisseVerifiePrend(int caseDepart) {
-		/// vérifie si le joueur à le droit de prendre
-		/// le pion qu'il choisit
-
-		boolean ok = false;
-		/// prend la série de cases possibles pour le pion choisi
-		int casesPossibles[] = Outils.listeCasesAdjacentes[caseDepart - 1];
-		/// regarde si la case choisie par le joueur peut être déplacée
-		for (int casePossible : casesPossibles) {
-			/// si une case est inoccupée
-			if (caseLibre(casePossible) == false) {
-				ok = true;
-				break;
-			} else {
-				ok = false;
-			}
-		}
-
-		return ok;
 
 	}
 
-	public static boolean modeGlisseVerifiePose(Pion pion, int caseArrivee) {
+	public static boolean modeGlisseVerifiePose(Deplacements pion, int caseArrivee, Plateau plateau) {
 		/// vérifie si le joueur a le droit de poser son pion à
 		/// l'endroit choisi
 
 		boolean ok = false;
 		/// prend la série de cases possibles pour le pion choisi
-		int casesPossibles[] = Outils.listeCasesAdjacentes[pion.getCaseDepart() - 1];
+		int casesPossibles[] = plateau.tabCases[pion.getCaseDepart()].getCasesAdjacentes();
 		/// regarde si la case choisie par le joueur est comprise dans
 		/// le tableau
 		for (int casePossible : casesPossibles) {
 			/// si la case d'arrivée est dans les cases disponibles
-			/// et
-			/// qu'elle est libre
-			if (caseArrivee == casePossible && caseLibre(caseArrivee) == false) {
+			/// et qu'elle est libre
+			if (caseArrivee == casePossible && plateau.tabCases[casePossible].pion != Pion.vide) {
 				ok = true;
 				break;
 			} else {
@@ -376,46 +162,19 @@ public class ModeDeJeuMethodes {
 		return ok;
 	}
 
-	public static boolean modeGlisseVerifieDeplacementPossible() {
+	public static boolean modeGlisseVerifieDeplacementPossible(Plateau plateau) {
 		/// vérifie si le joueur peut déplacer un pion, où s'il est
 		/// coincé
 		boolean ok = false;
-		/// numero de la case testee
-		int caseTestee = 1;
-		/// prend chaque case l'une après l'autre
-		for (int[] casesAutours : Outils.listeCasesAdjacentes) {
-			/// si la case contient un pion qui appartient au joueur
-			if (Pion.caseID.get(caseTestee) == Pion.getCouleurActuelle()) {
-				/// regarde si le pion est bloqué, ou non
-				for (int caseAutours : casesAutours) {
-					/// si elle est libre...
-					if (caseLibre(caseAutours) == false) {
-						/// si oui, alors le joueur
-						/// n'est pas bloqué, le jeu
-						/// continu
-						ok = true;
-						break;
-					}
-				}
+
+		/// test chaque case, les unes après les autres
+		for (int i = 1; i < 25; i++) {
+			ok = plateau.tabCases[i].getBlocage(plateau);
+			if (ok) {
+				break;
 			}
-			/// ajoute 1 à caseTestee car on passe à la suivante
-			caseTestee++;
 		}
 
 		return ok;
 	}
-
-	public static boolean caseLibre(int caseTestee) {
-		boolean ok;
-
-		/// regarde si la case est occupée par un pion
-		/// inoccupee = 0 , occupee = 1 ou 6 (noir ou blanc)
-		if (Pion.caseID.get(caseTestee) == Pion.noir || Pion.caseID.get(caseTestee) == Pion.blanc)
-			ok = true;
-		else
-			ok = false;
-
-		return ok;
-	}
-
 }

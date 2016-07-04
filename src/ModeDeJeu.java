@@ -12,33 +12,33 @@ public class ModeDeJeu {
 
 	/// ******* mode de jeu **********
 
-	public void joue() throws IOException {
+	public static void joue(Plateau plateau) throws IOException {
 		/// variable pour sortir du jeu s'il un joueur fini
 		boolean fin = false;
 		/// blanc commence
 		Pion.setCouleurActuelle(Pion.couleurDominante);
 		/// première partie, les joueurs posent leurs pions.
-		modePose();
+		modePose(plateau);
 
 		while (!fin) {
 
 			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 				/// si le nombre de poins est supérieur à 3,
 				/// glissements
-				if (Pion.getNbrPionsRobot() > 3)
-					modeGlisse();
+				if (plateau.nbrPionsRobot > 3)
+					modeGlisse(plateau);
 				/// s'il est égal à 3, sauts
-				else if (Pion.getNbrPionsRobot() == 3)
-					modeSaut();
+				else if (plateau.nbrPionsRobot == 3)
+					modeSaut(plateau);
 				/// sinon, c'est la fin du jeu
 				else
 					fin = true;
 
 			} else {
-				if (Pion.getNbrPionsJoueur() > 3)
-					modeGlisse();
-				else if (Pion.getNbrPionsJoueur() == 3)
-					modeSaut();
+				if (plateau.nbrPionsJoueur > 3)
+					modeGlisse(plateau);
+				else if (plateau.nbrPionsJoueur == 3)
+					modeSaut(plateau);
 				else
 					fin = true;
 			}
@@ -52,15 +52,16 @@ public class ModeDeJeu {
 			}
 		}
 		/// pour tout ce qui concerne la fin de la partie
-		modeFin();
+		Deplacements pion = new Deplacements();
+		modeFin(pion);
 	}
 
-	public void modePose() throws IOException {
+	public static void modePose(Plateau plateau) throws IOException {
 		int iDepartRobot = 0; /// défini le n° de la case départ du
 					/// robot. Doit être à zéro
 		int iDepartJoueur = 0; /// défini le n° de la case départ du
 					/// joueur. Doit être à zéro
-		Pion.mode = 1;
+		plateau.mode = 1;
 
 		for (int i = 0; i < 18; i++) {
 
@@ -71,15 +72,16 @@ public class ModeDeJeu {
 				Sound.beep();
 			}
 			/// création d'un pion avec attribution de la couleur
-			Deplacements pion = new Deplacements(Pion.getCouleurActuelle());
+			Deplacements pion = new Deplacements();
+			
 
 			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 				/// case départ, avance à chaque tour de 1 dans
 				/// la ligne de départ
-				pion.setCaseDepart(iDepartRobot + 25);
+				pion.setCaseDepart(iDepartRobot + 25, plateau);
 				/// choisi une case libre et attribue case
 				/// d'arrivée
-				pion.setCaseArrivee(robotPose(pion));
+				pion.setCaseArrivee(robotPose(pion, plateau), plateau);
 				pion.deplacementPionRobot();
 				/// incrémente 1 dans la ligne de départ des
 				/// pions
@@ -88,10 +90,10 @@ public class ModeDeJeu {
 			} else {
 				/// case départ, avance à chaque tour de 1 dans
 				/// la ligne de départ
-				pion.setCaseDepart(42 - iDepartJoueur);
+				pion.setCaseDepart(42 - iDepartJoueur,plateau);
 				/// choisi une case libre, et attibue la case
 				/// d'arrivée
-				pion.setCaseArrivee(joueurPose(pion));
+				pion.setCaseArrivee(joueurPose(pion, plateau),plateau);
 
 				// pion.deplacementOrigine();
 				pion.deplacementPionJoueur();
@@ -102,7 +104,7 @@ public class ModeDeJeu {
 
 			/// vérifie si un moulin est effectué, et joue en
 			/// conséquence
-			ModeDeJeuMethodes.verifieMoulin(pion.getCaseArrivee(), pion);
+			ModeDeJeuMethodes.verifieMoulin(pion.getCaseArrivee(), pion, plateau);
 			/// change la couleur pour donner la main
 			Pion.setCouleurActuelle((Pion.getCouleurActuelle() == Pion.blanc ? Pion.noir : Pion.blanc));
 
@@ -110,74 +112,73 @@ public class ModeDeJeu {
 
 	}
 
-	public void modeGlisse() throws IOException {
+	public static void modeGlisse(Plateau plateau) throws IOException {
 		/// réglage du mode
-		Pion.mode = 2;
+		plateau.mode = 2;
 
 		/// création d'un pion avec attribution de la couleur
-		Deplacements pion = new Deplacements(Pion.getCouleurActuelle());
+		Deplacements pion = new Deplacements();
 
 		/// séléctionne le pion à bouger et la case d'arrivée
 		if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 			/// vérifie que le robot puisse déplacer un pion
-			if (ModeDeJeuMethodes.modeGlisseVerifieDeplacementPossible() == true) {
+			if (ModeDeJeuMethodes.modeGlisseVerifieDeplacementPossible(plateau) == true) {
 				/// si oui, fait le nécessaire pour en déplacer
 				/// un
-				pion.setCaseDepart(robotPrend());
-				pion.setCaseArrivee(robotPose(pion));
+				pion.setCaseDepart(robotPrend(plateau), plateau);
+				pion.setCaseArrivee(robotPose(pion, plateau), plateau);
 				pion.deplacementPionRobot();
 			} else {
 				/// si non, la partie est finie
-				modeFin();
+				modeFin(pion);
 			}
 
 		} else {
 			/// vérifie que le robot puisse déplacer un pion
-			if (ModeDeJeuMethodes.modeGlisseVerifieDeplacementPossible() == true) {
+			if (ModeDeJeuMethodes.modeGlisseVerifieDeplacementPossible(plateau) == true) {
 				/// si oui, fait le nécessaire pour en déplacer
 				/// un
-				pion.setCaseDepart(joueurPrend());
-				pion.setCaseArrivee(joueurPose(pion));
+				pion.setCaseDepart(joueurPrend(plateau), plateau);
+				pion.setCaseArrivee(joueurPose(pion, plateau), plateau);
 				pion.deplacementOrigine();
 				pion.deplacementPionJoueur();
 			} else {
 				/// si non, la partie est finie
-				modeFin();
+				modeFin(pion);
 			}
 		}
 		/// vérifie si un moulin est créé
-		ModeDeJeuMethodes.verifieMoulin(pion.getCaseArrivee(), pion);
+		ModeDeJeuMethodes.verifieMoulin(pion.getCaseArrivee(), pion, plateau);
 	}
 
-	public void modeSaut() throws IOException {
+	public static void modeSaut(Plateau plateau) throws IOException {
 		/// réglage du mode
-		Pion.mode = 3;
+		plateau.mode = 3;
 
 		/// création d'un pion avec attribution de la couleur
-		Deplacements pion = new Deplacements(Pion.getCouleurActuelle());
+		Deplacements pion = new Deplacements();
 
 		/// séléctionne le pion à bouger et la case d'arrivée
 		if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 			/// choisi un pion à déplacer
-			pion.setCaseDepart(robotPrend());
-			pion.setCaseArrivee(robotPose(pion));
+			pion.setCaseDepart(robotPrend(plateau), plateau);
+			pion.setCaseArrivee(robotPose(pion, plateau), plateau);
 			pion.deplacementPionRobot();
 
 		} else {
 			/// choisi un pion à déplacer
-			pion.setCaseDepart(joueurPrend());
-			pion.setCaseArrivee(joueurPose(pion));
+			pion.setCaseDepart(joueurPrend(plateau), plateau);
+			pion.setCaseArrivee(joueurPose(pion, plateau), plateau);
 			pion.deplacementOrigine();
 			pion.deplacementPionJoueur();
 
 		}
 		/// vérifie si un moulin est créé
-		ModeDeJeuMethodes.verifieMoulin(pion.getCaseArrivee(), pion);
+		ModeDeJeuMethodes.verifieMoulin(pion.getCaseArrivee(), pion, plateau);
 	}
 
-	public void modeFin() throws IOException {
+	public static void modeFin(Deplacements pion) throws IOException {
 		/// ramène le robot à l'origine
-		Deplacements pion = new Deplacements();
 		pion.deplacementOrigine();
 
 		Sound.beep();
@@ -189,7 +190,7 @@ public class ModeDeJeu {
 	}
 
 	/// ******* tour des joueurs ************
-	public int joueurPose(Pion pion) throws IOException {
+	public static int joueurPose(Deplacements pion, Plateau plateau) throws IOException {
 		boolean ok = true;
 		int caseChoisie;
 		do {
@@ -197,12 +198,12 @@ public class ModeDeJeu {
 			caseChoisie = Communication.PCInputStream();
 
 			/// vérifie que la case choisie est possible
-			if (Pion.mode == 1 || Pion.mode == 3) { /// pose ou saut
-				if (ModeDeJeuMethodes.caseLibre(caseChoisie) == false) {
+			if (plateau.mode == 1 || plateau.mode == 3) { /// pose ou saut
+				if(plateau.tabCases[caseChoisie].pion == Pion.vide){
 					ok = false;
 				}
-			} else if (Pion.mode == 2) { /// glisse
-				if (ModeDeJeuMethodes.modeGlisseVerifiePose(pion, caseChoisie) == true) {
+			} else if (plateau.mode == 2) { /// glisse
+				if (ModeDeJeuMethodes.modeGlisseVerifiePose(pion, caseChoisie, plateau) == true) {
 					ok = false;
 				}
 			}
@@ -210,16 +211,16 @@ public class ModeDeJeu {
 			/// renvoie un message de d'acceptation ou de rejet
 			if (!ok) {
 				/// si un moulin est créé, le joueur est averti
-				if (ModeDeJeuMethodes.moulinVerifie(caseChoisie, Pion.getCouleurActuelle()) == true) {
+				if (ModeDeJeuMethodes.moulinVerifie(caseChoisie, Pion.getCouleurActuelle(), plateau) == true) {
 					Communication.PCOutputStream(8);
 				} else {
 					Communication.PCOutputStream(2);
 				}
 			} else {
 				/// en fonction du mode
-				if (Pion.mode == 1)
+				if (plateau.mode == 1)
 					Communication.PCOutputStream(1);
-				if (Pion.mode == 2)
+				if (plateau.mode == 2)
 					Communication.PCOutputStream(7);
 			}
 
@@ -228,19 +229,19 @@ public class ModeDeJeu {
 
 	}
 
-	public int robotPose(Pion pion) {
+	public static int robotPose(Deplacements pion, Plateau plateau) {
 		boolean ok = true;
 		int caseChoisie;
 		do {
-			caseChoisie = Robot.robotJoue();
+			caseChoisie = Robot.robotJoue(plateau);
 			
 			/// vérifie que la case choisie est possible
-			if (Pion.mode == 1 || Pion.mode == 3) { /// pose ou saut
-				if (ModeDeJeuMethodes.caseLibre(caseChoisie) == false) {
+			if (plateau.mode == 1 || plateau.mode == 3) { /// pose ou saut
+				if (plateau.tabCases[caseChoisie].pion == Pion.vide) {
 					ok = false;
 				}
-			} else if (Pion.mode == 2) { /// glisse
-				if (ModeDeJeuMethodes.modeGlisseVerifiePose(pion, caseChoisie) == true) {
+			} else if (plateau.mode == 2) { /// glisse
+				if (ModeDeJeuMethodes.modeGlisseVerifiePose(pion, caseChoisie, plateau) == true) {
 					ok = false;
 				}
 			}
@@ -248,7 +249,7 @@ public class ModeDeJeu {
 		return caseChoisie;
 	}
 
-	public int joueurPrend() throws IOException {
+	public static int joueurPrend(Plateau plateau) throws IOException {
 		boolean ok = false;
 		int caseChoisie;
 		do {
@@ -257,15 +258,16 @@ public class ModeDeJeu {
 
 			/// vérifie que la case choisie est de la bonne couleur
 			/// et qu'elle peut être déplacée
-			if (Pion.mode == 2) { /// glisse
-				if (Pion.caseID.get(caseChoisie) == Pion.getCouleurJoueur()
-						&& ModeDeJeuMethodes.modeGlisseVerifiePrend(caseChoisie) == true) {
+			if (plateau.mode == 2) { /// glisse
+				/// si oui
+				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurJoueur()
+						&& 	plateau.tabCases[caseChoisie].getBlocage(plateau) == false) {
 					ok = true;
 				} else {
 					ok = false;
 				}
-			} else if (Pion.mode == 3) { /// saut
-				if (Pion.caseID.get(caseChoisie) == Pion.getCouleurJoueur()) {
+			} else if (plateau.mode == 3) { /// saut
+				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurJoueur()) {
 					ok = true;
 				} else {
 					ok = false;
@@ -283,24 +285,24 @@ public class ModeDeJeu {
 		return caseChoisie;
 	}
 
-	public int robotPrend() {
+	public static int robotPrend(Plateau plateau) {
 		boolean ok = false;
 		int caseChoisie;
 		do {
-			caseChoisie = Robot.robotJoue();
+			caseChoisie = Robot.robotJoue(plateau);
 
 			/// vérifie que la case choisie est de la bonne couleur
 			/// et qu'elle peut être déplacée
-			if (Pion.mode == 2) { /// glisse
-				if (Pion.caseID.get(caseChoisie) == Pion.getCouleurRobot()
-						&& ModeDeJeuMethodes.modeGlisseVerifiePrend(caseChoisie) == true) {
+			if (plateau.mode == 2) { /// glisse
+				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurRobot()
+						&& 	plateau.tabCases[caseChoisie].getBlocage(plateau) == false) {
 					ok = true;
 				} else {
 					ok = false;
 				}
 				/// vérifie que la case peut être choisie
-			} else if (Pion.mode == 3) { /// saut
-				if (Pion.caseID.get(caseChoisie) == Pion.getCouleurRobot()) {
+			} else if (plateau.mode == 3) { /// saut
+				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurRobot()) {
 					ok = true;
 				} else {
 					ok = false;

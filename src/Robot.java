@@ -3,19 +3,19 @@ public class Robot {
 
 	private static int caseChoisie;
 
-	public static int robotJoue() {
+	public static int robotJoue(Plateau plateau) {
 
-		if (Pion.mode == 1) { /// pose
+		if (plateau.mode == 1) { /// pose
 
 			IntelligencePose go = new IntelligencePose();
-			caseChoisie = go.intelligencePose();
+			caseChoisie = go.intelligencePose(plateau);
 
-		} else if (Pion.mode == 2) { /// glisse
+		} else if (plateau.mode == 2) { /// glisse
 
 			IntelligenceGlisse go = new IntelligenceGlisse();
 			caseChoisie = go.hasard();
 
-		} else if (Pion.mode == 3) {/// saut
+		} else if (plateau.mode == 3) {/// saut
 
 			IntelligenceSaut go = new IntelligenceSaut();
 			caseChoisie = go.hasard();

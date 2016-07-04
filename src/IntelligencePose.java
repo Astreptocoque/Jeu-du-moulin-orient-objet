@@ -11,44 +11,44 @@ public class IntelligencePose extends Outils {
 	private Random random = new Random();
 	private int caseChoisie;
 
-	public int intelligencePose() {
+	public int intelligencePose(Plateau plateau) {
 		boolean testSuivant = false;
 		int hasard;
 		/// regarde si le robot peut faire un moulin testSuivant =
-		testSuivant = poseEffectueMoulinDirect();
+		testSuivant = poseEffectueMoulinDirect(plateau);
 		/// si non, vérifie s'il peut bloquer un moulin
 		if (testSuivant) {
 			LCD.refresh();
 			LCD.drawString("Pose : 2", 0, 0);
 			LCD.drawInt(caseChoisie, 0, 1);
-			testSuivant = poseBloqueMoulinDirect();
+			testSuivant = poseBloqueMoulinDirect(plateau);
 		}
-		if (yatilUnPion()) {
+		if (yatilUnPion(plateau)) {
 			hasard = random.nextInt(5);
 			if (testSuivant && hasard > 3) {
 				LCD.refresh();
 				LCD.drawString("Pose : 5", 6, 0);
 				LCD.drawInt(caseChoisie, 0, 1);
-				testSuivant = poseEffectueMoulinIndirect();
+				testSuivant = poseEffectueMoulinIndirect(plateau);
 			}
 		}
 
 		/// si non, il regarde sinle joueur fait un schéma
 
 		/// si non, fait un schema
-		if (yatilUnPion()) {
+		if (yatilUnPion(plateau)) {
 			if (testSuivant) {
 				hasard = random.nextInt(2);
 				if (hasard == 0) {
 					LCD.refresh();
 					LCD.drawString("Pose : 4", 6, 0);
 					LCD.drawInt(caseChoisie, 0, 1);
-					testSuivant = poseEffectueSchema();
+					testSuivant = poseEffectueSchema(plateau);
 				} else {
 					LCD.refresh();
 					LCD.drawString("Pose : 3", 0, 0);
 					LCD.drawInt(caseChoisie, 0, 1);
-					testSuivant = poseBloqueSchema();
+					testSuivant = poseBloqueSchema(plateau);
 
 				}
 			}
@@ -57,7 +57,7 @@ public class IntelligencePose extends Outils {
 		if (testSuivant) {
 			LCD.refresh();
 			LCD.drawString("Pose : 6", 0, 0);
-			testSuivant = poseStrategique();
+			testSuivant = poseStrategique(plateau);
 		}
 		/// en dernier recours, au hasard
 		if (testSuivant) {
@@ -78,7 +78,7 @@ public class IntelligencePose extends Outils {
 		caseChoisie = random.nextInt(24) + 1;
 	}
 
-	private boolean poseEffectueMoulinDirect() {
+	private boolean poseEffectueMoulinDirect(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// copie l'original
@@ -97,12 +97,12 @@ public class IntelligencePose extends Outils {
 			for (int j = 0; j < ligneMoulin.length; j++) {
 				/// s'il y a un pion de l'adversaire sur la
 				/// case, incrémentation
-				if (Pion.caseID.get(ligneMoulin[j]) == Pion.getCouleurRobot()) {
+				if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurRobot()) {
 					nbrPionsMoulin++;
 				}
 				/// si il y a un pion du joueur, ce n'est pas
 				/// possible de faire un moulin
-				else if (Pion.caseID.get(ligneMoulin[j]) == Pion.getCouleurJoueur()) {
+				else if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurJoueur()) {
 					/// pour empêcher la comparaison
 					/// suivante
 					nbrPionsMoulin = -1;
@@ -126,7 +126,7 @@ public class IntelligencePose extends Outils {
 
 	}
 
-	private boolean poseBloqueMoulinDirect() {
+	private boolean poseBloqueMoulinDirect(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// copie l'original
@@ -146,12 +146,12 @@ public class IntelligencePose extends Outils {
 			for (int j = 0; j < ligneMoulin.length; j++) {
 				/// s'il y a un pion de l'adversaire sur la
 				/// case, incrémentation
-				if (Pion.caseID.get(ligneMoulin[j]) == Pion.getCouleurJoueur()) {
+				if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurJoueur()) {
 					nbrPionsMoulin++;
 				}
 				/// si il y a un pion du joueur, ce n'est pas
 				/// possible de faire un moulin
-				else if (Pion.caseID.get(ligneMoulin[j]) == Pion.getCouleurRobot()) {
+				else if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurRobot()) {
 					/// pour empêcher la comparaison
 					/// suivante
 					nbrPionsMoulin = -1;
@@ -175,7 +175,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseBloqueSchema() {
+	private boolean poseBloqueSchema(Plateau plateau) {
 
 		boolean affirmatif = true;
 
@@ -190,8 +190,8 @@ public class IntelligencePose extends Outils {
 		int[] tabSchemaValeurs = new int[3];
 
 		/// récupère tout les pions adverse sur le plateau
-		for (int i = 0; i < Pion.caseID.size(); i++) {
-			if (Pion.caseID.get(i + 1) == Pion.getCouleurJoueur()) {
+		for (int i = 0; i < 24; i++) {
+			if (plateau.tabCases[i + 1].pion == Pion.getCouleurJoueur()) {
 				pionsJoueur.add(i + 1);
 			}
 		}
@@ -217,7 +217,7 @@ public class IntelligencePose extends Outils {
 					for (int k = 0; k < tabSchemaValeurs.length; k++) {
 						/// si elle n'est pas vide, on
 						/// abandonne tout
-						if (Pion.caseID.get(tabSchemaValeurs[k]) != Pion.vide) {
+						if (plateau.tabCases[tabSchemaValeurs[k]].pion != Pion.vide) {
 							affirmatif = true;
 							break;
 						} else {
@@ -234,7 +234,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseEffectueSchema() {
+	private boolean poseEffectueSchema(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// Vérifie d'abord si un schéma peut être terminé
@@ -248,8 +248,8 @@ public class IntelligencePose extends Outils {
 		int[] tabSchemaValeurs = new int[3];
 
 		/// récupère tout les pions du robot sur le plateau
-		for (int i = 0; i < Pion.caseID.size(); i++) {
-			if (Pion.caseID.get(i + 1) == Pion.getCouleurRobot()) {
+		for (int i = 0; i < 24; i++) {
+			if (plateau.tabCases[i + 1].pion == Pion.getCouleurRobot()) {
 				pionsRobot.add(i + 1);
 			}
 		}
@@ -267,7 +267,7 @@ public class IntelligencePose extends Outils {
 				for (int j = 0; j < tabSchemaValeurs.length; j++) {
 					/// si une case n'est pas libre, on
 					/// abandonne direct
-					if (Pion.caseID.get(tabSchemaValeurs[j]) != Pion.vide) {
+					if (plateau.tabCases[tabSchemaValeurs[j]].pion != Pion.vide) {
 						affirmatif = true;
 						break;
 					} else {
@@ -307,7 +307,7 @@ public class IntelligencePose extends Outils {
 					/// n'est pas là dans les cases
 					/// tabSchemaValeurs, qui sont à testé
 					/// si elles sont vides
-					if (Pion.caseID.get(tabSchemaCles[0]) == Pion.getCouleurRobot()) {
+					if (plateau.tabCases[tabSchemaCles[0]].pion == Pion.getCouleurRobot()) {
 						schemaValeursTestee.add(tabSchemaCles[1]);
 					} else {
 						schemaValeursTestee.add(tabSchemaCles[0]);
@@ -318,7 +318,7 @@ public class IntelligencePose extends Outils {
 					for (int j = 0; j < schemaValeursTestee.size(); j++) {
 						/// si une case n'est pas libre,
 						/// on abandonne direct
-						if (Pion.caseID.get(schemaValeursTestee.get(j)) != Pion.vide) {
+						if (plateau.tabCases[schemaValeursTestee.get(j)].pion != Pion.vide) {
 							affirmatif = true;
 							break;
 						} else {
@@ -345,7 +345,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseStrategique() {
+	private boolean poseStrategique(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// pose un pion sur une case avec le max d'intersection
@@ -381,7 +381,7 @@ public class IntelligencePose extends Outils {
 				}
 				/// verifie que la case ne soit pas bloquée
 				for (int i = 0; i < casesAdjacentes.size(); i++) {
-					if (Pion.caseID.get(casesAdjacentes.get(i)) == Pion.vide) {
+					if (plateau.tabCases[casesAdjacentes.get(i)].pion == Pion.vide) {
 						caseChoisie = casesPossibles.get(indexCase);
 						affirmatif = false;
 					} else {
@@ -397,7 +397,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseEffectueMoulinIndirect() {
+	private boolean poseEffectueMoulinIndirect(Plateau plateau) {
 
 		boolean affirmatif = true;
 
@@ -414,8 +414,8 @@ public class IntelligencePose extends Outils {
 		ArrayList<Integer> pionsRobot = new ArrayList<Integer>();
 		/// récupère tout les cases ou il y a un pion du robot sur le
 		/// plateau
-		for (int i = 0; i < Pion.caseID.size(); i++) {
-			if (Pion.caseID.get(i + 1) == Pion.getCouleurRobot()) {
+		for (int i = 0; i < 24; i++) {
+			if (plateau.tabCases[i + 1].pion == Pion.getCouleurRobot()) {
 				pionsRobot.add(i + 1);
 			}
 		}
@@ -443,7 +443,7 @@ public class IntelligencePose extends Outils {
 
 				for (int j = 0; j < tabMoulin.length; j++) {
 					/// si la case est vide
-					if (Pion.caseID.get(tabMoulin[j]) == Pion.vide) {
+					if (plateau.tabCases[tabMoulin[j]].pion == Pion.vide) {
 						nbrPionsOk += 2;
 						if (casesMoulins[0] == 0)
 							casesMoulins[0] = tabMoulin[j];
@@ -474,14 +474,14 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean yatilUnPion() {
+	private boolean yatilUnPion(Plateau plateau) {
 		boolean ok;
 		/// prend tous les pions du robot qui sont sur le plateau
 		ArrayList<Integer> nbrPionsRobot = new ArrayList<Integer>();
 
-		for (int i = 0; i < Pion.caseID.size(); i++) {
-			if (Pion.caseID.get(i + 1) == Pion.getCouleurRobot()) {
-				nbrPionsRobot.add(Pion.caseID.get(i + 1));
+		for (int i = 0; i <24; i++) {
+			if (plateau.tabCases[i + 1].pion == Pion.getCouleurRobot()) {
+				nbrPionsRobot.add(plateau.tabCases[i + 1].pion);
 			}
 		}
 

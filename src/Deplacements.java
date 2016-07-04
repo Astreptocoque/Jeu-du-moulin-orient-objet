@@ -1,28 +1,59 @@
-import lejos.hardware.Button;
-import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 
-public class Deplacements extends Pion{
+public class Deplacements {
 
 	int coordDepartX;
 	int coordDepartY;
 	int coordArriveeX;
 	int coordArriveeY;
-	
+	int numeroCaseDepart; /// N° de la case départ du pion
+	int numeroCaseArrivee; /// N° de la case arrivée du pion
+
 	/// constructeurs pour la création des pions
-	public Deplacements(int couleur) {
-		super(couleur);
-		coordDepartX = super.tabCases[this.getCaseDepart()].coordX;
-		coordDepartY = super.tabCases[this.getCaseDepart()].coordY;
-		coordArriveeX = super.tabCases[this.getCaseArrivee()].coordX;
-		coordArriveeY = super.tabCases[this.getCaseArrivee()].coordY;
+	public Deplacements() {
+	}
+
+	public void setCaseDepart(int numeroCase, Plateau plateau) {
+		this.numeroCaseDepart = numeroCase;
+		/// modifie l'emplacement du nouveau pion en tant
+		/// que vide
+
+		plateau.tabCases[numeroCase - 1].pion = Pion.vide;
+
+		coordDepartX = plateau.tabCases[numeroCase].coordX;
+		coordDepartY = plateau.tabCases[numeroCase].coordY;
+	}
+
+	public void setCaseArrivee(int numeroCase, Plateau plateau) {
+		this.numeroCaseArrivee = numeroCase;
+		/// modifie l'emplacement du nouveau pion
+		/// le if est là pour empecher une erreur lors de la pose
+		/// initiale des pions
+
+		plateau.tabCases[numeroCase].pion = Pion.getCouleurActuelle();
+
+		/// enregistre la dernière case. La condition est là pour
+		/// empêcher de changer la case si le joueur mange un pion
+		if (plateau.getMode() != 4) {
+			Pion.derniereCaseJoueur = numeroCase;
+		}
+
+		coordArriveeX = plateau.tabCases[numeroCase].coordX;
+		coordArriveeY = plateau.tabCases[numeroCase].coordY;
 
 	}
 
+	public int getCaseDepart() {
+		return this.numeroCaseDepart;
+	}
+
+	public int getCaseArrivee() {
+		return this.numeroCaseArrivee;
+	}
 
 	/// Degrés a faire en moins sur la distance de retour
 	/// Sécurité pour ne pas "défoncer" le capteur tactile
@@ -46,6 +77,8 @@ public class Deplacements extends Pion{
 	/// distance en cm des cases par rapport à l'origine
 	private final float colonne[] = { 3.5f, 9f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
 	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.2f }; // y
+
+	private int[] coordDernierPion = { 0, 0 };
 
 	/// moteurs
 	EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
@@ -401,7 +434,6 @@ public class Deplacements extends Pion{
 		cadrage();
 
 		Boolean infini = true;
-		Boolean ok = false;
 
 		synchro[0] = moteurY2;
 		moteurY1.synchronizeWith(synchro);
@@ -429,11 +461,11 @@ public class Deplacements extends Pion{
 		capteurCouleur.fetchSample(sampleCouleur, 0);
 
 		if (sampleCouleur[0] == Pion.couleurDominante) {
-			Pion.setCouleurRobot(blanc);
-			Pion.setCouleurJoueur(noir);
+			Pion.setCouleurRobot(Pion.blanc);
+			Pion.setCouleurJoueur(Pion.noir);
 		} else {
-			Pion.setCouleurRobot(noir);
-			Pion.setCouleurJoueur(blanc);
+			Pion.setCouleurRobot(Pion.noir);
+			Pion.setCouleurJoueur(Pion.blanc);
 		}
 
 		/// éteint le capteur
