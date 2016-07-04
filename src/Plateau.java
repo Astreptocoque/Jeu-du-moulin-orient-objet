@@ -5,17 +5,18 @@ public class Plateau {
 	/// contient les informations du plateau comme le nombre de moulins
 	/// ouverts/fermés de chaque joueur, etc...
 
-	/// pour l'objet plateau
-	int nbrMoulinsOuvertsJoueur;
-	int nbrMoulinsFermesJoueur;
-	int nbrMoulinsOuvertsRobot;
-	int nbrMoulinsFermesRobot;
-	HashMap <Integer,Cases> mapCases;
+	/// variable d'instances
+	private int nbrMoulinsOuvertsJoueur;
+	private int nbrMoulinsFermesJoueur;
+	private int nbrMoulinsOuvertsRobot;
+	private int nbrMoulinsFermesRobot;
+	/// contient les cases du plateau
+	HashMap<Integer, Cases> mapCases;
 	/// nbr de pions restant pour chaque joueur
-	int nbrPionsJoueur;
-	int nbrPionsRobot;
+	public int nbrPionsJoueur;
+	public int nbrPionsRobot;
 	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut
-	int mode;
+	public int mode;
 
 	/// constructeur
 	public Plateau() {
@@ -27,7 +28,7 @@ public class Plateau {
 
 		/// ajoute les cases de départ dans tabCases
 		ajouteCases();
-		
+
 		/// ajoute les pions
 		this.nbrPionsJoueur = 9;
 		this.nbrPionsRobot = 9;
@@ -38,54 +39,44 @@ public class Plateau {
 	}
 
 	/// pour les moulins
-	public void setNbrMoulinsOuvertsJoueur(int nombre) {
-		this.nbrMoulinsOuvertsJoueur = this.nbrMoulinsOuvertsJoueur + nombre;
+	public void setNbrMoulinsOuvertsJoueur() {
+		this.nbrMoulinsOuvertsJoueur ++;
+		this.nbrMoulinsFermesJoueur --;
 	}
 
-	public void setNbrMoulinsFermesJoueur(int nombre) {
-		this.nbrMoulinsFermesJoueur = this.nbrMoulinsFermesJoueur + nombre;
+	public void setNbrMoulinsFermesJoueur() {
+		this.nbrMoulinsFermesJoueur ++;
 	}
 
-	public void setNbrMoulinsOuvertsRobot(int nombre) {
-		this.nbrMoulinsOuvertsRobot = this.nbrMoulinsOuvertsRobot + nombre;
+	public void setNbrMoulinsOuvertsRobot() {
+		this.nbrMoulinsOuvertsRobot ++;
+		this.nbrMoulinsFermesRobot --;
 	}
 
-	public void setNbrMoulinsFermesRobot(int nombre) {
-		this.nbrMoulinsFermesRobot = this.nbrMoulinsFermesRobot + nombre;
+	public void setNbrMoulinsFermesRobot() {
+		this.nbrMoulinsFermesRobot ++;
 	}
 
 	/// pour le nbr total de pion
 	/// gère le total des pions
 	public void enlevePionJoueur() {
 		this.nbrPionsJoueur = this.nbrPionsJoueur - 1;
-
 	}
 
 	public void enlevePionRobot() {
 		this.nbrPionsRobot = this.nbrPionsRobot - 1;
-
 	}
 
 	public int getNbrPionsSurLePlateau(int couleur) {
 		int nbrPions = 0;
-		for(int i = 1; i < 25; i++){
-			if(this.mapCases.get(i).pion == couleur){
+		for (int i = 1; i < 25; i++) {
+			if (this.mapCases.get(i).pion == couleur) {
 				nbrPions++;
 			}
 		}
 		return nbrPions;
 	}
 
-	/// gère le mode
-	public void setMode(int mode) {
-		this.mode = mode;
-	}
-
-	public int getMode() {
-		return this.mode;
-	}
-
-	
 	/// pour ajouter les cases, fait partie du constructeur
 	public void ajouteCases() {
 		/// pour attribuer les cases dans le constructeur
@@ -93,9 +84,10 @@ public class Plateau {
 		/// valeurs pour créer le couple de coord. x/y des cases
 		int[][] valeurs = { { 7, 4, 1 }, { 6, 4, 2 }, { 5, 4, 3 }, { 7, 6, 5, 3, 2, 1 }, { 5, 4, 3 },
 				{ 6, 4, 2 }, { 7, 4, 1 } };
-		
-		/// crée la map qui accueillera toutes les cases pour tout le jeu
-		this.mapCases = new HashMap<Integer,Cases>();
+
+		/// crée la map qui accueillera toutes les cases pour tout le
+		/// jeu
+		this.mapCases = new HashMap<Integer, Cases>();
 
 		/// ajoute les 24 cases
 		for (int i = 0; i < valeurs.length; i++) {

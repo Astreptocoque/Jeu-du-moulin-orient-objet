@@ -6,6 +6,7 @@ import lejos.robotics.SampleProvider;
 
 public class Deplacements {
 
+	/// variables d'instances
 	int coordDepartX;
 	int coordDepartY;
 	int coordArriveeX;
@@ -13,8 +14,9 @@ public class Deplacements {
 	int numeroCaseDepart; /// N° de la case départ du pion
 	int numeroCaseArrivee; /// N° de la case arrivée du pion
 
-	/// constructeurs pour la création des pions
+	/// constructeurs pour la création d'un déplacement
 	public Deplacements() {
+		
 	}
 
 	public void setCaseDepart(int numeroCase, Plateau plateau) {
@@ -23,6 +25,7 @@ public class Deplacements {
 		/// que vide
 		plateau.mapCases.get(numeroCase).pion = Pion.vide;
 
+		/// définit les coordonnées de départ
 		coordDepartX = plateau.mapCases.get(numeroCase).coordX;
 		coordDepartY = plateau.mapCases.get(numeroCase).coordY;
 	}
@@ -30,17 +33,16 @@ public class Deplacements {
 	public void setCaseArrivee(int numeroCase, Plateau plateau) {
 		this.numeroCaseArrivee = numeroCase;
 		/// modifie l'emplacement du nouveau pion
-		/// le if est là pour empecher une erreur lors de la pose
 		/// initiale des pions
-
 		plateau.mapCases.get(numeroCase).pion = Pion.getCouleurActuelle();
 
 		/// enregistre la dernière case. La condition est là pour
 		/// empêcher de changer la case si le joueur mange un pion
-		if (plateau.getMode() != 4) {
+		if (plateau.mode != 4) {
 			Pion.derniereCaseJoueur = numeroCase;
 		}
 
+		/// définit les coordonnées d'arrivée
 		coordArriveeX = plateau.mapCases.get(numeroCase).coordX;
 		coordArriveeY = plateau.mapCases.get(numeroCase).coordY;
 
@@ -76,7 +78,6 @@ public class Deplacements {
 	/// distance en cm des cases par rapport à l'origine
 	private final float colonne[] = { 3.5f, 9f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
 	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.2f }; // y
-
 
 	/// moteurs
 	EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;

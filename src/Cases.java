@@ -4,6 +4,10 @@ import java.util.Map;
 
 public class Cases {
 
+	public final static int[][] listeMoulins = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }, { 10, 11, 12 },
+			{ 13, 14, 15 }, { 16, 17, 18 }, { 19, 20, 21 }, { 22, 23, 24 }, { 1, 10, 22 }, { 4, 11, 19 },
+			{ 7, 12, 16 }, { 2, 5, 8 }, { 17, 20, 23 }, { 9, 13, 18 }, { 6, 14, 21 }, { 3, 15, 24 } };
+
 	/// variables d'instances
 	int numero; /// numero de la case
 	ArrayList<Integer> casesAdjacentes; /// les cases adjacentes
@@ -17,8 +21,8 @@ public class Cases {
 		this.numero = numero;
 		/// lors de l'initialisation, la case est vide
 		this.pion = Pion.vide;
-		
-		if(numero < 25)
+		/// pour toutes les cases se trouvant sur le plateau (1 à 24)
+		if (numero < 25)
 			attributionListesCases(numero);
 
 	}
@@ -31,11 +35,6 @@ public class Cases {
 				{ 7, 11, 16 }, { 9, 14, 18 }, { 6, 13, 15, 21 }, { 3, 14, 24 }, { 12, 17 },
 				{ 16, 18, 20 }, { 13, 17 }, { 11, 20 }, { 17, 19, 21, 23 }, { 14, 20 }, { 10, 23 },
 				{ 20, 22, 24 }, { 15, 23 } };
-
-		int[][] listeMoulins = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }, { 10, 11, 12 }, { 13, 14, 15 },
-				{ 16, 17, 18 }, { 19, 20, 21 }, { 22, 23, 24 }, { 1, 10, 22 }, { 4, 11, 19 },
-				{ 7, 12, 16 }, { 2, 5, 8 }, { 17, 20, 23 }, { 9, 13, 18 }, { 6, 14, 21 },
-				{ 3, 15, 24 } };
 
 		/// attribution des cases adjacentes, ne change pas
 		this.casesAdjacentes = new ArrayList<Integer>();
@@ -78,8 +77,19 @@ public class Cases {
 		}
 		return cases;
 	}
+
+	public int[] getCasesMoulin1() {
+		int[] moulin1 = this.casesMoulins[0].clone();
+
+		return moulin1;
+	}
 	
-	
+	public int[] getCasesMoulin2(){
+		int[] moulin2 = this.casesMoulins[1].clone();
+		
+		return moulin2;
+	}
+
 	public boolean getBlocage(Plateau plateau) {
 		/// permet d'obtenir si les cases adjacentes sont occupée ou
 		/// non, donc si le pion est bloqué
@@ -90,8 +100,8 @@ public class Cases {
 		/// regarde chaque case adjacente
 		for (int i = 0; i < casesAdjacentes.length; i++) {
 			/// si la case est occupée...
-			if(plateau.mapCases.get(casesAdjacentes[i]).pion != Pion.vide){
-				///... on ajoute 1 à nbrCasesBloquees
+			if (plateau.mapCases.get(casesAdjacentes[i]).pion != Pion.vide) {
+				/// ... on ajoute 1 à nbrCasesBloquees
 				nbrCasesBloquees++;
 			}
 		}
@@ -99,13 +109,12 @@ public class Cases {
 		/// retourne le nombre de cases bloquée
 		/// s'il est égal au nombre de cases adjacentes, alors la case
 		/// testée est bloquée
-		if(nbrCasesBloquees == this.getCasesAdjacentes().length){
+		if (nbrCasesBloquees == this.getCasesAdjacentes().length) {
 			bloque = true;
-		}
-		else{
+		} else {
 			bloque = false;
 		}
-		
+		/// retourne le boolean true si la case est bloquée
 		return bloque;
 	}
 }

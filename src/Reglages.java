@@ -7,7 +7,7 @@ import lejos.remote.ev3.RemoteRequestEV3;
 
 public class Reglages {
 
-	static AfficheBatterie batterie = new AfficheBatterie();
+	private static AfficheBatterie batterie = new AfficheBatterie();
 
 	/// permet la connection à la seconde brique
 	public static String[] names = { "EV1", "EV2" };
@@ -30,7 +30,7 @@ public class Reglages {
 
 	}
 
-	public void reglagesFin() throws IOException {
+	public static void reglagesFin() throws IOException {
 		/// stop le thread de la batterie;
 		batterie.stopBatterie = false;
 		/// arrête le moteur de la brique esclave

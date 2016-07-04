@@ -5,24 +5,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Outils {
-	/// liste pour vérifier si le pion est glissé au bon endroit
-	/// un groupe de parenthèse représente la case de départ
-	/// les nbr à l'intérieur les possibilités de déplacement
-	public final static int[][] listeCasesAdjacentes = { { 2, 10 }, { 1, 3, 5 }, { 2, 15 }, { 5, 11 },
-			{ 2, 4, 6, 8 }, { 5, 14 }, { 8, 12 }, { 5, 7, 9 }, { 8, 13 }, { 1, 11, 22 }, { 4, 10, 12, 19 },
-			{ 7, 11, 16 }, { 9, 14, 18 }, { 6, 13, 15, 21 }, { 3, 14, 24 }, { 12, 17 }, { 16, 18, 20 },
-			{ 13, 17 }, { 11, 20 }, { 17, 19, 21, 23 }, { 14, 20 }, { 10, 23 }, { 20, 22, 24 },
-			{ 15, 23 } };
-
-	/// ***********************************************
-
-	/// le premier indice ne représente rien, à part la ligne de case qu'il
-	/// représente
-	/// le second est le triplet de case formant un moulin
-	public final static int[][] listeMoulins = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }, { 10, 11, 12 },
-			{ 13, 14, 15 }, { 16, 17, 18 }, { 19, 20, 21 }, { 22, 23, 24 }, { 1, 10, 22 }, { 4, 11, 19 },
-			{ 7, 12, 16 }, { 2, 5, 8 }, { 17, 20, 23 }, { 9, 13, 18 }, { 6, 14, 21 }, { 3, 15, 24 } };
-
 	//// ***********************************
 
 	public final static int[][] casesSchemas = { { 1, 5 }, { 1, 8 }, { 1, 11 }, { 1, 12 }, { 1, 15 }, { 1, 23 },
@@ -70,7 +52,6 @@ public class Outils {
 
 	///**************************************************
 	/// cases stratégiques, en fonction du nombre d'intersections
-	public final static int[][] casesStrategiques = {{5,11,20,14},{2,10,23,15,8,12,17,13}};
 	public final static int[] cases4intersections = {5,11,20,14};
 	public final static int[] cases3intersections = {2,10,23,15,8,12,17,13};
 	

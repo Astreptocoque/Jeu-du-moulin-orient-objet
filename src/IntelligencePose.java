@@ -8,10 +8,10 @@ import lejos.hardware.lcd.LCD;
 
 public class IntelligencePose extends Outils {
 
-	private Random random = new Random();
-	private int caseChoisie;
+	private static Random random = new Random();
+	private static int caseChoisie = 0;
 
-	public int intelligencePose(Plateau plateau) {
+	public static int intelligencePose(Plateau plateau) {
 		boolean testSuivant = false;
 		int hasard;
 		/// regarde si le robot peut faire un moulin testSuivant =
@@ -23,7 +23,8 @@ public class IntelligencePose extends Outils {
 			LCD.drawInt(caseChoisie, 0, 1);
 			testSuivant = poseBloqueMoulinDirect(plateau);
 		}
-		if (yatilUnPion(plateau)) {
+		/// uniquement s'il y a des pions sur le plateau
+		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0) {
 			hasard = random.nextInt(5);
 			if (testSuivant && hasard > 3) {
 				LCD.refresh();
@@ -33,10 +34,9 @@ public class IntelligencePose extends Outils {
 			}
 		}
 
-		/// si non, il regarde sinle joueur fait un schéma
-
+		/// si non, il regarde si le joueur fait un schéma
 		/// si non, fait un schema
-		if (yatilUnPion(plateau)) {
+		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0) {
 			if (testSuivant) {
 				hasard = random.nextInt(2);
 				if (hasard == 0) {
@@ -52,7 +52,7 @@ public class IntelligencePose extends Outils {
 
 				}
 			}
-		} /// si non, pose stratégiquement if (testSuivant) {
+		} /// si non, pose stratégiquement
 
 		if (testSuivant) {
 			LCD.refresh();
@@ -65,20 +65,20 @@ public class IntelligencePose extends Outils {
 			LCD.drawString("Pose : 7", 0, 0);
 			LCD.drawInt(caseChoisie, 0, 1);
 
-			/// on n'est pas sensé arriver ici, /// mais c'est une
-			/// sécurité
+			/// on n'est pas sensé arriver ici, 
+			/// mais c'est unesécurité
 			hasard();
 		}
 		return caseChoisie;
 	}
 
 	/// ******** méthode pour l'intelligence pose***************
-	public void hasard() {
+	public static void hasard() {
 		/// prend une case au hasard sur le plateau
 		caseChoisie = random.nextInt(24) + 1;
 	}
 
-	private boolean poseEffectueMoulinDirect(Plateau plateau) {
+	private static boolean poseEffectueMoulinDirect(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// copie l'original
@@ -86,10 +86,12 @@ public class IntelligencePose extends Outils {
 		/// pour vérifier si 2 pions sont sur une ligne
 		int nbrPionsMoulin = 0;
 
+		/// ************** avant ********************
+
 		/// passe en revue toutes les lignes
-		for (int i = 0; i < listeMoulins.length; i++) {
+		for (int i = 0; i < Cases.listeMoulins.length; i++) {
 			/// copie le moulin a tester
-			ligneMoulin = listeMoulins[i].clone();
+			ligneMoulin = Cases.listeMoulins[i].clone();
 
 			/// réinitialise la variable pour chaque tour
 			nbrPionsMoulin = 0;
@@ -125,8 +127,8 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 
 	}
-	
-	private boolean poseBloqueMoulinDirect(Plateau plateau) {
+
+	private static boolean poseBloqueMoulinDirect(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// copie l'original
@@ -135,9 +137,9 @@ public class IntelligencePose extends Outils {
 		int nbrPionsMoulin = 0;
 
 		/// passe en revue toutes les lignes
-		for (int i = 0; i < listeMoulins.length; i++) {
+		for (int i = 0; i < Cases.listeMoulins.length; i++) {
 			/// copie le moulin a tester
-			ligneMoulin = listeMoulins[i].clone();
+			ligneMoulin = Cases.listeMoulins[i].clone();
 
 			/// réinitialise la variable pour chaque tour
 			nbrPionsMoulin = 0;
@@ -175,7 +177,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseBloqueSchema(Plateau plateau) {
+	private static boolean poseBloqueSchema(Plateau plateau) {
 
 		boolean affirmatif = true;
 
@@ -234,7 +236,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseEffectueSchema(Plateau plateau) {
+	private static boolean poseEffectueSchema(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// Vérifie d'abord si un schéma peut être terminé
@@ -318,7 +320,8 @@ public class IntelligencePose extends Outils {
 					for (int j = 0; j < schemaValeursTestee.size(); j++) {
 						/// si une case n'est pas libre,
 						/// on abandonne direct
-						if (plateau.mapCases.get(schemaValeursTestee.get(j)).pion != Pion.vide) {
+						if (plateau.mapCases
+								.get(schemaValeursTestee.get(j)).pion != Pion.vide) {
 							affirmatif = true;
 							break;
 						} else {
@@ -345,7 +348,7 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseStrategique(Plateau plateau) {
+	private static boolean poseStrategique(Plateau plateau) {
 
 		boolean affirmatif = true;
 		/// pose un pion sur une case avec le max d'intersection
@@ -354,9 +357,6 @@ public class IntelligencePose extends Outils {
 
 		/// la case potentiellement libre actuellement testée
 		int indexCase;
-		/// cases adjacentes
-		ArrayList<Integer> casesAdjacentes = new ArrayList<Integer>();
-		///
 		/// les cases potentiellement libres
 		ArrayList<Integer> casesPossibles = new ArrayList<Integer>();
 		int tour = random.nextInt(2);
@@ -375,13 +375,12 @@ public class IntelligencePose extends Outils {
 			do {
 				/// prend au hasard dans les cases
 				indexCase = random.nextInt(casesPossibles.size());
+				int casePossible = casesPossibles.get(indexCase);
 
-				for (int e : listeCasesAdjacentes[casesPossibles.get(indexCase)]) {
-					casesAdjacentes.add(e);
-				}
 				/// verifie que la case ne soit pas bloquée
-				for (int i = 0; i < casesAdjacentes.size(); i++) {
-					if (plateau.mapCases.get(casesAdjacentes.get(i)).pion == Pion.vide) {
+				for (int i = 0; i < plateau.mapCases.get(casePossible).casesAdjacentes.size(); i++) {
+					if (plateau.mapCases.get(plateau.mapCases.get(casePossible).casesAdjacentes
+							.get(i)).pion == Pion.vide) {
 						caseChoisie = casesPossibles.get(indexCase);
 						affirmatif = false;
 					} else {
@@ -397,100 +396,54 @@ public class IntelligencePose extends Outils {
 		return affirmatif;
 	}
 
-	private boolean poseEffectueMoulinIndirect(Plateau plateau) {
+	private static boolean poseEffectueMoulinIndirect(Plateau plateau) {
 
 		boolean affirmatif = true;
-
-		int indicePionsRobot = 0;
-
-		int[] tabMoulin = new int[3];
-
-		int nbrPionsOk = 0;
-
-		int[] casesMoulins = new int[3];
 
 		/// enregiste toutes les pions du robot actuellement sur le
 		/// plateau
 		ArrayList<Integer> pionsRobot = new ArrayList<Integer>();
 		/// récupère tout les cases ou il y a un pion du robot sur le
 		/// plateau
-		for (int i = 0; i < 24; i++) {
-			if (plateau.mapCases.get(i + 1).pion == Pion.getCouleurRobot()) {
-				pionsRobot.add(i + 1);
+		for (int i = 1; i < 25; i++) {
+			if (plateau.mapCases.get(i).pion == Pion.getCouleurRobot()) {
+				pionsRobot.add(i);
 			}
 		}
 
 		Collections.shuffle(pionsRobot);
 
-		do {
+		int[] moulin1;
+		int[] moulin2;
+		int hasard;
 
-			/// prend au hasard une case dans les pions déjà sur le
-			/// plateau
-			/// ajoute du hasard dans le jeu, pour ne pas prendre le
-			/// premier
-			/// moulin disponible dans la liste.
-			// indicePionsRobot = random.nextInt(pionsRobot.size());
+		/// passe les pions mélangés en revue
+		for (int i = 0; i < pionsRobot.size(); i++) {
+			moulin1 = plateau.mapCases.get(pionsRobot.get(i)).getCasesMoulin1();
+			moulin2 = plateau.mapCases.get(pionsRobot.get(i)).getCasesMoulin2();
 
-			/// cherche une possibilité de moulin
-			for (int i = 0; i < listeMoulins.length; i++) {
-				/// copie le moulin à tester
-				tabMoulin = listeMoulins[i].clone();
-				/// indice pour choisir plus tard une case
-				nbrPionsOk = 0;
-				/// verifie que la ligne testée soit libre pour
-				/// faire un
-				/// moulin
-
-				for (int j = 0; j < tabMoulin.length; j++) {
-					/// si la case est vide
-					if (plateau.mapCases.get(tabMoulin[j]).pion == Pion.vide) {
-						nbrPionsOk += 2;
-						if (casesMoulins[0] == 0)
-							casesMoulins[0] = tabMoulin[j];
-						else
-							casesMoulins[1] = tabMoulin[j];
-
-						/// si la case est la même que
-						/// celle tirée au hasard
-					} else if (tabMoulin[j] == pionsRobot.get(indicePionsRobot)) {
-						nbrPionsOk += 1;
-					} else {
-						affirmatif = true;
+			hasard = random.nextInt(2);
+			/// pour choisir au hasard le moulin
+			for (int j = 0; j < 2; j++) {
+				if (hasard == 0) {
+					if (plateau.mapCases.get(moulin1[0]).pion == Pion.vide
+							&& plateau.mapCases.get(moulin1[1]).pion == Pion.vide) {
+						affirmatif = false;
+						caseChoisie = moulin1[random.nextInt(2)];
 						break;
 					}
-
+				} else {
+					if (plateau.mapCases.get(moulin2[0]).pion == Pion.vide
+							&& plateau.mapCases.get(moulin2[1]).pion == Pion.vide) {
+						affirmatif = false;
+						caseChoisie = moulin2[random.nextInt(2)];
+						break;
+					}
 				}
-
-				if (nbrPionsOk == 5) {
-					affirmatif = false;
-					caseChoisie = casesMoulins[random.nextInt(2)];
-
-					break;
-				}
+				hasard = (hasard == 0 ? 1 : 0);
 			}
-			pionsRobot.remove(indicePionsRobot);
-			indicePionsRobot++;
-		} while (pionsRobot.size() > 0 && affirmatif == true);
+		}
 		return affirmatif;
 	}
 
-	private boolean yatilUnPion(Plateau plateau) {
-		boolean ok;
-		/// prend tous les pions du robot qui sont sur le plateau
-		ArrayList<Integer> nbrPionsRobot = new ArrayList<Integer>();
-
-		for (int i = 0; i <24; i++) {
-			if (plateau.mapCases.get(i + 1).pion == Pion.getCouleurRobot()) {
-				nbrPionsRobot.add(plateau.mapCases.get(i + 1).pion);
-			}
-		}
-
-		/// regarde maintenant si il y a des pions
-		if (nbrPionsRobot.size() == 0) {
-			ok = false;
-		} else {
-			ok = true;
-		}
-		return ok;
-	}
 }

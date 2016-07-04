@@ -6,29 +6,19 @@ public class Robot {
 	public static int robotJoue(Plateau plateau) {
 
 		if (plateau.mode == 1) { /// pose
-
-			IntelligencePose go = new IntelligencePose();
-			caseChoisie = go.intelligencePose(plateau);
+			caseChoisie = IntelligencePose.intelligencePose(plateau);
 
 		} else if (plateau.mode == 2) { /// glisse
-
-			IntelligenceGlisse go = new IntelligenceGlisse();
-			caseChoisie = go.hasard();
+			caseChoisie = IntelligenceGlisse.hasard();
 
 		} else if (plateau.mode == 3) {/// saut
-
-			IntelligenceSaut go = new IntelligenceSaut();
-			caseChoisie = go.hasard();
+			caseChoisie = IntelligenceSaut.hasard();
 
 		} else { /// mange
-			robotMange();
+			caseChoisie = IntelligenceMange.hasard();
 		}
 		return caseChoisie;
 	}
 
-	public static void robotMange() {
-		IntelligenceMange go = new IntelligenceMange();
-		caseChoisie = go.hasard();
-	}
 
 }

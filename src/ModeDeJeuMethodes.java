@@ -4,72 +4,63 @@ import lejos.hardware.Sound;
 public class ModeDeJeuMethodes {
 
 	/// variable pour sortir les pions que le robot mange
-	public static int robotElimine = 24;
+	private static int robotElimine = 24;
 	/// variable pour sortir les pions que le joueur mange
-	public static int joueurElimine = 43;
-	
+	private static int joueurElimine = 43;
+
 	public static void verifieMoulin(int IDCaseTestee, Deplacements pion, Plateau plateau) throws IOException {
 		int couleurAdversaire = 0; /// couleur de l'adversaire
 
-		if (Pion.getCouleurActuelle() == Pion.couleurDominante) {
+		if (Pion.getCouleurActuelle() == Pion.blanc) {
 			couleurAdversaire = Pion.noir;
 		} else {
 			couleurAdversaire = Pion.blanc;
 		}
 
+		/// vérifie si un moulin est créé
 		/// vérifie si min. une pièce adverse est disponible
 		/// si aucune pièce adverse est diponible
 		/// le programme saute l'étape
-		if (plateau.getNbrPionsSurLePlateau(couleurAdversaire) > 0) {
-			/// vérifie ensuite si un moulin est créé
-			if (moulinVerifie(IDCaseTestee, Pion.getCouleurActuelle(), plateau) == true) {
+		if (moulinVerifie(IDCaseTestee, Pion.getCouleurActuelle(), plateau)
+				&& plateau.getNbrPionsSurLePlateau(couleurAdversaire) > 0) {
+		
+			/// si oui, le joueur choisi un pion à manger
+			/// création du pion à manger
+			Deplacements pionAManger = new Deplacements();
 
-				/// si oui, le joueur choisi un pion à manger
-				/// création du pion à manger
-				Deplacements pionAManger = new Deplacements();
+			/// set la case départ, avec mangePion
+			pionAManger.setCaseDepart(mangePion(couleurAdversaire, pionAManger, plateau), plateau);
 
-				/// set la case départ, avec mangePion
-				pionAManger.setCaseDepart(mangePion(couleurAdversaire, pionAManger, plateau), plateau);
-
-				/// attribue la case d'arrivée sur la case de la
-				/// ligne de départ suivante
-				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
-					pionAManger.setCaseArrivee(robotElimine += 1, plateau);
-					/// sort le pion
-					pionAManger.deplacementPionRobot();
-					/// se replace à l'origine pour le
-					/// joueur
-					pionAManger.deplacementOrigine();
-				} else {
-					pionAManger.setCaseArrivee(joueurElimine -= 1, plateau);
-					/// sort le pion
-					pionAManger.deplacementPionJoueur();
-				}
-
-			} else
-
-			{
-				if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
-					/// pas de moulin, le robot se met à
-					/// l'origine pour le joueur
-					pion.deplacementOrigine();
-				}
-			}
-
-		} else {
+			/// attribue la case d'arrivée sur la case de la
+			/// ligne de départ suivante
 			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
-				/// pas de moulin possible, le robot se met à
-				/// l'origine pour le joueur
+				pionAManger.setCaseArrivee(robotElimine += 1, plateau);
+				/// sort le pion
+				pionAManger.deplacementPionRobot();
+				/// se replace à l'origine pour le
+				/// joueur
+				pionAManger.deplacementOrigine();
+			} else {
+				pionAManger.setCaseArrivee(joueurElimine -= 1, plateau);
+				/// sort le pion
+				pionAManger.deplacementPionJoueur();
+			}
+			/// si aucun moulin n'est créer...
+		} else {
+			/// ... et si c'est le robot qui a joué...
+			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
+				/// ...il se replace à l'origine pour le
+				/// joueur
 				pion.deplacementOrigine();
 			}
 		}
-
 	}
 
 	private static int mangePion(int couleurAManger, Deplacements pion, Plateau plateau) throws IOException {
 		int caseChoisie;
 		boolean ok = false;
 
+		/// met le mode en 4, pour manger
 		plateau.mode = 4;
 
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
@@ -77,29 +68,37 @@ public class ModeDeJeuMethodes {
 		do {
 			/// choisi la case à manger
 			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()) {
+				/// si c'est au joueur de jouer
 				pion.deplacementOrigine();
 				Sound.beep();
+				/// choisit une case
 				caseChoisie = Communication.PCInputStream();
 			} else {
+				/// choisit une case
 				caseChoisie = Robot.robotJoue(plateau);
 			}
+
+			/// on vérifie ensuite que le pion puisse être mangé
 
 			/// condition 1 : vérifie que le pion choisi ne
 			/// soit pas dans un moulin
 			if (moulinVerifie(caseChoisie, couleurAManger, plateau) == false
-					/// c.2 : si la case est occupée, true.
-					/// c'est ce qu'on veut
-					&&plateau.mapCases.get(caseChoisie).pion != Pion.vide
+					/// c.2 : si la case est occupée
+					/// c'est ce que l'on souhaite
+					&& plateau.mapCases.get(caseChoisie).pion != Pion.vide
 					/// c.3 : vérifie la couleur du pion
+					/// on veut la couleur à manger
 					&& plateau.mapCases.get(caseChoisie).pion == couleurAManger) {
+				/// si toutes les conditions sont réunis, alors
+				/// c'est bon
 				ok = true;
 				/// pour le joueur
 				if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle()) {
 					/// envoi un message d'approbation
 					Communication.PCOutputStream(3);
 				}
-				/// si le pion n'est pas valide
 			} else {
+				/// si le pion n'est pas valide
 				ok = false;
 				/// pour le joueur
 				if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle()) {
@@ -107,6 +106,7 @@ public class ModeDeJeuMethodes {
 					Communication.PCOutputStream(4);
 				}
 			}
+			/// donc tant que le pion n'est pas valide
 		} while (ok == false);
 
 		if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle()) {
@@ -131,7 +131,8 @@ public class ModeDeJeuMethodes {
 		int[] moulin2 = plateau.mapCases.get(caseTestee).casesMoulins[1].clone();
 
 		/// et on regarde s'ils font un moulins
-		if (plateau.mapCases.get(moulin1[0]).pion == couleur && plateau.mapCases.get(moulin1[1]).pion == couleur) {
+		if (plateau.mapCases.get(moulin1[0]).pion == couleur
+				&& plateau.mapCases.get(moulin1[1]).pion == couleur) {
 			oui_non = true;
 		} else if (plateau.mapCases.get(moulin2[0]).pion == couleur
 				&& plateau.mapCases.get(moulin2[1]).pion == couleur) {
@@ -140,6 +141,12 @@ public class ModeDeJeuMethodes {
 			oui_non = false;
 		}
 
+		if(couleur == Pion.getCouleurJoueur() && oui_non){
+			plateau.setNbrMoulinsFermesJoueur();
+		}else{
+			plateau.setNbrMoulinsFermesRobot();
+		}
+		
 		return oui_non;
 
 	}
@@ -163,7 +170,6 @@ public class ModeDeJeuMethodes {
 				ok = false;
 			}
 		}
-
 		return ok;
 	}
 
