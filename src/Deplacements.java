@@ -21,11 +21,10 @@ public class Deplacements {
 		this.numeroCaseDepart = numeroCase;
 		/// modifie l'emplacement du nouveau pion en tant
 		/// que vide
+		plateau.mapCases.get(numeroCase).pion = Pion.vide;
 
-		plateau.tabCases[numeroCase - 1].pion = Pion.vide;
-
-		coordDepartX = plateau.tabCases[numeroCase].coordX;
-		coordDepartY = plateau.tabCases[numeroCase].coordY;
+		coordDepartX = plateau.mapCases.get(numeroCase).coordX;
+		coordDepartY = plateau.mapCases.get(numeroCase).coordY;
 	}
 
 	public void setCaseArrivee(int numeroCase, Plateau plateau) {
@@ -34,7 +33,7 @@ public class Deplacements {
 		/// le if est là pour empecher une erreur lors de la pose
 		/// initiale des pions
 
-		plateau.tabCases[numeroCase].pion = Pion.getCouleurActuelle();
+		plateau.mapCases.get(numeroCase).pion = Pion.getCouleurActuelle();
 
 		/// enregistre la dernière case. La condition est là pour
 		/// empêcher de changer la case si le joueur mange un pion
@@ -42,8 +41,8 @@ public class Deplacements {
 			Pion.derniereCaseJoueur = numeroCase;
 		}
 
-		coordArriveeX = plateau.tabCases[numeroCase].coordX;
-		coordArriveeY = plateau.tabCases[numeroCase].coordY;
+		coordArriveeX = plateau.mapCases.get(numeroCase).coordX;
+		coordArriveeY = plateau.mapCases.get(numeroCase).coordY;
 
 	}
 

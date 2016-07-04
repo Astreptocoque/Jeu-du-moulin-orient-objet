@@ -84,9 +84,9 @@ public class ModeDeJeuMethodes {
 			if (moulinVerifie(caseChoisie, couleurAManger, plateau) == false
 					/// c.2 : si la case est occupée, true.
 					/// c'est ce qu'on veut
-					&&plateau.tabCases[caseChoisie].pion != Pion.vide
+					&&plateau.mapCases.get(caseChoisie).pion != Pion.vide
 					/// c.3 : vérifie la couleur du pion
-					&& plateau.tabCases[caseChoisie].pion == couleurAManger) {
+					&& plateau.mapCases.get(caseChoisie).pion == couleurAManger) {
 				ok = true;
 				/// pour le joueur
 				if (Pion.getCouleurJoueur() == Pion.getCouleurActuelle()) {
@@ -122,14 +122,14 @@ public class ModeDeJeuMethodes {
 		boolean oui_non = false;
 
 		/// on récupère les moulins possibles avec la case testée
-		int[] moulin1 = plateau.tabCases[caseTestee].casesMoulins[0].clone();
-		int[] moulin2 = plateau.tabCases[caseTestee].casesMoulins[1].clone();
+		int[] moulin1 = plateau.mapCases.get(caseTestee).casesMoulins[0].clone();
+		int[] moulin2 = plateau.mapCases.get(caseTestee).casesMoulins[1].clone();
 
 		/// et on regarde s'ils font un moulins
-		if (plateau.tabCases[moulin1[0]].pion == couleur && plateau.tabCases[moulin1[1]].pion == couleur) {
+		if (plateau.mapCases.get(moulin1[0]).pion == couleur && plateau.mapCases.get(moulin1[1]).pion == couleur) {
 			oui_non = true;
-		} else if (plateau.tabCases[moulin2[0]].pion == couleur
-				&& plateau.tabCases[moulin2[1]].pion == couleur) {
+		} else if (plateau.mapCases.get(moulin2[0]).pion == couleur
+				&& plateau.mapCases.get(moulin2[1]).pion == couleur) {
 			oui_non = true;
 		} else {
 			oui_non = false;
@@ -145,13 +145,13 @@ public class ModeDeJeuMethodes {
 
 		boolean ok = false;
 		/// prend la série de cases possibles pour le pion choisi
-		int casesPossibles[] = plateau.tabCases[pion.getCaseDepart()].getCasesAdjacentes();
+		int casesPossibles[] = plateau.mapCases.get(pion.getCaseDepart()).getCasesAdjacentes();
 		/// regarde si la case choisie par le joueur est comprise dans
 		/// le tableau
 		for (int casePossible : casesPossibles) {
 			/// si la case d'arrivée est dans les cases disponibles
 			/// et qu'elle est libre
-			if (caseArrivee == casePossible && plateau.tabCases[casePossible].pion != Pion.vide) {
+			if (caseArrivee == casePossible && plateau.mapCases.get(casePossible).pion != Pion.vide) {
 				ok = true;
 				break;
 			} else {
@@ -169,7 +169,7 @@ public class ModeDeJeuMethodes {
 
 		/// test chaque case, les unes après les autres
 		for (int i = 1; i < 25; i++) {
-			ok = plateau.tabCases[i].getBlocage(plateau);
+			ok = plateau.mapCases.get(i).getBlocage(plateau);
 			if (ok) {
 				break;
 			}

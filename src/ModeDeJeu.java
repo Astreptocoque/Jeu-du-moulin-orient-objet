@@ -197,7 +197,7 @@ public class ModeDeJeu {
 
 			/// vérifie que la case choisie est possible
 			if (plateau.mode == 1 || plateau.mode == 3) { /// pose ou saut
-				if(plateau.tabCases[caseChoisie].pion == Pion.vide){
+				if(plateau.mapCases.get(caseChoisie).pion == Pion.vide){
 					ok = false;
 				}
 			} else if (plateau.mode == 2) { /// glisse
@@ -235,7 +235,7 @@ public class ModeDeJeu {
 			
 			/// vérifie que la case choisie est possible
 			if (plateau.mode == 1 || plateau.mode == 3) { /// pose ou saut
-				if (plateau.tabCases[caseChoisie].pion == Pion.vide) {
+				if (plateau.mapCases.get(caseChoisie).pion == Pion.vide) {
 					ok = false;
 				}
 			} else if (plateau.mode == 2) { /// glisse
@@ -258,14 +258,14 @@ public class ModeDeJeu {
 			/// et qu'elle peut être déplacée
 			if (plateau.mode == 2) { /// glisse
 				/// si oui
-				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurJoueur()
-						&& 	plateau.tabCases[caseChoisie].getBlocage(plateau) == false) {
+				if (plateau.mapCases.get(caseChoisie).pion == Pion.getCouleurJoueur()
+						&& 	plateau.mapCases.get(caseChoisie).getBlocage(plateau) == false) {
 					ok = true;
 				} else {
 					ok = false;
 				}
 			} else if (plateau.mode == 3) { /// saut
-				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurJoueur()) {
+				if (plateau.mapCases.get(caseChoisie).pion == Pion.getCouleurJoueur()) {
 					ok = true;
 				} else {
 					ok = false;
@@ -292,15 +292,15 @@ public class ModeDeJeu {
 			/// vérifie que la case choisie est de la bonne couleur
 			/// et qu'elle peut être déplacée
 			if (plateau.mode == 2) { /// glisse
-				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurRobot()
-						&& 	plateau.tabCases[caseChoisie].getBlocage(plateau) == false) {
+				if (plateau.mapCases.get(caseChoisie).pion == Pion.getCouleurRobot()
+						&& 	plateau.mapCases.get(caseChoisie).getBlocage(plateau) == false) {
 					ok = true;
 				} else {
 					ok = false;
 				}
 				/// vérifie que la case peut être choisie
 			} else if (plateau.mode == 3) { /// saut
-				if (plateau.tabCases[caseChoisie].pion == Pion.getCouleurRobot()) {
+				if (plateau.mapCases.get(caseChoisie).pion == Pion.getCouleurRobot()) {
 					ok = true;
 				} else {
 					ok = false;

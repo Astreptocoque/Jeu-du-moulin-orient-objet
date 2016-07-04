@@ -10,7 +10,7 @@ public class Plateau {
 	int nbrMoulinsFermesJoueur;
 	int nbrMoulinsOuvertsRobot;
 	int nbrMoulinsFermesRobot;
-	Cases[] tabCases;
+//	Cases[] tabCases;
 	HashMap <Integer,Cases> mapCases;
 	/// nbr de pions restant pour chaque joueur
 	int nbrPionsJoueur;
@@ -69,8 +69,8 @@ public class Plateau {
 
 	public int getNbrPionsSurLePlateau(int couleur) {
 		int nbrPions = 0;
-		for(Cases caseTestee : this.tabCases){
-			if(caseTestee.pion == couleur){
+		for(int i = 1; i < 25; i++){
+			if(this.mapCases.get(i).pion == couleur){
 				nbrPions++;
 			}
 		}
@@ -95,9 +95,8 @@ public class Plateau {
 		int[][] valeurs = { { 7, 4, 1 }, { 6, 4, 2 }, { 5, 4, 3 }, { 7, 6, 5, 3, 2, 1 }, { 5, 4, 3 },
 				{ 6, 4, 2 }, { 7, 4, 1 } };
 		
-		/// crée le tableau qui accueillera toutes les cases pour tout le jeu
-		this.tabCases = new Cases[42];
-		HashMap<Integer, Cases> coucou = new HashMap<Integer,Cases>();
+		/// crée la map qui accueillera toutes les cases pour tout le jeu
+		this.mapCases = new HashMap<Integer,Cases>();
 
 		/// ajoute les 24 cases
 		for (int i = 0; i < valeurs.length; i++) {
@@ -108,7 +107,7 @@ public class Plateau {
 				cases.coordX = valeurs[i][j];
 				cases.coordY = i + 1;
 				/// ajoute la case au tableau des cases
-				this.tabCases[numeroCase -1] = cases;
+				this.mapCases.put(numeroCase, cases);
 				numeroCase++;
 			}
 		}
@@ -117,7 +116,7 @@ public class Plateau {
 			Cases cases = new Cases(numeroCase);
 			cases.coordX = i;
 			cases.coordY = 0;
-			this.tabCases[numeroCase -1] = cases;
+			this.mapCases.put(numeroCase, cases);
 			numeroCase++;
 		}
 		/// ajoute les cases de depart du joueur
@@ -125,7 +124,7 @@ public class Plateau {
 			Cases cases = new Cases(numeroCase);
 			cases.coordX = i;
 			cases.coordY = 8;
-			this.tabCases[numeroCase -1] = cases;
+			this.mapCases.put(numeroCase, cases);
 			numeroCase++;
 
 		}

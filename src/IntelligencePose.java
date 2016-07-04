@@ -97,12 +97,12 @@ public class IntelligencePose extends Outils {
 			for (int j = 0; j < ligneMoulin.length; j++) {
 				/// s'il y a un pion de l'adversaire sur la
 				/// case, incrémentation
-				if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurRobot()) {
+				if (plateau.mapCases.get(ligneMoulin[j]).pion == Pion.getCouleurRobot()) {
 					nbrPionsMoulin++;
 				}
 				/// si il y a un pion du joueur, ce n'est pas
 				/// possible de faire un moulin
-				else if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurJoueur()) {
+				else if (plateau.mapCases.get(ligneMoulin[j]).pion == Pion.getCouleurJoueur()) {
 					/// pour empêcher la comparaison
 					/// suivante
 					nbrPionsMoulin = -1;
@@ -146,12 +146,12 @@ public class IntelligencePose extends Outils {
 			for (int j = 0; j < ligneMoulin.length; j++) {
 				/// s'il y a un pion de l'adversaire sur la
 				/// case, incrémentation
-				if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurJoueur()) {
+				if (plateau.mapCases.get(ligneMoulin[j]).pion == Pion.getCouleurJoueur()) {
 					nbrPionsMoulin++;
 				}
 				/// si il y a un pion du joueur, ce n'est pas
 				/// possible de faire un moulin
-				else if (plateau.tabCases[ligneMoulin[j]].pion == Pion.getCouleurRobot()) {
+				else if (plateau.mapCases.get(ligneMoulin[j]).pion == Pion.getCouleurRobot()) {
 					/// pour empêcher la comparaison
 					/// suivante
 					nbrPionsMoulin = -1;
@@ -191,7 +191,7 @@ public class IntelligencePose extends Outils {
 
 		/// récupère tout les pions adverse sur le plateau
 		for (int i = 0; i < 24; i++) {
-			if (plateau.tabCases[i + 1].pion == Pion.getCouleurJoueur()) {
+			if (plateau.mapCases.get(i + 1).pion == Pion.getCouleurJoueur()) {
 				pionsJoueur.add(i + 1);
 			}
 		}
@@ -217,7 +217,7 @@ public class IntelligencePose extends Outils {
 					for (int k = 0; k < tabSchemaValeurs.length; k++) {
 						/// si elle n'est pas vide, on
 						/// abandonne tout
-						if (plateau.tabCases[tabSchemaValeurs[k]].pion != Pion.vide) {
+						if (plateau.mapCases.get(tabSchemaValeurs[k]).pion != Pion.vide) {
 							affirmatif = true;
 							break;
 						} else {
@@ -249,7 +249,7 @@ public class IntelligencePose extends Outils {
 
 		/// récupère tout les pions du robot sur le plateau
 		for (int i = 0; i < 24; i++) {
-			if (plateau.tabCases[i + 1].pion == Pion.getCouleurRobot()) {
+			if (plateau.mapCases.get(i + 1).pion == Pion.getCouleurRobot()) {
 				pionsRobot.add(i + 1);
 			}
 		}
@@ -267,7 +267,7 @@ public class IntelligencePose extends Outils {
 				for (int j = 0; j < tabSchemaValeurs.length; j++) {
 					/// si une case n'est pas libre, on
 					/// abandonne direct
-					if (plateau.tabCases[tabSchemaValeurs[j]].pion != Pion.vide) {
+					if (plateau.mapCases.get(tabSchemaValeurs[j]).pion != Pion.vide) {
 						affirmatif = true;
 						break;
 					} else {
@@ -307,7 +307,7 @@ public class IntelligencePose extends Outils {
 					/// n'est pas là dans les cases
 					/// tabSchemaValeurs, qui sont à testé
 					/// si elles sont vides
-					if (plateau.tabCases[tabSchemaCles[0]].pion == Pion.getCouleurRobot()) {
+					if (plateau.mapCases.get(tabSchemaCles[0]).pion == Pion.getCouleurRobot()) {
 						schemaValeursTestee.add(tabSchemaCles[1]);
 					} else {
 						schemaValeursTestee.add(tabSchemaCles[0]);
@@ -318,7 +318,7 @@ public class IntelligencePose extends Outils {
 					for (int j = 0; j < schemaValeursTestee.size(); j++) {
 						/// si une case n'est pas libre,
 						/// on abandonne direct
-						if (plateau.tabCases[schemaValeursTestee.get(j)].pion != Pion.vide) {
+						if (plateau.mapCases.get(schemaValeursTestee.get(j)).pion != Pion.vide) {
 							affirmatif = true;
 							break;
 						} else {
@@ -381,7 +381,7 @@ public class IntelligencePose extends Outils {
 				}
 				/// verifie que la case ne soit pas bloquée
 				for (int i = 0; i < casesAdjacentes.size(); i++) {
-					if (plateau.tabCases[casesAdjacentes.get(i)].pion == Pion.vide) {
+					if (plateau.mapCases.get(casesAdjacentes.get(i)).pion == Pion.vide) {
 						caseChoisie = casesPossibles.get(indexCase);
 						affirmatif = false;
 					} else {
@@ -415,7 +415,7 @@ public class IntelligencePose extends Outils {
 		/// récupère tout les cases ou il y a un pion du robot sur le
 		/// plateau
 		for (int i = 0; i < 24; i++) {
-			if (plateau.tabCases[i + 1].pion == Pion.getCouleurRobot()) {
+			if (plateau.mapCases.get(i + 1).pion == Pion.getCouleurRobot()) {
 				pionsRobot.add(i + 1);
 			}
 		}
@@ -443,7 +443,7 @@ public class IntelligencePose extends Outils {
 
 				for (int j = 0; j < tabMoulin.length; j++) {
 					/// si la case est vide
-					if (plateau.tabCases[tabMoulin[j]].pion == Pion.vide) {
+					if (plateau.mapCases.get(tabMoulin[j]).pion == Pion.vide) {
 						nbrPionsOk += 2;
 						if (casesMoulins[0] == 0)
 							casesMoulins[0] = tabMoulin[j];
@@ -480,8 +480,8 @@ public class IntelligencePose extends Outils {
 		ArrayList<Integer> nbrPionsRobot = new ArrayList<Integer>();
 
 		for (int i = 0; i <24; i++) {
-			if (plateau.tabCases[i + 1].pion == Pion.getCouleurRobot()) {
-				nbrPionsRobot.add(plateau.tabCases[i + 1].pion);
+			if (plateau.mapCases.get(i + 1).pion == Pion.getCouleurRobot()) {
+				nbrPionsRobot.add(plateau.mapCases.get(i + 1).pion);
 			}
 		}
 
