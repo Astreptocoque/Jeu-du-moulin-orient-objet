@@ -26,6 +26,7 @@ public class Communication {
 				erreur = true;
 				LCD.drawString("erreur", 0, 3);
 				Sound.beep();
+				System.out.println(e);
 
 			}
 		} while (erreur == true);
