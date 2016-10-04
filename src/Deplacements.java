@@ -16,7 +16,7 @@ public class Deplacements {
 
 	/// constructeurs pour la création d'un déplacement
 	public Deplacements() {
-		
+
 	}
 
 	public void setCaseDepart(int numeroCase, Plateau plateau) {
@@ -28,6 +28,23 @@ public class Deplacements {
 		/// définit les coordonnées de départ
 		coordDepartX = plateau.mapCases.get(numeroCase).coordX;
 		coordDepartY = plateau.mapCases.get(numeroCase).coordY;
+
+		/// change l'état (dans un moulin ou non) de la case et des
+		/// cases formant avec elle un moulin
+		if (plateau.mapCases.get(numeroCase).etatMoulin == true){
+			int[] moulin1 = plateau.mapCases.get(numeroCase).casesMoulins[0].clone();
+			int[] moulin2 = plateau.mapCases.get(numeroCase).casesMoulins[1].clone();
+			for(int i = 0; i < moulin1.length; i++){
+				if(plateau.mapCases.get(moulin1[i]).etatMoulin == true){
+					plateau.mapCases.get(moulin1[i]).etatMoulin = false;
+				}
+			}
+			for(int i = 0; i < moulin2.length; i++){
+				if(plateau.mapCases.get(moulin2[i]).etatMoulin == true){
+					plateau.mapCases.get(moulin2[i]).etatMoulin = false;
+				}
+			}
+		}
 	}
 
 	public void setCaseArrivee(int numeroCase, Plateau plateau) {
@@ -58,7 +75,7 @@ public class Deplacements {
 
 	/// Degrés a faire en moins sur la distance de retour
 	/// Sécurité pour ne pas "défoncer" le capteur tactile
-	private final static int degreMoins = 80;
+	private final static int degreEnmoinsDeplacement = 80;
 	/// vitesse de déplacements
 	private final static int vitesseMax = 700;
 	/// vitesse du cadrage
@@ -75,8 +92,12 @@ public class Deplacements {
 	private final static float echelle = 96;
 	/// degrés pour faire descendre la pince
 	private final static int degreDescendLevePince = 550;
-	/// distance en cm des cases par rapport à l'origine
-	private final float colonne[] = { 3.5f, 9f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
+	/// degrés pour fermer la pince, ne pas changer (sauf micro-ajustements)
+	private final static int degreFermePince = 260;
+	/// degrés de pré-fermeture de la pince, valeur ajustable
+	private final static int degrePreFermePince = 170;
+	/// distance en cm des cases par rapport à l'origine, valeurs ajustables
+	private final float colonne[] = { 3.5f, 8.7f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 42f }; // x
 	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.2f }; // y
 
 	/// moteurs
@@ -133,19 +154,20 @@ public class Deplacements {
 		moteurY1.endSynchronization();
 		moteurX.rotate(distanceX, true);
 
-		moteurPince.rotate(175, true);
+		moteurPince.rotate(degrePreFermePince, true);
 
 		moteurY2.waitComplete();
 		moteurX.waitComplete();
 		moteurPince.waitComplete();
 		/// la pince descend
 		moteurLevePince.rotate(degreDescendLevePince);
-		/// saisi le pion
-		moteurPince.rotate(75);
+		/// saisi le pion, fait la différence entre le total et ce qui
+		/// est déjà baissé
+		moteurPince.rotate(degreFermePince - degrePreFermePince);
 		/// la pince remonte
 		/// Monte tout d'abord avec une vitesse élevée et s'arrête juste
 		/// avant le tactile
-		moteurLevePince.rotate(-degreDescendLevePince + degreMoins);
+		moteurLevePince.rotate(-degreDescendLevePince + degreEnmoinsDeplacement);
 		/// ralentit et termine la montée, et se cadre sur le tactile
 		moteurLevePince.setSpeed(vitesseLentePince);
 		moteurLevePince.backward();
@@ -175,9 +197,9 @@ public class Deplacements {
 		moteurLevePince.setSpeed(vitesseRapidePince);
 		moteurLevePince.rotate(degreDescendLevePince);
 		/// pose le pion
-		moteurPince.rotate(-75);
+		moteurPince.rotate(-(degreFermePince - degrePreFermePince));
 		/// la pince remonte
-		moteurLevePince.rotate(-degreDescendLevePince + degreMoins);
+		moteurLevePince.rotate(-degreDescendLevePince + degreEnmoinsDeplacement);
 		moteurLevePince.setSpeed(vitesseLentePince);
 		moteurLevePince.backward();
 		while (infini == true) {
@@ -216,7 +238,7 @@ public class Deplacements {
 
 		/// baisse la pince si c'est le 1er tour et le robot commence
 		if (Pion.coordDernierPion[0] == 0 && Pion.coordDernierPion[1] == 0) {
-			moteurPince.rotate(175, true);
+			moteurPince.rotate(degrePreFermePince, true);
 		}
 
 		/// pour se rendre au premier pion
@@ -242,11 +264,11 @@ public class Deplacements {
 		/// la pince descend
 		moteurLevePince.rotate(degreDescendLevePince);
 		/// saisi le pion
-		moteurPince.rotate(75);
+		moteurPince.rotate(degreFermePince - degrePreFermePince);
 		/// la pince remonte
 		/// Monte tout d'abord avec une vitesse élevée et s'arrête juste
 		/// avant le tactile
-		moteurLevePince.rotate(-degreDescendLevePince + degreMoins);
+		moteurLevePince.rotate(-degreDescendLevePince + degreEnmoinsDeplacement);
 		/// ralentit et termine la montée, et se cadre sur le tactile
 		moteurLevePince.setSpeed(vitesseLentePince);
 		moteurLevePince.backward();
@@ -282,9 +304,9 @@ public class Deplacements {
 		moteurLevePince.setSpeed(vitesseRapidePince);
 		moteurLevePince.rotate(degreDescendLevePince);
 		/// pose le pion
-		moteurPince.rotate(-75);
+		moteurPince.rotate(-(degreFermePince - degrePreFermePince));
 		/// la pince remonte
-		moteurLevePince.rotate(-degreDescendLevePince + degreMoins);
+		moteurLevePince.rotate(-degreDescendLevePince + degreEnmoinsDeplacement);
 		moteurLevePince.setSpeed(vitesseLentePince);
 		moteurLevePince.backward();
 		while (infini == true) {
@@ -321,13 +343,13 @@ public class Deplacements {
 			/// l'emplacement choisi
 			reglageVitesse(distanceX, distanceY);
 			/// reouvre totalement la pince
-			moteurPince.rotate(-175, true);
+			moteurPince.rotate(-degrePreFermePince, true);
 			/// avance
 			moteurY1.startSynchronization();
-			moteurY1.rotate(-distanceY - degreMoins);
-			moteurY2.rotate(-distanceY - degreMoins);
+			moteurY1.rotate(-distanceY - degreEnmoinsDeplacement);
+			moteurY2.rotate(-distanceY - degreEnmoinsDeplacement);
 			moteurY1.endSynchronization();
-			moteurX.rotate(-distanceX + degreMoins);
+			moteurX.rotate(-distanceX + degreEnmoinsDeplacement);
 
 			/// attend que la pince s'ouvre completement (si pas)
 			moteurPince.waitComplete();

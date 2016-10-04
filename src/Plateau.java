@@ -15,7 +15,7 @@ public class Plateau {
 	/// nbr de pions restant pour chaque joueur
 	public int nbrPionsJoueur;
 	public int nbrPionsRobot;
-	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut
+	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut, 4 = mange
 	public int mode;
 
 	/// constructeur
@@ -75,6 +75,21 @@ public class Plateau {
 			}
 		}
 		return nbrPions;
+	}
+	
+	public boolean caseLibre(int couleur){
+		/// si une case est libre, etat est true
+		boolean etat = false;
+		/// passe en revue toutes les cases
+		for(int i = 1; i < 25; i ++){
+			/// si une case est libre...
+			if(this.mapCases.get(i).etatMoulin == false  && this.mapCases.get(i).pion == couleur){
+				etat = true; 
+				break;
+			}
+		}
+		
+		return etat;
 	}
 
 	/// pour ajouter les cases, fait partie du constructeur

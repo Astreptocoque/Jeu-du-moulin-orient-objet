@@ -23,6 +23,22 @@ public class IntelligencePose extends Outils {
 			LCD.drawInt(caseChoisie, 0, 1);
 			testSuivant = poseBloqueMoulinDirect(plateau);
 		}
+		
+		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0){
+			if (testSuivant) {
+				testSuivant = poseBloqueSchema(plateau);
+			}
+		
+			if(testSuivant){
+				testSuivant = poseEffectueMoulinIndirect(plateau);
+			}
+			if(testSuivant){
+				testSuivant = poseEffectueMoulinIndirect(plateau);
+			}
+		}
+		
+		
+		/*/// possibilité de code numéro 2
 		/// uniquement s'il y a des pions sur le plateau
 		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0) {
 			hasard = random.nextInt(5);
@@ -52,8 +68,9 @@ public class IntelligencePose extends Outils {
 
 				}
 			}
+			
 		} /// si non, pose stratégiquement
-
+*/
 		if (testSuivant) {
 			LCD.refresh();
 			LCD.drawString("Pose : 6", 0, 0);
@@ -66,7 +83,7 @@ public class IntelligencePose extends Outils {
 			LCD.drawInt(caseChoisie, 0, 1);
 
 			/// on n'est pas sensé arriver ici, 
-			/// mais c'est unesécurité
+			/// mais c'est une sécurité
 			hasard();
 		}
 		return caseChoisie;
@@ -419,8 +436,8 @@ public class IntelligencePose extends Outils {
 
 		/// passe les pions mélangés en revue
 		for (int i = 0; i < pionsRobot.size(); i++) {
-			moulin1 = plateau.mapCases.get(pionsRobot.get(i)).getCasesMoulin1();
-			moulin2 = plateau.mapCases.get(pionsRobot.get(i)).getCasesMoulin2();
+			moulin1 = plateau.mapCases.get(pionsRobot.get(i)).casesMoulins[0].clone();
+			moulin2 = plateau.mapCases.get(pionsRobot.get(i)).casesMoulins[1].clone();
 
 			hasard = random.nextInt(2);
 			/// pour choisir au hasard le moulin

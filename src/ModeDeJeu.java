@@ -1,6 +1,8 @@
 import java.io.IOException;
 
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
 
 public class ModeDeJeu {
 
@@ -53,11 +55,12 @@ public class ModeDeJeu {
 					/// robot. Doit être à 25
 		int iDepartJoueur = 42; /// défini le n° de la case départ du
 					/// joueur. Doit être à 42
-		/// réglage du mode en tant que pose (1)
-		plateau.mode = 1;
+		
 
-		for (int i = 0; i < 18; i++) {
-
+		for (int i = 0; i < 2; i++) {
+			/// réglage du mode en tant que pose (1)
+			plateau.mode = 1;
+			
 			/// buzz pour annoncer au joueur qu'il peut joueur (si
 			/// c'est son tour)
 			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()) {
@@ -73,6 +76,9 @@ public class ModeDeJeu {
 				/// choisi une case libre et attribue case
 				/// d'arrivée
 				pion.setCaseArrivee(robotPose(pion, plateau), plateau);
+				LCD.clear();
+				LCD.drawString("Arr. " + pion.getCaseArrivee(), 0, 0);
+				LCD.drawString("Dep." + pion.getCaseDepart(), 0, 1);
 				pion.deplacementPionRobot();
 				/// incrémente 1 dans la ligne de départ des
 				/// pions
@@ -93,17 +99,29 @@ public class ModeDeJeu {
 				iDepartJoueur--;
 			}
 
+			LCD.drawInt(pion.getCaseArrivee(), 0, 4);
+			
 			/// vérifie si un moulin est effectué, et joue en
 			/// conséquence
 			ModeDeJeuMethodes.verifieMoulin(pion.getCaseArrivee(), pion, plateau);
 			/// change la couleur pour donner la main
 			Pion.setCouleurActuelle((Pion.getCouleurActuelle() == Pion.blanc ? Pion.noir : Pion.blanc));
-
+			
+			String[] verification = new String[24];
+			for(int test = 1; test < 25;test++){
+				verification[test -1 ] = Integer.toString(test) + " : " +  Integer.toString(plateau.mapCases.get(test).pion);
+			}
+			int rien = verification.length;
 		}
 
 	}
 
 	public static void modeGlisse(Plateau plateau) throws IOException {
+		String[] verification = new String[24];
+		for(int test = 1; test < 25;test++){
+			verification[test -1 ] = Integer.toString(test) + " : " +  Integer.toString(plateau.mapCases.get(test).pion);
+		}
+		int rien = verification.length;
 		/// réglage du mode en tant que glisse (2)
 		plateau.mode = 2;
 
@@ -223,7 +241,6 @@ public class ModeDeJeu {
 		int caseChoisie;
 		do {
 			caseChoisie = Robot.robotJoue(plateau);
-
 			/// vérifie que la case choisie est possible
 			if (plateau.mode == 1 || plateau.mode == 3) {
 				/// si la case est libre

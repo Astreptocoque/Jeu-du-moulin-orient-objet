@@ -47,7 +47,7 @@ public class Reglages {
 			brique[1] = new RemoteRequestEV3(BrickFinder.find(names[1])[0].getIPAddress());
 		} catch (Exception e) {
 			LCD.clear();
-			Sound.beep();
+			Sound.beepSequenceUp();
 			LCD.drawString("La connection", 1, 0);
 			LCD.drawString("a echouee", 3, 1);
 			LCD.drawString("!!!!!!!!", 5, 4);

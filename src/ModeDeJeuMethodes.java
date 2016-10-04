@@ -22,8 +22,10 @@ public class ModeDeJeuMethodes {
 		/// si aucune pièce adverse est diponible
 		/// le programme saute l'étape
 		if (moulinVerifie(IDCaseTestee, Pion.getCouleurActuelle(), plateau)
-				&& plateau.getNbrPionsSurLePlateau(couleurAdversaire) > 0) {
-		
+				&& plateau.getNbrPionsSurLePlateau(couleurAdversaire) > 0
+				&& plateau.caseLibre(couleurAdversaire)) {
+			
+			
 			/// si oui, le joueur choisi un pion à manger
 			/// création du pion à manger
 			Deplacements pionAManger = new Deplacements();
@@ -45,7 +47,7 @@ public class ModeDeJeuMethodes {
 				/// sort le pion
 				pionAManger.deplacementPionJoueur();
 			}
-			/// si aucun moulin n'est créer...
+			/// si aucun moulin n'est créé...
 		} else {
 			/// ... et si c'est le robot qui a joué...
 			if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
@@ -117,7 +119,6 @@ public class ModeDeJeuMethodes {
 			/// soustrait le pion au nbr total de pion du robot
 			plateau.enlevePionJoueur();
 		}
-
 		return caseChoisie;
 	}
 
@@ -134,9 +135,19 @@ public class ModeDeJeuMethodes {
 		if (plateau.mapCases.get(moulin1[0]).pion == couleur
 				&& plateau.mapCases.get(moulin1[1]).pion == couleur) {
 			oui_non = true;
+			/// change l'etat (dans un moulin ou pas) des cases
+			plateau.mapCases.get(moulin1[0]).etatMoulin = true;
+			plateau.mapCases.get(moulin1[1]).etatMoulin = true;
+			plateau.mapCases.get(caseTestee).etatMoulin = true;
+
 		} else if (plateau.mapCases.get(moulin2[0]).pion == couleur
 				&& plateau.mapCases.get(moulin2[1]).pion == couleur) {
 			oui_non = true;
+			/// change l'etat (dans un moulin ou pas) des cases
+			plateau.mapCases.get(moulin2[0]).etatMoulin = true;
+			plateau.mapCases.get(moulin2[1]).etatMoulin = true;
+			plateau.mapCases.get(caseTestee).etatMoulin = true;
+
 		} else {
 			oui_non = false;
 		}
@@ -163,7 +174,7 @@ public class ModeDeJeuMethodes {
 		for (int casePossible : casesPossibles) {
 			/// si la case d'arrivée est dans les cases disponibles
 			/// et qu'elle est libre
-			if (caseArrivee == casePossible && plateau.mapCases.get(casePossible).pion != Pion.vide) {
+			if (caseArrivee == casePossible && plateau.mapCases.get(casePossible).pion == Pion.vide) {
 				ok = true;
 				break;
 			} else {

@@ -15,6 +15,7 @@ public class Cases {
 	int coordX; /// Case départ en coordonnées
 	int coordY; /// Case arrivée en coordonnées
 	int[][] casesMoulins;
+	boolean etatMoulin; /// si la case est dans un moulin, true, sinon false
 
 	public Cases(int numero) {
 		/// son numero lui est attribué dès le début et ne change pas
@@ -78,18 +79,6 @@ public class Cases {
 		return cases;
 	}
 
-	public int[] getCasesMoulin1() {
-		int[] moulin1 = this.casesMoulins[0].clone();
-
-		return moulin1;
-	}
-	
-	public int[] getCasesMoulin2(){
-		int[] moulin2 = this.casesMoulins[1].clone();
-		
-		return moulin2;
-	}
-
 	public boolean getBlocage(Plateau plateau) {
 		/// permet d'obtenir si les cases adjacentes sont occupée ou
 		/// non, donc si le pion est bloqué
@@ -117,4 +106,5 @@ public class Cases {
 		/// retourne le boolean true si la case est bloquée
 		return bloque;
 	}
+
 }
