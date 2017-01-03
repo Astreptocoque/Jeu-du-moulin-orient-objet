@@ -22,7 +22,7 @@ public class Reglages {
 		Thread threadBatterie = new Thread(batterie);
 		threadBatterie.start();
 		
-		Outils.initialiseSchemas();
+		OutilsTactiques.initialiseSchemas();
 		
 		/// regarde quelle est la couleur du robot
 		Deplacements d = new Deplacements();

@@ -6,23 +6,20 @@ public class Plateau {
 	/// ouverts/fermés de chaque joueur, etc...
 
 	/// variable d'instances
-	private int nbrMoulinsOuvertsJoueur;
 	private int nbrMoulinsFermesJoueur;
-	private int nbrMoulinsOuvertsRobot;
 	private int nbrMoulinsFermesRobot;
 	/// contient les cases du plateau
 	HashMap<Integer, Cases> mapCases;
 	/// nbr de pions restant pour chaque joueur
 	public int nbrPionsJoueur;
 	public int nbrPionsRobot;
-	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut, 4 = mange
+	/// variable pour définir le mode de jeu. 1 = pose, 2 = glisse, 3 = saut
 	public int mode;
+	public boolean modeElimination;
 
 	/// constructeur
 	public Plateau() {
 		/// gère les moulins
-		this.nbrMoulinsOuvertsJoueur = 0;
-		this.nbrMoulinsOuvertsRobot = 0;
 		this.nbrMoulinsFermesJoueur = 0;
 		this.nbrMoulinsFermesRobot = 0;
 
@@ -35,22 +32,13 @@ public class Plateau {
 
 		/// règle le mode. Au début il est sur 1:
 		this.mode = 1;
+		this.modeElimination = false;
 
 	}
 
 	/// pour les moulins
-	public void setNbrMoulinsOuvertsJoueur() {
-		this.nbrMoulinsOuvertsJoueur ++;
-		this.nbrMoulinsFermesJoueur --;
-	}
-
 	public void setNbrMoulinsFermesJoueur() {
 		this.nbrMoulinsFermesJoueur ++;
-	}
-
-	public void setNbrMoulinsOuvertsRobot() {
-		this.nbrMoulinsOuvertsRobot ++;
-		this.nbrMoulinsFermesRobot --;
 	}
 
 	public void setNbrMoulinsFermesRobot() {

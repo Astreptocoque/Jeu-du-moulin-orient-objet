@@ -5,17 +5,17 @@ public class Robot {
 
 	public static int robotJoue(Plateau plateau) {
 
-		if (plateau.mode == 1) { /// pose
-			caseChoisie = IntelligencePose.intelligencePose(plateau);
+		if (plateau.mode == 1 && plateau.modeElimination == false) { /// pose
+			caseChoisie = TactiquePose.intelligencePose(plateau);
 
-		} else if (plateau.mode == 2) { /// glisse
-			caseChoisie = IntelligenceGlisse.hasard();
+		} else if (plateau.mode == 2 && plateau.modeElimination == false) { /// glisse
+			caseChoisie = TactiqueGlisse.hasard();
 
-		} else if (plateau.mode == 3) {/// saut
-			caseChoisie = IntelligenceSaut.hasard();
+		} else if (plateau.mode == 3 && plateau.modeElimination == false) {/// saut
+			caseChoisie = TactiqueSaut.hasard();
 
-		} else { /// mange
-			caseChoisie = IntelligenceMange.hasard();
+		} else if (plateau.modeElimination == true && plateau.modeElimination == false) { /// mange
+			caseChoisie = TactiqueMange.hasard();
 		}
 		return caseChoisie;
 	}

@@ -57,9 +57,10 @@ public class ModeDeJeu {
 					/// joueur. Doit être à 42
 		
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 18; i++) {
 			/// réglage du mode en tant que pose (1)
 			plateau.mode = 1;
+			plateau.modeElimination = false;
 			
 			/// buzz pour annoncer au joueur qu'il peut joueur (si
 			/// c'est son tour)
@@ -124,6 +125,7 @@ public class ModeDeJeu {
 		int rien = verification.length;
 		/// réglage du mode en tant que glisse (2)
 		plateau.mode = 2;
+		plateau.modeElimination = false;
 
 		/// création d'un déplacement
 		Deplacements pion = new Deplacements();
@@ -163,6 +165,7 @@ public class ModeDeJeu {
 	public static void modeSaut(Plateau plateau) throws IOException {
 		/// réglage du mode en tant que saut (3)
 		plateau.mode = 3;
+		plateau.modeElimination = false;
 
 		/// création d'un déplacement
 		Deplacements pion = new Deplacements();
@@ -190,9 +193,8 @@ public class ModeDeJeu {
 		/// ramène le robot à l'origine
 		pion.deplacementOrigine();
 
-		Sound.beep();
-		Sound.beep();
-		Sound.beep();
+		Sound.beepSequence();
+		Sound.beepSequenceUp();
 		Reglages.reglagesFin();
 		System.exit(0);
 	}

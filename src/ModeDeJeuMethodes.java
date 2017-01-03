@@ -62,8 +62,8 @@ public class ModeDeJeuMethodes {
 		int caseChoisie;
 		boolean ok = false;
 
-		/// met le mode en 4, pour manger
-		plateau.mode = 4;
+		/// met le modeElimination, pour manger
+		plateau.modeElimination = true;
 
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
 		/// choisi

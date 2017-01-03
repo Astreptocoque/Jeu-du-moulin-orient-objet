@@ -6,7 +6,7 @@ import java.util.Random;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 
-public class IntelligencePose extends Outils {
+public class TactiquePose extends OutilsTactiques {
 
 	private static Random random = new Random();
 	private static int caseChoisie = 0;
@@ -33,7 +33,7 @@ public class IntelligencePose extends Outils {
 				testSuivant = poseEffectueMoulinIndirect(plateau);
 			}
 			if(testSuivant){
-				testSuivant = poseEffectueMoulinIndirect(plateau);
+				testSuivant = poseEffectueSchema(plateau);
 			}
 		}
 		

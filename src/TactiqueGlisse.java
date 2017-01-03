@@ -1,6 +1,7 @@
 import java.util.Random;
 
-public class IntelligenceSaut {
+public class TactiqueGlisse {
+
 	public static int hasard() {
 		/// prend une case au hasard sur le plateau
 		Random random = new Random();

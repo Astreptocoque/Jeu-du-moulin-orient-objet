@@ -12,7 +12,7 @@ public class MainMoulin {
 		
 		/// création du plateau de jeu et démarrage de la partie
 		Plateau plateau = new Plateau();
-		plateau.mapCases.get(1).pion = Pion.noir;
+		/*plateau.mapCases.get(1).pion = Pion.noir;
 		plateau.mapCases.get(2).pion = Pion.vide;
 		plateau.mapCases.get(3).pion = Pion.blanc;
 		plateau.mapCases.get(4).pion = Pion.blanc;
@@ -36,7 +36,7 @@ public class MainMoulin {
 		plateau.mapCases.get(22).pion = Pion.noir;
 		plateau.mapCases.get(23).pion = Pion.blanc;
 		plateau.mapCases.get(24).pion = Pion.blanc;
-
+*/
 
 		ModeDeJeu.joue(plateau);
 		

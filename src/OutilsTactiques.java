@@ -1,10 +1,7 @@
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-public class Outils {
+public class OutilsTactiques {
 	//// ***********************************
 
 	public final static int[][] casesSchemas = { { 1, 5 }, { 1, 8 }, { 1, 11 }, { 1, 12 }, { 1, 15 }, { 1, 23 },
@@ -42,13 +39,12 @@ public class Outils {
 			{ 23, 17, 24 }, { 23, 17, 22 }, { 20, 17, 19 } };
 
 	/// *************************************************
-	/// contient les cases opposées
-	/// clé = cases déjà là
-	/// valeur = cases ou il faut déposer le pion.
-	public static Map<Integer, Integer> casesOpposees = new HashMap<Integer, Integer>();
-
-	private final static int[] casesOpposeesCles = { 1, 3, 22, 24, 4, 6, 19, 21, 7, 9, 16, 18 };
-	private final static int[] casesOpposeesValeurs = { 24, 22, 3, 1, 21, 19, 6, 4, 18, 16, 9, 7 };
+	/// contient les cases de placements stratégiques
+	
+	public final static int[][] placementsStrategiques = {{1,24},{3,22},{4,21},{6,19},{7,18},{9,16}};
+	
+	///pour chaque groupe ci-dessus correspondent les groupe 2n et 2n + 1 ci-dessous
+	public final static int[][] casesNecessairesPS = {{22,10,23},{3,2,15},{1,2,10},{24,15,23},{19,11,20},{6,5,14},{4,5,11},{21,14,20},{16,12,17},{9,8,13},{7,8,12},{18,13,17}};
 
 	///**************************************************
 	/// cases stratégiques, en fonction du nombre d'intersections
@@ -56,14 +52,5 @@ public class Outils {
 	public final static int[] cases3intersections = {2,10,23,15,8,12,17,13};
 	
 	
-	
-	///*********************************
-	
-	public static void initialiseSchemas() {
-		/// crée la map des cases opposées (schéma 3)
-		for (int i = 0; i < casesOpposeesCles.length; i++) {
-			casesOpposees.put(casesOpposeesCles[i], casesOpposeesValeurs[i]);
-		}
-	}
 
 }
