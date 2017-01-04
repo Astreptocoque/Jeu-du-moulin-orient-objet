@@ -10,7 +10,7 @@ import lejos.hardware.lcd.LCD;
 public class TactiqueMange {
 
 	public static Coups tactiqueMange(Plateau plateau) {
-		ArrayList<Integer> pionsRobot = pionSurPlateau(plateau, Pion.getCouleurRobot());
+//		ArrayList<Integer> pionsRobot = pionSurPlateau(plateau, Pion.getCouleurRobot());
 		ArrayList<Integer> pionsJoueur = pionSurPlateau(plateau, Pion.getCouleurJoueur());
 		ArrayList<Coups> listeCoups = new ArrayList<Coups>();
 
@@ -23,16 +23,16 @@ public class TactiqueMange {
 		if (plateau.mode == 1) {
 			detecteSchema(plateau, pionsJoueur, listeCoups);
 			detectePlacementStrategique(plateau, pionsJoueur, listeCoups);
-			deuxPionsAdversesAlignesMode1(plateau, pionsJoueur, listeCoups);
-			fermetureMoulinBloque(plateau, pionsRobot, listeCoups);
+			deuxPionsAdversesAlignesMode1(plateau, listeCoups);
+			fermetureMoulinBloque(plateau, listeCoups);
 			pourChaquePionMode1(plateau, pionsJoueur, listeCoups);
 		}
 		/// si c'est un autre mode
 		else {
-			deuxPionsAdversesAlignesAutresModes(plateau, pionsJoueur, listeCoups);
+			deuxPionsAdversesAlignesAutresModes(plateau, listeCoups);
 			pourChaquePionAutresModes(plateau, pionsJoueur, listeCoups);
 			pionBloqueOuvertureMoulinAutresModes(plateau, listeCoups);
-			fermetureMoulinBloque(plateau, pionsRobot, listeCoups);
+			fermetureMoulinBloque(plateau, listeCoups);
 		}
 
 		/// on mélange la liste
@@ -95,8 +95,7 @@ public class TactiqueMange {
 		}
 	}
 
-	public static void fermetureMoulinBloque(Plateau plateau, ArrayList<Integer> pionsRobot,
-			ArrayList<Coups> listeCoups) {
+	public static void fermetureMoulinBloque(Plateau plateau, ArrayList<Coups> listeCoups) {
 		// si deux pions robot sont alignés avec un troisième adversaire
 		// qui bloque
 
@@ -130,8 +129,7 @@ public class TactiqueMange {
 
 	}
 
-	public static void deuxPionsAdversesAlignesAutresModes(Plateau plateau, ArrayList<Integer> pionsJoueur,
-			ArrayList<Coups> listeCoups) {
+	public static void deuxPionsAdversesAlignesAutresModes(Plateau plateau, ArrayList<Coups> listeCoups) {
 		/// si deux pions sont alignés
 
 		// si deux pions adverses sont alignés et la 3ème case est vide
@@ -396,8 +394,7 @@ public class TactiqueMange {
 		}
 	}
 
-	public static void deuxPionsAdversesAlignesMode1(Plateau plateau, ArrayList<Integer> pionsJoueur,
-			ArrayList<Coups> listeCoups) {
+	public static void deuxPionsAdversesAlignesMode1(Plateau plateau, ArrayList<Coups> listeCoups) {
 
 		/// si 2 pions du joueur sont alignés avec la troisième case
 		/// libre
