@@ -76,7 +76,7 @@ public class ModeDeJeu {
 				pion.setCaseDepart(iDepartRobot, plateau);
 				/// choisi une case libre et attribue case
 				/// d'arrivée
-				pion.setCaseArrivee(robotPose(pion, plateau), plateau);
+				pion.setCaseArrivee(robotPose(pion, plateau).getCoupCaseArrivee(), plateau);
 				LCD.clear();
 				LCD.drawString("Arr. " + pion.getCaseArrivee(), 0, 0);
 				LCD.drawString("Dep." + pion.getCaseDepart(), 0, 1);
@@ -108,6 +108,7 @@ public class ModeDeJeu {
 			/// change la couleur pour donner la main
 			Pion.setCouleurActuelle((Pion.getCouleurActuelle() == Pion.blanc ? Pion.noir : Pion.blanc));
 			
+			/// test pour voir les valeur lors du programme
 			String[] verification = new String[24];
 			for(int test = 1; test < 25;test++){
 				verification[test -1 ] = Integer.toString(test) + " : " +  Integer.toString(plateau.mapCases.get(test).pion);
@@ -118,6 +119,7 @@ public class ModeDeJeu {
 	}
 
 	public static void modeGlisse(Plateau plateau) throws IOException {
+		/// test pour voir les valeurs lors du programe
 		String[] verification = new String[24];
 		for(int test = 1; test < 25;test++){
 			verification[test -1 ] = Integer.toString(test) + " : " +  Integer.toString(plateau.mapCases.get(test).pion);
@@ -136,8 +138,11 @@ public class ModeDeJeu {
 			if (ModeDeJeuMethodes.modeGlisseVerifieDeplacementPossible(plateau) == true) {
 				/// si oui, fait le nécessaire pour en déplacer
 				/// un
-				pion.setCaseDepart(robotPrend(plateau), plateau);
-				pion.setCaseArrivee(robotPose(pion, plateau), plateau);
+				/// créer le coup
+				Coups coup = robotPrend(plateau);
+				/// set le déplacement du pion
+				pion.setCaseDepart(coup.getCoupCaseDepart(), plateau);
+				pion.setCaseArrivee(coup.getCoupCaseArrivee(), plateau);
 				pion.deplacementPionRobot();
 			} else {
 				/// si non, la partie est finie
@@ -173,8 +178,10 @@ public class ModeDeJeu {
 		/// séléctionne le pion à bouger et la case d'arrivée
 		if (Pion.getCouleurActuelle() == Pion.getCouleurRobot()) {
 			/// choisi un pion à déplacer
-			pion.setCaseDepart(robotPrend(plateau), plateau);
-			pion.setCaseArrivee(robotPose(pion, plateau), plateau);
+			Coups coup = robotPrend(plateau);
+			/// set le déplacement du pion
+			pion.setCaseDepart(coup.getCoupCaseDepart(), plateau);
+			pion.setCaseArrivee(coup.getCoupCaseArrivee(), plateau);
 			pion.deplacementPionRobot();
 
 		} else {
@@ -238,19 +245,19 @@ public class ModeDeJeu {
 
 	}
 
-	public static int robotPose(Deplacements pion, Plateau plateau) {
+	public static Coups robotPose(Deplacements pion, Plateau plateau) {
 		boolean ok = true;
-		int caseChoisie;
+		Coups caseChoisie;
 		do {
 			caseChoisie = Robot.robotJoue(plateau);
 			/// vérifie que la case choisie est possible
 			if (plateau.mode == 1 || plateau.mode == 3) {
 				/// si la case est libre
-				if (plateau.mapCases.get(caseChoisie).pion == Pion.vide) {
+				if (plateau.mapCases.get(caseChoisie.getCoupCaseArrivee()).pion == Pion.vide) {
 					ok = false;
 				}
 			} else if (plateau.mode == 2) { /// glisse
-				if (ModeDeJeuMethodes.modeGlisseVerifiePose(pion, caseChoisie, plateau)) {
+				if (ModeDeJeuMethodes.modeGlisseVerifiePose(pion, caseChoisie.getCoupCaseArrivee(), plateau)) {
 					ok = false;
 				}
 			}
@@ -292,9 +299,9 @@ public class ModeDeJeu {
 		return caseChoisie;
 	}
 
-	public static int robotPrend(Plateau plateau) {
+	public static Coups robotPrend(Plateau plateau) {
 		boolean ok = false;
-		int caseChoisie;
+		Coups caseChoisie;
 		do {
 			caseChoisie = Robot.robotJoue(plateau);
 
@@ -302,15 +309,15 @@ public class ModeDeJeu {
 			if (plateau.mode == 2) { /// glisse
 				/// vérifie que la case choisie est de la bonne couleur
 				/// et qu'elle peut être déplacée
-				if (plateau.mapCases.get(caseChoisie).pion == Pion.getCouleurRobot()
-						&& plateau.mapCases.get(caseChoisie).getBlocage(plateau) == false) {
+				if (plateau.mapCases.get(caseChoisie.getCoupCaseDepart()).pion == Pion.getCouleurRobot()
+						&& plateau.mapCases.get(caseChoisie.getCoupCaseDepart()).getBlocage(plateau) == false) {
 					ok = true;
 				} else {
 					ok = false;
 				}
 			} else if (plateau.mode == 3) { /// saut
 				/// vérifie que la case peut être choisie
-				if (plateau.mapCases.get(caseChoisie).pion == Pion.getCouleurRobot()) {
+				if (plateau.mapCases.get(caseChoisie.getCoupCaseDepart()).pion == Pion.getCouleurRobot()) {
 					ok = true;
 				} else {
 					ok = false;

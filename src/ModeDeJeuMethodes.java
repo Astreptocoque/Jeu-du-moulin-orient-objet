@@ -1,5 +1,8 @@
 import java.io.IOException;
+
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
 
 public class ModeDeJeuMethodes {
 
@@ -64,6 +67,11 @@ public class ModeDeJeuMethodes {
 
 		/// met le modeElimination, pour manger
 		plateau.modeElimination = true;
+		
+		LCD.clear();
+		LCD.drawString("mangePion", 0, 0);
+		Sound.beep();
+		Button.waitForAnyPress();
 
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
 		/// choisi
@@ -77,7 +85,11 @@ public class ModeDeJeuMethodes {
 				caseChoisie = Communication.PCInputStream();
 			} else {
 				/// choisit une case
-				caseChoisie = Robot.robotJoue(plateau);
+				Coups coup = Robot.robotJoue(plateau);
+				caseChoisie = coup.getCoupCaseArrivee();
+				LCD.drawString("coup : " + caseChoisie, 0, 1);
+				Sound.beep();
+				Button.waitForAnyPress();
 			}
 
 			/// on vérifie ensuite que le pion puisse être mangé

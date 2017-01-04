@@ -11,16 +11,13 @@ public class TactiquePose extends OutilsTactiques {
 	private static Random random = new Random();
 	private static int caseChoisie = 0;
 
-	public static int intelligencePose(Plateau plateau) {
+	public static Coups tactiquePose(Plateau plateau) {
 		boolean testSuivant = false;
-		int hasard;
+		int hasard = 0;
 		/// regarde si le robot peut faire un moulin testSuivant =
 		testSuivant = poseEffectueMoulinDirect(plateau);
 		/// si non, vérifie s'il peut bloquer un moulin
 		if (testSuivant) {
-			LCD.refresh();
-			LCD.drawString("Pose : 2", 0, 0);
-			LCD.drawInt(caseChoisie, 0, 1);
 			testSuivant = poseBloqueMoulinDirect(plateau);
 		}
 		
@@ -28,49 +25,25 @@ public class TactiquePose extends OutilsTactiques {
 			if (testSuivant) {
 				testSuivant = poseBloqueSchema(plateau);
 			}
-		
-			if(testSuivant){
+			
+			/// hasard entre les deux suivants
+			hasard = random.nextInt(2);
+			
+			if(testSuivant && hasard == 0){
 				testSuivant = poseEffectueMoulinIndirect(plateau);
 			}
-			if(testSuivant){
+			else if(testSuivant && hasard == 1){
 				testSuivant = poseEffectueSchema(plateau);
 			}
-		}
-		
-		
-		/*/// possibilité de code numéro 2
-		/// uniquement s'il y a des pions sur le plateau
-		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0) {
-			hasard = random.nextInt(5);
-			if (testSuivant && hasard > 3) {
-				LCD.refresh();
-				LCD.drawString("Pose : 5", 6, 0);
-				LCD.drawInt(caseChoisie, 0, 1);
+			
+			if(testSuivant && hasard == 0){
+				testSuivant = poseEffectueSchema(plateau);
+			}
+			else if(testSuivant && hasard == 1){
 				testSuivant = poseEffectueMoulinIndirect(plateau);
 			}
 		}
-
-		/// si non, il regarde si le joueur fait un schéma
-		/// si non, fait un schema
-		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0) {
-			if (testSuivant) {
-				hasard = random.nextInt(2);
-				if (hasard == 0) {
-					LCD.refresh();
-					LCD.drawString("Pose : 4", 6, 0);
-					LCD.drawInt(caseChoisie, 0, 1);
-					testSuivant = poseEffectueSchema(plateau);
-				} else {
-					LCD.refresh();
-					LCD.drawString("Pose : 3", 0, 0);
-					LCD.drawInt(caseChoisie, 0, 1);
-					testSuivant = poseBloqueSchema(plateau);
-
-				}
-			}
-			
-		} /// si non, pose stratégiquement
-*/
+		
 		if (testSuivant) {
 			LCD.refresh();
 			LCD.drawString("Pose : 6", 0, 0);
@@ -86,7 +59,10 @@ public class TactiquePose extends OutilsTactiques {
 			/// mais c'est une sécurité
 			hasard();
 		}
-		return caseChoisie;
+		
+		/// met le case choisie dans un coup
+		Coups coup = new Coups(0, 0, caseChoisie);
+		return coup;
 	}
 
 	/// ******** méthode pour l'intelligence pose***************

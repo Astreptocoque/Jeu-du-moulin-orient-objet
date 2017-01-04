@@ -10,6 +10,18 @@ public class Coups {
 		this.coupCaseDepart = 0;
 	}
 	
+	public Coups(int coupCaseDepart,  int valeur, int coupCaseArrivee){
+		this.coupCaseArrivee = coupCaseArrivee;
+		this.coupCaseDepart = coupCaseDepart;
+		this.valeur = valeur;
+	}
+	
+	public Coups(int valeur, int coupCaseArrivee){
+		this.coupCaseArrivee = coupCaseArrivee;
+		this.coupCaseDepart = 0;
+		this.valeur = valeur;
+	}
+	
 	public void setCoupCaseDepart(int coupCaseDepart){
 		this.coupCaseDepart = coupCaseDepart;
 	}

@@ -1,177 +1,241 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
+
+import lejos.hardware.Button;
+import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
 
 public class TactiqueMange {
 
-	public void tactiqueMange(Plateau plateau) {
+	public static Coups tactiqueMange(Plateau plateau) {
 		ArrayList<Integer> pionsRobot = pionSurPlateau(plateau, Pion.getCouleurRobot());
 		ArrayList<Integer> pionsJoueur = pionSurPlateau(plateau, Pion.getCouleurJoueur());
 		ArrayList<Coups> listeCoups = new ArrayList<Coups>();
+
+		LCD.clear();
+		Sound.beep();
+		LCD.drawString("tactiqueMange", 0, 0);
+		Button.waitForAnyPress();
 
 		/// si le jeu est en mode pose
 		if (plateau.mode == 1) {
 			detecteSchema(plateau, pionsJoueur, listeCoups);
 			detectePlacementStrategique(plateau, pionsJoueur, listeCoups);
+			deuxPionsAdversesAlignesMode1(plateau, pionsJoueur, listeCoups);
+			fermetureMoulinBloque(plateau, pionsRobot, listeCoups);
 			pourChaquePionMode1(plateau, pionsJoueur, listeCoups);
-			deuxPionsAlignesMode1(plateau, pionsJoueur, listeCoups);
-			moulinBloque(plateau, pionsRobot, listeCoups);
-			pionBloqueOuvertureMoulin(plateau, pionsRobot, pionsJoueur, listeCoups);
 		}
 		/// si c'est un autre mode
 		else {
-			deuxPionsAlignes(plateau, pionsJoueur, listeCoups);
-			moulinBloque(plateau, pionsRobot,listeCoups);
+			deuxPionsAdversesAlignesAutresModes(plateau, pionsJoueur, listeCoups);
 			pourChaquePionAutresModes(plateau, pionsJoueur, listeCoups);
-
+			pionBloqueOuvertureMoulinAutresModes(plateau, listeCoups);
+			fermetureMoulinBloque(plateau, pionsRobot, listeCoups);
 		}
+
+		/// on mélange la liste
+		Collections.shuffle(listeCoups);
+		/// et on prend le premier coup le plus bas
+		Boolean affirmatif = true;
+		int valeur = 0;
+		Coups coupChoisi = null;
+		while (affirmatif) {
+			for (int i = 0; i < listeCoups.size(); i++) {
+				/// s'il y a un coup de la valeur voulue
+				if (listeCoups.get(i).getValeur() == valeur) {
+					/// pour sortir de la boucle
+					affirmatif = false;
+					/// on prend le coup
+					coupChoisi = listeCoups.get(i);
+				}
+			}
+			/// si affirmatif = true, c'est qu'aucun coup n'a été
+			/// trouvé
+			if (affirmatif == true) {
+				/// on essaye avec la valeur du dessus
+				valeur += 1;
+			}
+		}
+
+		return coupChoisi;
 
 	}
 
-	public void pionBloqueOuvertureMoulin(Plateau plateau, ArrayList<Integer>pionsRobot, ArrayList<Integer>pionsJoueur, ArrayList<Coups> listeCoups){
+	public static void pionBloqueOuvertureMoulinAutresModes(Plateau plateau, ArrayList<Coups> listeCoups) {
 		/// si un pion bloque l'ouverture d'un moulin
-		
+
 		/// parcours tous les possibilités de moulins
-		for(int[] moulin : Cases.listeMoulins){
-			
+		for (int[] moulin : Cases.listeMoulins) {
+			/// si les 3 cases sont occupées par un pion du robot
+			if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
+				/// on regarde pour chaque pion si ces cases
+				/// adjacentes sont libres
+				/// ou occupés par le robot. Il faut au moins
+				/// une case libre
+				for (int pion : moulin) {
+					/// récupère les cases adjacentes
+					int[] casesAdjacentes = plateau.mapCases.get(pion).getCasesAdjacentes();
+					for (int caseAdjacente : casesAdjacentes) {
+						/// si la case a un pion
+						/// adverse, on l'ajoute en coup
+						if (plateau.mapCases.get(caseAdjacente).pion == Pion
+								.getCouleurJoueur()) {
+							Coups coup = new Coups(3, caseAdjacente);
+							listeCoups.add(coup);
+						}
+					}
+
+				}
+
+			}
 		}
 	}
-	
-	public void moulinBloque(Plateau plateau, ArrayList<Integer> pionsRobot, ArrayList<Coups> listeCoups) {
+
+	public static void fermetureMoulinBloque(Plateau plateau, ArrayList<Integer> pionsRobot,
+			ArrayList<Coups> listeCoups) {
 		// si deux pions robot sont alignés avec un troisième adversaire
 		// qui bloque
 
-		/// pour éviter de tester 2 fois le même moulin
-		ArrayList<Integer> pionsDejaAnalyses = new ArrayList<Integer>();
-
-		/// Pour chaque pions du robot
-		for (int i = 0; i < pionsRobot.size(); i++) {
-			/// on récupère les potentiels moulins
-			int[][] casesMoulins = plateau.mapCases.get(pionsRobot.get(i)).casesMoulins.clone();
-			/// car 2 moulins différents
-			for (int j = 0; j < 2; j++) {
-				/// pour éviter de retester un coup déjà testé
-				if (!pionsDejaAnalyses.contains(casesMoulins[j][0])
-						&& !pionsDejaAnalyses.contains(casesMoulins[j][1])) {
-					/// si la 2ème case est occupée par un
-					/// même pion
-					/// et la 3ème est vide
-					if (casesMoulins[j][0] == Pion.getCouleurJoueur()
-							&& casesMoulins[j][1] == Pion.getCouleurRobot()) {
-						/// crée le coup
-						Coups coup = new Coups();
-						coup.setValeur(1);
-						///
-						coup.setCoupCaseArrivee(casesMoulins[j][1]);
-						/// ajoute le coup à listecoup
-						listeCoups.add(coup);
-					}
-				}
-
-				/// si la 2ème est vide et la 3ème est
-				/// occupée
-				/// par un même pion
-				if (casesMoulins[j][1] == Pion.getCouleurJoueur()
-						&& casesMoulins[j][0] == Pion.getCouleurRobot()) {
-					/// crée le coup
-					Coups coup = new Coups();
-					coup.setValeur(1);
-					///
-					coup.setCoupCaseArrivee(casesMoulins[j][0]);
-					/// ajoute le coup à listecoup
-					listeCoups.add(coup);
-				}
-
+		/// parcours tous les possibilités de moulins
+		for (int[] moulin : Cases.listeMoulins) {
+			/// si la 3ème case est occupée par l'adversaire
+			if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
+				/// on ajoute le pion adverse
+				Coups coup = new Coups(1, moulin[2]);
+				listeCoups.add(coup);
+			}
+			/// si la 2ème case est occupée par l'adversaire
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
+				/// on ajoute le pion adverse
+				Coups coup = new Coups(1, moulin[1]);
+				listeCoups.add(coup);
+			}
+			/// si la 1ère case est occupée par l'adversaire
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
+				/// on ajoute le pion adverse
+				Coups coup = new Coups(1, moulin[0]);
+				listeCoups.add(coup);
 			}
 		}
 
 	}
 
-	public void deuxPionsAlignes(Plateau plateau, ArrayList<Integer> pionsJoueur, ArrayList<Coups> listeCoups) {
+	public static void deuxPionsAdversesAlignesAutresModes(Plateau plateau, ArrayList<Integer> pionsJoueur,
+			ArrayList<Coups> listeCoups) {
 		/// si deux pions sont alignés
 
-		/// une fois qu'un pion a été testé, on l'ajout lui et les pions
-		/// formant les moulins dans cette liste pour pas faire 2 fois
-		/// les moulins.
-		ArrayList<Integer> pionsDejaAnalyses = new ArrayList<Integer>();
+		// si deux pions adverses sont alignés et la 3ème case est vide
 
-		/// pour chacun des pions du joueur
-		for (int i = 0; i < pionsJoueur.size(); i++) {
-			/// si deux pions sont alignés
-			int[][] casesMoulins = plateau.mapCases.get(pionsJoueur.get(i)).casesMoulins.clone();
-			/// car 2 moulins pour chaque case --> int[][]
-			for (int j = 0; j < 2; j++) {
+		/// parcours tous les possibilités de moulins
+		for (int[] moulin : Cases.listeMoulins) {
+			/// si la 3ème case est vide
+			if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.vide) {
 
-				/// pour éviter de retester un coup déjà testé
-				if (!pionsDejaAnalyses.contains(casesMoulins[j][0])
-						&& !pionsDejaAnalyses.contains(casesMoulins[j][1])) {
-					/// si la 2ème case est occupée par un
-					/// même pion
-					/// et la 3ème est vide
-					if (casesMoulins[j][0] == Pion.getCouleurJoueur()
-							&& casesMoulins[j][1] == Pion.vide) {
-						/// crée le coup
-						Coups coup = new Coups();
-						/// remonte les cases jusqu'à
-						/// trouver un
-						/// pion qui pourrai compléter
-						/// le moulin
-						ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
-						int retour = remonteCase(plateau,
-								plateau.mapCases.get(casesMoulins[j][1]).numero,
-								Pion.getCouleurJoueur(), 0, -1,
-								valeursDifferentsChemins);
-						
-						/// set les valeur de coup
-						coup.setValeur(retour -1);
-						coup.setCoupCaseArrivee(casesMoulins[j][0]);
-						/// ajoute le coup à listecoup
-						listeCoups.add(coup);
-						Coups coup1 = new Coups();
-						coup1.setValeur(retour -1);
-						coup1.setCoupCaseArrivee(i);
-						listeCoups.add(coup1);
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurJoueur(), 0,
+						-1, valeursDifferentsChemins);
+
+				if (!valeursDifferentsChemins.isEmpty()) {
+					/// tri les différentes valeur (pas très propre comme code)
+					/// pour obtenir la pièce la plus proche
+					int[] valeursChemins = new int[valeursDifferentsChemins.size()];
+					for (int i = 0; i < valeursDifferentsChemins.size(); i++) {
+						valeursChemins[i] = valeursDifferentsChemins.get(i);
 					}
-					/// si la 2ème est vide et la 3ème est
-					/// occupée
-					/// par un même pion
-					if (casesMoulins[j][1] == Pion.getCouleurJoueur()
-							&& casesMoulins[j][0] == Pion.vide) {
-						/// crée le coup
-						Coups coup = new Coups();
-						/// remonte les cases jusqu'à
-						/// trouver un
-						/// pion qui pourrai compléter
-						/// le moulin
-						ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
-						int retour = remonteCase(plateau,
-								plateau.mapCases.get(casesMoulins[j][1]).numero,
-								Pion.getCouleurJoueur(), 0, -1,
-								valeursDifferentsChemins);
-						/// set les valeurs de coup
-						coup.setValeur(retour - 1);
-						coup.setCoupCaseArrivee(casesMoulins[j][1]);
-						/// ajoute le coup à listecoup
-						listeCoups.add(coup);
-						Coups coup1 = new Coups();
-						coup1.setValeur(retour - 1);
-						coup1.setCoupCaseArrivee(i);
-						listeCoups.add(coup1);
-					}
-					pionsDejaAnalyses.add(casesMoulins[j][0]);
-					pionsDejaAnalyses.add(casesMoulins[j][0]);
+					Arrays.sort(valeursChemins);
+					/// la valeur est la 1ère valeur de valeursChemins, la plus
+					/// petite
+
+					/// on ajoute les deux pions
+					Coups coup1 = new Coups(valeursChemins[0] - 1, moulin[0]);
+					Coups coup2 = new Coups(valeursChemins[0] - 1, moulin[1]);
+					listeCoups.add(coup1);
+					listeCoups.add(coup2);
 				}
-				pionsDejaAnalyses.add(i);
+
+			}
+			/// si la 2ème case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurJoueur(), 0,
+						-1, valeursDifferentsChemins);
+
+				if (!valeursDifferentsChemins.isEmpty()) {
+					/// tri les différentes valeur (pas très propre comme code)
+					/// pour obtenir la pièce la plus proche
+					int[] valeursChemins = new int[valeursDifferentsChemins.size()];
+					for (int i = 0; i < valeursDifferentsChemins.size(); i++) {
+						valeursChemins[i] = valeursDifferentsChemins.get(i);
+					}
+					Arrays.sort(valeursChemins);
+					/// la valeur est la 1ère valeur de valeursChemins, la plus
+					/// petite
+
+					/// on ajoute les deux pions
+					Coups coup1 = new Coups(valeursChemins[0] - 1, moulin[0]);
+					Coups coup2 = new Coups(valeursChemins[0] - 1, moulin[2]);
+					listeCoups.add(coup1);
+					listeCoups.add(coup2);
+				}
+			}
+			/// si la 1ère case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurJoueur(), 0,
+						-1, valeursDifferentsChemins);
+
+				if (!valeursDifferentsChemins.isEmpty()) {
+					/// tri les différentes valeur (pas très propre comme code)
+					/// pour obtenir la pièce la plus proche
+					int[] valeursChemins = new int[valeursDifferentsChemins.size()];
+					for (int i = 0; i < valeursDifferentsChemins.size(); i++) {
+						valeursChemins[i] = valeursDifferentsChemins.get(i);
+					}
+					Arrays.sort(valeursChemins);
+					/// la valeur est la 1ère valeur de valeursChemins, la plus
+					/// petite
+
+					/// on ajoute les deux pions
+					Coups coup1 = new Coups(valeursChemins[0] - 1, moulin[1]);
+					Coups coup2 = new Coups(valeursChemins[0] - 1, moulin[2]);
+					listeCoups.add(coup1);
+					listeCoups.add(coup2);
+				}
+
 			}
 		}
+
 	}
 
-	public void detecteSchema(Plateau plateau, ArrayList<Integer> pionsJoueur, ArrayList<Coups> listeCoups) {
+	public static void detecteSchema(Plateau plateau, ArrayList<Integer> pionsJoueur, ArrayList<Coups> listeCoups) {
 		/// pour savoir si le coup est validé ou non
 		Boolean affirmatif = false;
 		/// passe en revue tout les couples possibles de duo de cases
-		/// pour un schéma
-		/// parcours le tableau --> faire un dessin si jamais
+		/// pour un schéma. parcours le tableau --> faire un dessin si jamais
 		for (int pion1 = 0; pion1 < pionsJoueur.size() - 1; pion1++) {
 			for (int pion2 = pion1 + 1; pion2 < pionsJoueur.size() - pion1; pion2++) {
 				/// couple à tester
@@ -188,38 +252,29 @@ public class TactiqueMange {
 					/// si les couples sont pareils
 					if (schema[0] == OutilsTactiques.casesSchemas[i][0]
 							&& schema[1] == OutilsTactiques.casesSchemas[i][1]) {
-						/// si oui, on vérifie que
-						/// toutes les cases nécessaires
-						/// au schema soient libres
+						/// si oui, on vérifie que toutes les cases
+						/// nécessaires au schema soient libres
 						int[] casesNecessairesSchema = OutilsTactiques.casesNecessairesSchemas[i]
 								.clone();
 						for (int j = 0; j < casesNecessairesSchema.length; j++) {
-							/// si elle n'est pas
-							/// vide, on
-							/// abandonne tout
+							/// si elle n'est pas vide, on abandonne
+							/// tout
 							if (plateau.mapCases.get(
 									casesNecessairesSchema[j]).pion != Pion.vide) {
 								affirmatif = false;
 								break;
 							} else {
-								/// 1ere case
-								/// bloque le
-								/// schema
+								/// 1ere case bloque le schema
 								affirmatif = true;
 							}
 						}
-						/// si affirmatif est vrai,
-						/// alors un schéma a été
+						/// si affirmatif est vrai, alors un schéma a été
 						/// reconnu
 						if (affirmatif) {
-							/// les deux cases
-							/// formant le schéma
-							/// sont ajoutés dans
-							/// listeCoups
+							/// les deux cases formant le schéma
+							/// sont ajoutés dans listeCoups
 							for (int pionSchema = 0; pionSchema < schema.length; pionSchema++) {
-								Coups coup = new Coups();
-								coup.setValeur(1);
-								coup.setCoupCaseArrivee(schema[pionSchema]);
+								Coups coup = new Coups(1, schema[pionSchema]);
 								listeCoups.add(coup);
 							}
 						}
@@ -230,7 +285,7 @@ public class TactiqueMange {
 		}
 	}
 
-	public void detectePlacementStrategique(Plateau plateau, ArrayList<Integer> pionsJoueur,
+	public static void detectePlacementStrategique(Plateau plateau, ArrayList<Integer> pionsJoueur,
 			ArrayList<Coups> listeCoups) {
 		/// pour savoir si le coup est validé ou non
 		Boolean affirmatif = false;
@@ -254,58 +309,39 @@ public class TactiqueMange {
 					/// si les deux couples sont égaux
 					if (schema[0] == OutilsTactiques.placementsStrategiques[i][0]
 							&& schema[1] == OutilsTactiques.placementsStrategiques[i][1]) {
-						/// on copie les schema 1 et 2
-						/// de niveau 1
+						/// on copie les schema 1 et 2 de niveau 1
 						int[] casesPS11 = OutilsTactiques.casesNecessairesPS[2 * i].clone();
 						int[] casesPS12 = OutilsTactiques.casesNecessairesPS[2 * i + 1].clone();
-						/// on vérifie que toutes les
-						/// cases néces. au PS 1 du 1er
-						/// niveau soient libres
+						/// on vérifie que toutes les cases néces. au PS 1
+						/// du 1er niveau soient libres
 						for (int casePS1 = 0; casePS1 < casesPS11.length; casePS1++) {
 							if (plateau.mapCases
 									.get(casesPS11[casePS1]).pion != Pion.vide) {
-								/// pour tester
-								/// le second
-								/// niveau
+								/// pour tester le second niveau
 								affirmatif = false;
 								break;
 							} else {
 								affirmatif = true;
-								/// les deux
-								/// cases
-								/// formant le
-								/// schéma
-								/// sont ajoutés
-								/// dans
-								/// listeCoups
+								/// les deux cases formant le schéma
+								/// sont ajoutés dans listeCoups
 								for (int pionSchema = 0; pionSchema < schema.length; pionSchema++) {
-									Coups coup = new Coups();
-									coup.setValeur(1);
-									coup.setCoupCaseArrivee(schema[pionSchema]);
+									Coups coup = new Coups(1, schema[pionSchema]);
 									listeCoups.add(coup);
 								}
 							}
 						}
 						if (affirmatif == false) {
-							/// le 1er niveau n'est
-							/// pas libre
-							/// on teste le second
-							/// niveau
-							/// si la case centrale
-							/// est occupée et les
-							/// deux autres libres
+							/// le 1er niveau n'est pas libre on teste
+							/// le second niveau si la case centrale est
+							/// occupée et les deux autres libres
 							if (plateau.mapCases.get(casesPS11[0]).pion == Pion
 									.getCouleurJoueur()
 									&& plateau.mapCases
 											.get(casesPS11[1]).pion == Pion.vide
 									&& plateau.mapCases.get(
 											casesPS11[2]).pion == Pion.vide) {
-								/// alors on
-								/// ajoute le
-								/// coup
-								Coups coup = new Coups();
-								coup.setValeur(1);
-								coup.setCoupCaseArrivee(casesPS11[0]);
+								/// alors on ajoute le coup
+								Coups coup = new Coups(1, casesPS11[0]);
 								listeCoups.add(coup);
 							}
 
@@ -316,48 +352,31 @@ public class TactiqueMange {
 						for (int casePS2 = 0; casePS2 < casesPS12.length; casePS2++) {
 							if (plateau.mapCases
 									.get(casesPS12[casePS2]).pion != Pion.vide) {
-								/// pour tester
-								/// le second
-								/// niveau
+								/// pour tester le second niveau
 								affirmatif = false;
 								break;
 							} else {
 								affirmatif = true;
-								/// les deux
-								/// cases
-								/// formant le
-								/// schéma
-								/// sont ajoutés
-								/// dans
-								/// listeCoups
+								/// les deux cases formant le schéma
+								/// sont ajoutés dans listeCoups
 								for (int pionSchema = 0; pionSchema < schema.length; pionSchema++) {
-									Coups coup = new Coups();
-									coup.setValeur(1);
-									coup.setCoupCaseArrivee(schema[pionSchema]);
+									Coups coup = new Coups(1, schema[pionSchema]);
 									listeCoups.add(coup);
 								}
 							}
 						}
 						if (affirmatif == false) {
-							/// le 1er niveau n'est
-							/// pas libre
-							/// on teste le second
-							/// niveau
-							/// si la case centrale
-							/// est occupée et les
-							/// deux autres libres
+							/// le 1er niveau n'est pas libre on teste
+							/// le second niveau si la case centrale est
+							/// occupée et les deux autres libres
 							if (plateau.mapCases.get(casesPS12[0]).pion == Pion
 									.getCouleurJoueur()
 									&& plateau.mapCases
 											.get(casesPS12[1]).pion == Pion.vide
 									&& plateau.mapCases.get(
 											casesPS12[2]).pion == Pion.vide) {
-								/// alors on
-								/// ajoute le
-								/// coup
-								Coups coup = new Coups();
-								coup.setValeur(1);
-								coup.setCoupCaseArrivee(casesPS12[0]);
+								/// alors on ajoute le coup
+								Coups coup = new Coups(1, casesPS12[0]);
 								listeCoups.add(coup);
 							}
 
@@ -368,92 +387,83 @@ public class TactiqueMange {
 		}
 	}
 
-	public void pourChaquePionMode1(Plateau plateau, ArrayList<Integer> pionsJoueur, ArrayList<Coups> listeCoups) {
+	public static void pourChaquePionMode1(Plateau plateau, ArrayList<Integer> pionsJoueur,
+			ArrayList<Coups> listeCoups) {
 		/// pour chaque pion...
 		for (int elements : pionsJoueur) {
-			Coups coup = new Coups();
-			coup.setValeur(2);
-			coup.setCoupCaseArrivee(elements);
+			Coups coup = new Coups(2, elements);
 			listeCoups.add(coup);
 		}
 	}
 
-	public void deuxPionsAlignesMode1(Plateau plateau, ArrayList<Integer> pionsJoueur,
+	public static void deuxPionsAdversesAlignesMode1(Plateau plateau, ArrayList<Integer> pionsJoueur,
 			ArrayList<Coups> listeCoups) {
-		/// si deux pions sont alignés
 
-		/// une fois qu'un pion a été testé, on l'ajout lui et les pions
-		/// formant les moulins dans cette liste pour pas faire 2 fois
-		/// les moulins.
-		ArrayList<Integer> pionsDejaAnalyses = new ArrayList<Integer>();
+		/// si 2 pions du joueur sont alignés avec la troisième case
+		/// libre
 
-		/// pour chacun des pions du joueur
-		for (int i = 0; i < pionsJoueur.size(); i++) {
-			/// si deux pions sont alignés
-			int[][] casesMoulins = plateau.mapCases.get(pionsJoueur.get(i)).casesMoulins.clone();
-			/// car 2 moulins pour chaque case --> int[][]
-			for (int j = 0; j < 2; j++) {
-
-				/// pour éviter de retester un coup déjà testé
-				if (!pionsDejaAnalyses.contains(casesMoulins[j][0])
-						&& !pionsDejaAnalyses.contains(casesMoulins[j][1])) {
-					/// si la 2ème case est occupée par un
-					/// même pion
-					/// et la 3ème est vide
-					if (casesMoulins[j][0] == Pion.getCouleurJoueur()
-							&& casesMoulins[j][1] == Pion.vide) {
-						/// ajoute les pions du moulin
-						/// comme
-						/// coup
-						Coups coup = new Coups();
-						coup.setValeur(0);
-						coup.setCoupCaseArrivee(casesMoulins[j][0]);
-						listeCoups.add(coup);
-						Coups coup2 = new Coups();
-						coup2.setValeur(0);
-						coup2.setCoupCaseArrivee(i);
-						listeCoups.add(coup2);
-
-					}
-					/// si la 2ème est vide et la 3ème est
-					/// occupée
-					/// par un même pion
-					if (casesMoulins[j][1] == Pion.getCouleurJoueur()
-							&& casesMoulins[j][0] == Pion.vide) {
-						/// ajoute les pions du moulin
-						/// comme
-						/// coup
-						for (int pionSchema = 0; pionSchema < casesMoulins[j].length; pionSchema++) {
-							Coups coup = new Coups();
-							coup.setValeur(0);
-							coup.setCoupCaseArrivee(casesMoulins[j][1]);
-							listeCoups.add(coup);
-							Coups coup2 = new Coups();
-							coup2.setValeur(0);
-							coup2.setCoupCaseArrivee(i);
-							listeCoups.add(coup2);
-						}
-					}
-					pionsDejaAnalyses.add(casesMoulins[j][0]);
-					pionsDejaAnalyses.add(casesMoulins[j][0]);
-				}
-				pionsDejaAnalyses.add(i);
+		/// parcours tous les possibilités de moulins
+		for (int[] moulin : Cases.listeMoulins) {
+			/// si la 3ème case est vide
+			if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.vide) {
+				/// on ajoute les deux pions
+				Coups coup1 = new Coups(0, moulin[0]);
+				Coups coup2 = new Coups(0, moulin[1]);
+				listeCoups.add(coup1);
+				listeCoups.add(coup2);
+			}
+			/// si la 2ème case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
+				/// on ajoute les deux pions
+				Coups coup1 = new Coups(0, moulin[0]);
+				Coups coup2 = new Coups(0, moulin[2]);
+				listeCoups.add(coup1);
+				listeCoups.add(coup2);
+			}
+			/// si la 1ère case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
+				/// on ajoute les deux pions
+				Coups coup1 = new Coups(0, moulin[1]);
+				Coups coup2 = new Coups(0, moulin[2]);
+				listeCoups.add(coup1);
+				listeCoups.add(coup2);
 			}
 		}
 	}
 
-	public void pourChaquePionAutresModes(Plateau plateau, ArrayList<Integer>pionsJoueur, ArrayList<Coups>listeCoups){
+	public static void pourChaquePionAutresModes(Plateau plateau, ArrayList<Integer> pionsJoueur,
+			ArrayList<Coups> listeCoups) {
 		/// pour chaque pion
-		int retour = 0;
-		for(int element : pionsJoueur){
+		for (int element : pionsJoueur) {
 			ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
-			retour = remonteCase(plateau, element, Pion.getCouleurJoueur(), 0, -1, valeursDifferentsChemins);
-			Coups coup = new Coups();
-			coup.setValeur(retour);
-			coup.setCoupCaseArrivee(element);
+			valeursDifferentsChemins = remonteCase(plateau, element, Pion.getCouleurJoueur(), 0, -1,
+					valeursDifferentsChemins);
+
+			/// uniquement si la liste n'est pas vide. Si elle est vide, il n'y pas
+			/// d'autre pion joignable
+			if (!valeursDifferentsChemins.isEmpty()) {
+				/// tri les différentes valeur (pas très propre comme code)
+				/// pour obtenir la pièce la plus proche
+				int[] valeursChemins = new int[valeursDifferentsChemins.size()];
+				for (int i = 0; i < valeursDifferentsChemins.size(); i++) {
+					valeursChemins[i] = valeursDifferentsChemins.get(i);
+				}
+				Arrays.sort(valeursChemins);
+				/// la valeur est la 1ère valeur de valeursChemins, la plus petite
+				/// si valeur
+				Coups coup = new Coups(valeursChemins[0] - 1, element);
+				listeCoups.add(coup);
+			}
 		}
+
 	}
-	
+
 	public static int hasard() {
 		/// prend une case au hasard sur le plateau
 		Random random = new Random();
@@ -463,11 +473,10 @@ public class TactiqueMange {
 	/// ------------------------------- outils
 	/// ------------------------------------
 
-	public int remonteCase(Plateau plateau, int caseDepart, int couleurJoueur, int valeur, int casePrecedente,
-			ArrayList<Integer> valeursDifferentsChemins) {
+	public static ArrayList<Integer> remonteCase(Plateau plateau, int caseDepart, int couleurJoueur, int valeur,
+			int casePrecedente, ArrayList<Integer> valeursDifferentsChemins) {
 		/// !!! récursivité
 
-		casePrecedente = caseDepart;
 		/// récupère les cases adjacente à caseDepart
 		ArrayList<Integer> casesAdjacentes = new ArrayList<Integer>();
 		for (int element : plateau.mapCases.get(caseDepart).casesAdjacentes)
@@ -480,39 +489,38 @@ public class TactiqueMange {
 			}
 		}
 
+		casePrecedente = caseDepart;
+
 		/// parcours toutes les cases adjacente à la case
 		for (int caseAdjacente : casesAdjacentes) {
 			/// si la case est vide, recommence l'opération
 			if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
 				valeur += 1;
-				/// caseDepart devient caseAdjacente, casePrecedente a déjà été changée
-				remonteCase(plateau, caseAdjacente, couleurJoueur, valeur, casePrecedente, valeursDifferentsChemins);
+				/// caseDepart devient caseAdjacente,
+				/// casePrecedente a déjà été changée
+				valeursDifferentsChemins = remonteCase(plateau, caseAdjacente, couleurJoueur, valeur,
+						casePrecedente, valeursDifferentsChemins);
 			}
 			/// si la case est occupée par un pion de l'adversaire
 			else if (plateau.mapCases.get(caseAdjacente).pion == couleurJoueur) {
 				valeur += 1;
+				/// si la case est occupée par un pion du robot, rien
+				/// on ajoute la valeur du chemin effectué
+				valeursDifferentsChemins.add(valeur);
 
 			}
-			/// si la case est occupée par un pion du robot, rien
-			/// on ajoute la valeur du chemin effectué
-			valeursDifferentsChemins.add(valeur);
+			/// si la case est occupée par un pion "ami"
+			else {
+				valeur = 0;
+			}
+
 		}
 
-		/// tri les différentes valeur (pas très propre comme code)
-		int[] valeursChemins = new int[valeursDifferentsChemins.size()];
-		for (int i = 0; i < valeursDifferentsChemins.size(); i++) {
-			valeursChemins[i] = valeursDifferentsChemins.get(i);
-		}
-		Arrays.sort(valeursChemins);
-
-		/// la valeur est la 1ère valeur de valeursChemins, la plus
-		/// petite
-		/// si valeur vaut -1, alors il n'y pas de pion pouvant
-		/// atteindre la case
-		return valeursChemins[0];
+		/// envoi les différentes valeurs
+		return valeursDifferentsChemins;
 	}
 
-	public ArrayList<Integer> pionSurPlateau(Plateau plateau, int couleur) {
+	public static ArrayList<Integer> pionSurPlateau(Plateau plateau, int couleur) {
 		/// récupère tous les pions d'une couleur présents sur le
 		/// plateau
 		/// liste des pions
@@ -521,8 +529,7 @@ public class TactiqueMange {
 		/// parcours toutes les cases
 		for (int i = 1; i < 25; i++) {
 			if (plateau.mapCases.get(i).pion == couleur)
-				;
-			pionPlateau.add(i);
+				pionPlateau.add(i);
 		}
 
 		return pionPlateau;
