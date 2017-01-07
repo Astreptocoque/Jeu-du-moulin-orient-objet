@@ -70,8 +70,7 @@ public class ModeDeJeuMethodes {
 		
 		LCD.clear();
 		LCD.drawString("mangePion", 0, 0);
-		Sound.beep();
-		Button.waitForAnyPress();
+		
 
 		/// la boucle est effectuée tant qu'un pion valide n'est pas
 		/// choisi
@@ -80,7 +79,7 @@ public class ModeDeJeuMethodes {
 			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()) {
 				/// si c'est au joueur de jouer
 				pion.deplacementOrigine();
-				Sound.beep();
+				Sound.beepSequenceUp();
 				/// choisit une case
 				caseChoisie = Communication.PCInputStream();
 			} else {
@@ -88,8 +87,6 @@ public class ModeDeJeuMethodes {
 				Coups coup = Robot.robotJoue(plateau);
 				caseChoisie = coup.getCoupCaseArrivee();
 				LCD.drawString("coup : " + caseChoisie, 0, 1);
-				Sound.beep();
-				Button.waitForAnyPress();
 			}
 
 			/// on vérifie ensuite que le pion puisse être mangé

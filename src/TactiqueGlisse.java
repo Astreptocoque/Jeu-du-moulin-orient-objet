@@ -198,7 +198,7 @@ public class TactiqueGlisse {
 						-1, valeursDifferentsChemins, casesDejaVisitees);
 				/// en argument de deuxPionCaseLibreOptimiser
 				/// pour pas compter les pion du moulin dans un coup
-				int[] casesMoulin = {moulin[0], moulin[1]};
+				int[] casesMoulin = {moulin[0], moulin[2]};
 				/// on s'occupe de valeursDifferentsChemins
 				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
 						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3, casesMoulin);
@@ -218,7 +218,7 @@ public class TactiqueGlisse {
 						-1, valeursDifferentsChemins, casesDejaVisitees);
 				/// en argument de deuxPionCaseLibreOptimiser
 				/// pour pas compter les pion du moulin dans un coup
-				int[] casesMoulin = {moulin[0], moulin[1]};
+				int[] casesMoulin = {moulin[1], moulin[2]};
 				/// on s'occupe de valeursDifferentsChemins
 				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
 						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3, casesMoulin);
@@ -267,7 +267,7 @@ public class TactiqueGlisse {
 						-1, valeursDifferentsChemins, casesDejaVisitees);
 				/// en argument de deuxPionCaseLibreOptimiser
 				/// pour pas compter les pion du moulin dans un coup
-				int[] casesMoulin = {moulin[0], moulin[1]};
+				int[] casesMoulin = {moulin[0], moulin[2]};
 				/// on s'occupe de valeursDifferentsChemins
 				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
 						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3, casesMoulin);
@@ -287,7 +287,7 @@ public class TactiqueGlisse {
 						-1, valeursDifferentsChemins, casesDejaVisitees);
 				/// en argument de deuxPionCaseLibreOptimiser
 				/// pour pas compter les pion du moulin dans un coup
-				int[] casesMoulin = {moulin[0], moulin[1]};
+				int[] casesMoulin = {moulin[1], moulin[2]};
 				/// on s'occupe de valeursDifferentsChemins
 				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
 						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3,casesMoulin);
