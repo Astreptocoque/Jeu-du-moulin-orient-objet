@@ -42,7 +42,7 @@ public class ModeDeJeu {
 			/// buzz pour annoncer au joueur qu'il peut joueur (si
 			/// c'est son tour)
 			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()) {
-				Sound.beep();
+				Sound.beepSequence();
 			}
 		}
 		/// pour tout ce qui concerne la fin de la partie
@@ -56,8 +56,8 @@ public class ModeDeJeu {
 		int iDepartJoueur = 42; /// défini le n° de la case départ du
 					/// joueur. Doit être à 42
 		
-
-		for (int i = 0; i < 18; i++) {
+		/// 18 car 18 pions à poser
+		for (int i = 0; i < 2; i++) {
 			/// réglage du mode en tant que pose (1)
 			plateau.mode = 1;
 			plateau.modeElimination = false;
@@ -65,7 +65,7 @@ public class ModeDeJeu {
 			/// buzz pour annoncer au joueur qu'il peut joueur (si
 			/// c'est son tour)
 			if (Pion.getCouleurActuelle() == Pion.getCouleurJoueur()) {
-				Sound.beep();
+				Sound.beepSequenceUp();
 			}
 			/// création d'un déplacement
 			Deplacements pion = new Deplacements();

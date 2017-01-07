@@ -12,22 +12,21 @@ public class TactiqueGlisse {
 	public static Coups tactiqueGlisse(Plateau plateau) {
 		ArrayList<Integer> pionsRobot = pionSurPlateau(plateau, Pion.getCouleurRobot());
 		ArrayList<Integer> pionsJoueur = pionSurPlateau(plateau, Pion.getCouleurJoueur());
-		ArrayList<Coups> listeCoupsAttenteValeur2 = verifiePionsRobotBloques(plateau, pionsRobot);
-		ArrayList<Coups> listeCoupsAttenteValeur1 = verifiePionsAdversaireBloques(plateau, pionsJoueur);
-		ArrayList<Coups> listeCoupsAttenteValeur3 = verifiePionBloqueMoulinAdversaire(plateau);
+		/// listeCoupsAttenteValeurX
+		ArrayList<Coups> listeCoupsAV2 = verifiePionsRobotBloques(plateau, pionsRobot);
+		ArrayList<Coups> listeCoupsAV1 = verifiePionsAdversaireBloques(plateau, pionsJoueur);
+		ArrayList<Coups> listeCoupsAV3 = verifiePionBloqueMoulinAdversaire(plateau);
 		ArrayList<Coups> listeCoups = new ArrayList<Coups>();
 
 		LCD.clear();
 		LCD.drawString("tactiqueGlisse", 0, 0);
-
-		/// la liste qu'on passe en paramètre
-		ArrayList<Coups> liste = listeCoups;
+		
 
 		/// analyse des coups
-		deuxPionsRobotCaseLibre(plateau, liste);
-		deuxPionsAdversaireCaseLibre(plateau, liste);
-		robotMoulin(plateau, liste);
-		chaquePion(plateau, liste);
+		deuxPionsRobotCaseLibre(plateau, listeCoups, listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+		deuxPionsAdversaireCaseLibre(plateau, listeCoups, listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+		robotMoulin(plateau, listeCoups, listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+		chaquePion(plateau, listeCoups, pionsRobot, listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
 
 		/// on mélange la liste
 		Collections.shuffle(listeCoups);
@@ -36,6 +35,7 @@ public class TactiqueGlisse {
 		int valeur = 0;
 		int nombreTests = 0;
 		Coups coupChoisi = null;
+		/// on repéte le défilement de liste coup avec chaque fois une valeur plus élevée
 		while (affirmatif) {
 			for (int i = 0; i < listeCoups.size(); i++) {
 				/// s'il y a un coup de la valeur voulue
@@ -44,9 +44,16 @@ public class TactiqueGlisse {
 					affirmatif = false;
 					/// on prend le coup
 					coupChoisi = listeCoups.get(i);
-					///
+					LCD.clear();
+					LCD.drawString("break", 0, 0);
+					Sound.beep();
+					Button.waitForAnyPress();
+					break;
+				} else {
+					/// pour sortir de la boucle une fois
 					nombreTests += 1;
 				}
+
 			}
 			/// si affirmatif = true, c'est qu'aucun coup n'a été
 			/// trouvé
@@ -55,29 +62,363 @@ public class TactiqueGlisse {
 				valeur += 1;
 			}
 			/// si le nbr Test = listeCoup, c'est qu'on a tout essayé.
+			/// on reprend les listeCoupAttente.
 			if (nombreTests == listeCoups.size()) {
+				///
 				affirmatif = false;
-				Random random = new Random();
 
 			}
 		}
 
+		if (nombreTests == listeCoups.size()) {
+			valeur = 0;
+			nombreTests = 0;
+			/// on vide listeCoup pour recommence avec les listeCoupsAV
+			listeCoups.clear();
+			/// on passe en revue listeCoupAV1
+			for (Coups coup : listeCoupsAV1) {
+				/// si le coup à déjà une case d'arrivée
+				if (coup.getCoupCaseArrivee() != 0) {
+					listeCoups.add(coup);
+				}
+				/// s'il n'en a pas
+				else {
+					/// on lui attribue toute les cases adjacente comme
+					/// case d'arrivée
+					int[] casesAdjacentes = plateau.mapCases.get(coup.getCoupCaseDepart())
+							.getCasesAdjacentes();
+					for (int caseAdjacente : casesAdjacentes) {
+						/// si la case est libre
+						if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
+							Coups coup1 = new Coups(coup.getCoupCaseDepart(),
+									coup.getValeur(), caseAdjacente);
+							listeCoups.add(coup1);
+						}
+					}
+
+				}
+			}
+			/// on passe en revue listeCoupAV2
+			for (Coups coup : listeCoupsAV2) {
+				/// si le coup à déjà une case d'arrivée
+				if (coup.getCoupCaseArrivee() != 0) {
+					listeCoups.add(coup);
+				}
+				/// s'il n'en a pas
+				else {
+					/// on lui attribue toute les cases adjacente comme
+					/// case d'arrivée
+					int[] casesAdjacentes = plateau.mapCases.get(coup.getCoupCaseDepart())
+							.getCasesAdjacentes();
+					for (int caseAdjacente : casesAdjacentes) {
+						/// si la case est libre
+						if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
+							Coups coup1 = new Coups(coup.getCoupCaseDepart(),
+									coup.getValeur(), caseAdjacente);
+							listeCoups.add(coup1);
+						}
+					}
+
+				}
+			}
+			/// on passe en revue listeCoupAV3
+			for (Coups coup : listeCoupsAV3) {
+				/// si le coup à déjà une case d'arrivée
+				if (coup.getCoupCaseArrivee() != 0) {
+					listeCoups.add(coup);
+				}
+				/// s'il n'en a pas
+				else {
+					/// on lui attribue toute les cases adjacente comme
+					/// case d'arrivée
+					int[] casesAdjacentes = plateau.mapCases.get(coup.getCoupCaseDepart())
+							.getCasesAdjacentes();
+					for (int caseAdjacente : casesAdjacentes) {
+						/// si la case est libre
+						if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
+							Coups coup1 = new Coups(coup.getCoupCaseDepart(),
+									coup.getValeur(), caseAdjacente);
+							listeCoups.add(coup1);
+						}
+					}
+
+				}
+			}
+		}
+		/// on rerépète avec listecoup qui a les listeAV
+		while (affirmatif) {
+			for (int i = 0; i < listeCoups.size(); i++) {
+				/// s'il y a un coup de la valeur voulue
+				if (listeCoups.get(i).getValeur() == valeur) {
+					/// pour sortir de la boucle
+					affirmatif = false;
+					/// on prend le coup
+					coupChoisi = listeCoups.get(i);
+					break;
+				} else {
+					/// pour sortir de la boucle une fois
+					nombreTests += 1;
+				}
+
+			}
+			/// si affirmatif = true, c'est qu'aucun coup n'a été
+			/// trouvé
+			if (affirmatif == true) {
+				/// on essaye avec la valeur du dessus
+				valeur += 1;
+			}
+			/// si le nbr Test = listeCoup, c'est qu'on a tout essayé.
+			/// on reprend les listeCoupAttente.
+			if (nombreTests == listeCoups.size()) {
+				///
+				affirmatif = false;
+
+			}
+		}
+
+		LCD.clear();
+		LCD.drawString("glissade", 0, 0);
+		LCD.drawString("coup" + coupChoisi.getCoupCaseDepart(), 0, 1);
+		Sound.beep();
 		return coupChoisi;
 	}
 
-	public static void deuxPionsRobotCaseLibre(Plateau plateau, ArrayList<Coups> liste) {
+	public static void deuxPionsRobotCaseLibre(Plateau plateau, ArrayList<Coups> listeCoups,
+			ArrayList<Coups> listeCoupsAV1, ArrayList<Coups> listeCoupsAV2,
+			ArrayList<Coups> listeCoupsAV3) {
+		// si deux pions du robot sont alignés et la 3ème case est vide
 
+		/// parcours tous les possibilités de moulins
+		for (int[] moulin : Cases.listeMoulins) {
+			/// si la 3ème case est vide
+			if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.vide) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Coups> valeursDifferentsChemins = new ArrayList<Coups>();
+				ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
+
+				valeursDifferentsChemins = remonteCase(plateau, moulin[2], Pion.getCouleurRobot(), 0,
+						-1, valeursDifferentsChemins, casesDejaVisitees);
+				/// on s'occupe de valeursDifferentsChemins
+				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
+						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+
+			}
+			/// si la 2ème case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Coups> valeursDifferentsChemins = new ArrayList<Coups>();
+				ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
+
+				valeursDifferentsChemins = remonteCase(plateau, moulin[1], Pion.getCouleurRobot(), 0,
+						-1, valeursDifferentsChemins, casesDejaVisitees);
+				/// on s'occupe de valeursDifferentsChemins
+				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
+						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+
+			}
+			/// si la 1ère case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Coups> valeursDifferentsChemins = new ArrayList<Coups>();
+				ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
+
+				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurRobot(), 0,
+						-1, valeursDifferentsChemins, casesDejaVisitees);
+
+				/// on s'occupe de valeursDifferentsChemins
+				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
+						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+			}
+		}
 	}
 
-	public static void deuxPionsAdversaireCaseLibre(Plateau plateau, ArrayList<Coups> liste) {
+	public static void deuxPionsAdversaireCaseLibre(Plateau plateau, ArrayList<Coups> listeCoups,
+			ArrayList<Coups> listeCoupsAV1, ArrayList<Coups> listeCoupsAV2,
+			ArrayList<Coups> listeCoupsAV3) {
+		// si deux pions du joueur sont alignés et la 3ème case est vide
 
+		/// parcours tous les possibilités de moulins
+		for (int[] moulin : Cases.listeMoulins) {
+			/// si la 3ème case est vide
+			if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.vide) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Coups> valeursDifferentsChemins = new ArrayList<Coups>();
+				ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
+
+				valeursDifferentsChemins = remonteCase(plateau, moulin[2], Pion.getCouleurRobot(), 0,
+						-1, valeursDifferentsChemins, casesDejaVisitees);
+				/// on s'occupe de valeursDifferentsChemins
+				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
+						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+
+			}
+			/// si la 2ème case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Coups> valeursDifferentsChemins = new ArrayList<Coups>();
+				ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
+
+				valeursDifferentsChemins = remonteCase(plateau, moulin[1], Pion.getCouleurRobot(), 0,
+						-1, valeursDifferentsChemins, casesDejaVisitees);
+				/// on s'occupe de valeursDifferentsChemins
+				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
+						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+
+			}
+			/// si la 1ère case est vide
+			else if (plateau.mapCases.get(moulin[0]).pion == Pion.vide
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
+
+				/// remonte les cases jusqu'a trouver un pion
+				/// qui pourrai compléter le moulin
+				ArrayList<Coups> valeursDifferentsChemins = new ArrayList<Coups>();
+				ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
+
+				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurRobot(), 0,
+						-1, valeursDifferentsChemins,casesDejaVisitees);
+
+				/// on s'occupe de valeursDifferentsChemins
+				deuxPionsCaseLibreOptimiser(plateau, valeursDifferentsChemins, listeCoups,
+						listeCoupsAV1, listeCoupsAV2, listeCoupsAV3);
+			}
+		}
 	}
 
-	public static void robotMoulin(Plateau plateau, ArrayList<Coups> liste) {
+	public static void robotMoulin(Plateau plateau, ArrayList<Coups> listeCoups, ArrayList<Coups> listeCoupsAV1,
+			ArrayList<Coups> listeCoupsAV2, ArrayList<Coups> listeCoupsAV3) {
+		/// si le robot a des moulins
 
+		/// parcours tous les possibilités de moulins
+		for (int[] moulin : Cases.listeMoulins) {
+			/// s'il y a un moulin
+			if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurRobot()
+					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
+				/// on passe en revue chacune des cases
+				for (int caseMoulin : moulin) {
+					/// on regarde si les cases adjacentes sont soit libres soit
+					/// occupé par un pion ami
+					int[] casesAdjacentes = plateau.mapCases.get(caseMoulin).getCasesAdjacentes();
+					ArrayList<Integer> pionsRobot = new ArrayList<Integer>();
+					ArrayList<Integer> pionsJoueur = new ArrayList<Integer>();
+					ArrayList<Integer> casesLibres = new ArrayList<Integer>();
+					for (int caseAdjacente : casesAdjacentes) {
+						if (plateau.mapCases.get(caseAdjacente).pion == Pion.getCouleurRobot())
+							pionsRobot.add(caseAdjacente);
+						else if (plateau.mapCases.get(caseAdjacente).pion == Pion
+								.getCouleurJoueur())
+							pionsJoueur.add(caseAdjacente);
+						else
+							casesLibres.add(caseAdjacente);
+					}
+					/// on compare les résultats
+					/// s'il n'y a aucun pion adverse
+					if (pionsJoueur.isEmpty()) {
+						/// et s'il y a des cases libres
+						if (!casesLibres.isEmpty()) {
+							/// on ajoute les coups
+							for (int caseLibre : casesLibres) {
+								/// seulement s'il n'est pas dans
+								/// les listeCoupAV
+								Coups coup = new Coups(caseMoulin, 1, caseLibre);
+								if (verifieExclusion(plateau, coup, listeCoupsAV1,
+										listeCoupsAV2, listeCoupsAV3)) {
+									listeCoups.add(coup);
+								}
+							}
+						}
+					}
+					/// si il y a des pions adverses
+					else {
+						/// mais aussi des cases libres
+						if (!casesLibres.isEmpty()) {
+							/// on ajoute les coups
+							for (int caseLibre : casesLibres) {
+								/// seulement s'il n'est pas dans
+								/// les listeCoupAV
+								Coups coup = new Coups(caseMoulin, 1, caseLibre);
+								if (verifieExclusion(plateau, coup, listeCoupsAV1,
+										listeCoupsAV2, listeCoupsAV3))
+									listeCoupsAV2.add(coup);
+							}
+						}
+					}
+
+				}
+
+			}
+		}
 	}
 
-	public static void chaquePion(Plateau plateau, ArrayList<Coups> liste) {
+	public static void chaquePion(Plateau plateau, ArrayList<Coups> listeCoups, ArrayList<Integer> pionsRobot,
+			ArrayList<Coups> listeCoupsAV1, ArrayList<Coups> listeCoupsAV2,
+			ArrayList<Coups> listeCoupsAV3) {
+
+		ArrayList<Integer> pionsSupprimes = new ArrayList<Integer>();
+		ArrayList<Integer> pionsRobotCopie = new ArrayList<Integer>();
+		for (int element : pionsRobot) {
+			pionsRobotCopie.add(element);
+		}
+
+		/// nbr de déplacement pour qu'un pion du robot rejoigne un autre
+		for (int pion : pionsRobot) {
+			/// on vérifie si il y a un pion ami adjacent
+			/// dans ce cas le pion ne sera pas analysé
+			int[] casesAdjacentes = plateau.mapCases.get(pion).getCasesAdjacentes();
+			for (int caseAdjacente : casesAdjacentes) {
+				/// si le pion adjacent est aussi un pion robot
+				if (plateau.mapCases.get(caseAdjacente).pion == Pion.getCouleurRobot()) {
+					/// on ajoute le pionDepart à listeCoupAttente
+					Coups coup = new Coups();
+					coup.setCoupCaseDepart(pion);
+					coup.setValeur(1);
+					if (verifieExclusion(plateau, coup, listeCoupsAV1, listeCoupsAV2,
+							listeCoupsAV3))
+						listeCoupsAV1.add(coup);
+					pionsSupprimes.add(pion);
+					break;
+				}
+
+			}
+		}
+		/// on supprime les pions qui ne doivent pas être analysés
+		for (Integer pion : pionsSupprimes) {
+			pionsRobotCopie.remove(pion);
+		}
+		/// et maintenant on remonte
+		ArrayList<Coups> differentsChemins = new ArrayList<Coups>();
+		ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
+
+		for (int pion : pionsRobotCopie) {
+			differentsChemins.clear();
+			casesDejaVisitees.clear();
+			differentsChemins = remonteCase(plateau, pion, Pion.getCouleurRobot(), 0, -1,
+					differentsChemins, casesDejaVisitees);
+			/// on met de l'ordre dand les différents chemins
+			deuxPionsCaseLibreOptimiser(plateau, differentsChemins, listeCoups, listeCoupsAV1,
+					listeCoupsAV2, listeCoupsAV3);
+		}
 
 	}
 
@@ -85,53 +426,126 @@ public class TactiqueGlisse {
 		/// non en fait il faut créer les coup directement dans la créatin des listes. On
 		/// regarde toute les directions que peut prendre chaque pion et on l'ajoute comme
 		/// coup
+
 	}
 
 	/// --------------------------------------------------------------------------
 
+	public static void deuxPionsCaseLibreOptimiser(Plateau plateau, ArrayList<Coups> valeursDifferentsChemins,
+			ArrayList<Coups> listeCoups, ArrayList<Coups> listeCoupsAV1, ArrayList<Coups> listeCoupsAV2,
+			ArrayList<Coups> listeCoupsAV3) {
+		/// pour les 3 répétitions dans deuxPionsRobotCaseLibre et dans
+		/// deuxPionJoueurCaseLibre et pour chaqueCoup
+
+		if (!valeursDifferentsChemins.isEmpty()) {
+			/// on mélange la liste (à la place d'un tri)
+			Collections.shuffle(valeursDifferentsChemins);
+
+			/// et on prend le premier coup le plus bas
+			Boolean affirmatif = true;
+			int valeur = 0;
+			ArrayList<Coups> coupsPotentielsRobot = new ArrayList<Coups>();
+			while (affirmatif) {
+				for (int i = 0; i < valeursDifferentsChemins.size(); i++) {
+					/// s'il y a un coup de la valeur voulue
+					if (valeursDifferentsChemins.get(i).getValeur() == valeur) {
+						/// pour sortir de la boucle
+						affirmatif = false;
+						/// si c'est un pion du robot
+						if (plateau.mapCases.get(valeursDifferentsChemins.get(i)
+								.getCoupCaseDepart()).pion == Pion.getCouleurRobot()) {
+							/// on ajoute le coup potentiel
+							coupsPotentielsRobot.add(valeursDifferentsChemins.get(i));
+						}
+					}
+				}
+				/// si affirmatif = true, c'est qu'aucun coup n'a
+				/// été
+				/// trouvé
+				if (affirmatif == true) {
+					/// on essaye avec la valeur du dessus
+					valeur += 1;
+				}
+			}
+			/// on compare maintenant les solutions trouvée
+			/// le pion du robot doit être plus proche que l'adversaire
+			if (affirmatif == false) {
+				/// si coupsPR contient n'est pas vide, alors le robot
+				/// est soit le plus proche, soit à égale distance avec
+				/// le joueur
+				if (!coupsPotentielsRobot.isEmpty()) {
+					for (Coups coup : coupsPotentielsRobot) {
+						/// seulement si pas dans listeCoupsAV
+						if (verifieExclusion(plateau, coup, listeCoupsAV1, listeCoupsAV2,
+								listeCoupsAV3)) {
+							listeCoups.add(coup);
+						}
+					}
+				}
+			}
+
+		}
+	}
+
 	public static ArrayList<Coups> verifiePionsRobotBloques(Plateau plateau, ArrayList<Integer> pionRobot) {
 		/// si le pion est bloqué, alors ValeurDifferentsChemins doit être vide
-		ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+		ArrayList<Coups> differentsChemins = new ArrayList<Coups>();
 		/// la liste des coups en attente
-		ArrayList<Coups> listeCoupsAttenteValeur2 = new ArrayList<Coups>();
+		ArrayList<Coups> listeCoupsAV2 = new ArrayList<Coups>();
+		/// lors du remonteCase, pour ne pas tourner en rond
+		ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
 
-		/// on passe en revue tout les pions de l'adversaire
-		for (int pion : pionRobot) {
-			valeursDifferentsChemins = remonteCase(plateau, pion, Pion.getCouleurRobot(), 0, -1,
-					valeursDifferentsChemins);
+		/// on passe en revue tout les pions du robot
+		for (int pion : pionRobot){
+			/// on remet à zéro les compteurs
+			casesDejaVisitees.clear();
+			differentsChemins.clear();
+			
+			differentsChemins = remonteCaseVerifie(plateau, pion, Pion.getCouleurRobot(), 0, -1,
+					differentsChemins, casesDejaVisitees);
+			
 			/// si c'est vide, alors le pion est "bloqué"
-			if (valeursDifferentsChemins.isEmpty()) {
+			if (differentsChemins.isEmpty()) {
 				/// on ajoute le coup
-				Coups coup = new Coups(2, pion);
-				listeCoupsAttenteValeur2.add(coup);
+				Coups coup = new Coups();
+				coup.setCoupCaseDepart(pion);
+				coup.setValeur(2);
+				listeCoupsAV2.add(coup);
 
 			}
 		}
 
-		return listeCoupsAttenteValeur2;
+		return listeCoupsAV2;
 
 	}
 
 	public static ArrayList<Coups> verifiePionsAdversaireBloques(Plateau plateau, ArrayList<Integer> pionsJoueur) {
 		/// si le pion est bloqué, alors ValeurDifferentsChemins doit être vide
-		ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+		ArrayList<Coups> differentsChemins = new ArrayList<Coups>();
 		/// la liste des coups en attente
-		ArrayList<Coups> listeCoupsAttenteValeur1 = new ArrayList<Coups>();
-
+		ArrayList<Coups> listeCoupsAV1 = new ArrayList<Coups>();
+		ArrayList<Integer>casesDejaVisitees = new ArrayList<Integer>();
 		/// on passe en revue tout les pions de l'adversaire
 		for (int pion : pionsJoueur) {
-			valeursDifferentsChemins = remonteCase(plateau, pion, Pion.getCouleurJoueur(), 0, -1,
-					valeursDifferentsChemins);
+			/// on remet à zéro les variables
+			casesDejaVisitees.clear();
+			differentsChemins.clear();
+			differentsChemins = remonteCaseVerifie(plateau, pion, Pion.getCouleurJoueur(), 0, -1,
+					differentsChemins, casesDejaVisitees);
+			
+
 			/// si c'est vide, alors le pion est "bloqué"
-			if (valeursDifferentsChemins.isEmpty()) {
+			if (differentsChemins.isEmpty()) {
 				/// on ajoute le coup
-				Coups coup = new Coups(1, pion);
-				listeCoupsAttenteValeur1.add(coup);
+				Coups coup = new Coups();
+				coup.setCoupCaseDepart(pion);
+				coup.setValeur(1);
+				listeCoupsAV1.add(coup);
 
 			}
 		}
 
-		return listeCoupsAttenteValeur1;
+		return listeCoupsAV1;
 
 	}
 
@@ -147,7 +561,9 @@ public class TactiqueGlisse {
 					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
 					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
 				/// on ajoute le pion adverse
-				Coups coup = new Coups(3, moulin[2]);
+				Coups coup = new Coups();
+				coup.setCoupCaseDepart(moulin[2]);
+				coup.setValeur(3);
 				listeCoupsAttenteValeur3.add(coup);
 			}
 			/// si la 2ème case est occupée par l'adversaire
@@ -155,7 +571,9 @@ public class TactiqueGlisse {
 					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurRobot()
 					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
 				/// on ajoute le pion adverse
-				Coups coup = new Coups(3, moulin[1]);
+				Coups coup = new Coups();
+				coup.setCoupCaseDepart(moulin[1]);
+				coup.setValeur(3);
 				listeCoupsAttenteValeur3.add(coup);
 			}
 			/// si la 1ère case est occupée par l'adversaire
@@ -163,7 +581,9 @@ public class TactiqueGlisse {
 					&& plateau.mapCases.get(moulin[1]).pion == Pion.getCouleurJoueur()
 					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
 				/// on ajoute le pion adverse
-				Coups coup = new Coups(3, moulin[0]);
+				Coups coup = new Coups();
+				coup.setCoupCaseDepart(moulin[0]);
+				coup.setValeur(3);
 				listeCoupsAttenteValeur3.add(coup);
 			}
 		}
@@ -172,8 +592,9 @@ public class TactiqueGlisse {
 
 	}
 
-	public static ArrayList<Integer> remonteCase(Plateau plateau, int caseDepart, int couleur, int valeur,
-			int casePrecedente, ArrayList<Integer> valeursDifferentsChemins) {
+	public static ArrayList<Coups> remonteCase(Plateau plateau, int caseDepart, int couleur, int valeur,
+			int casePrecedente, ArrayList<Coups> valeursDifferentsChemins,
+			ArrayList<Integer> casesDejaVisitees) {
 		/// !!! récursivité
 		/// la couleur est celle que l'on veut faire venir sur caseDepart
 
@@ -194,30 +615,131 @@ public class TactiqueGlisse {
 		/// parcours toutes les cases adjacente à la case
 		for (int caseAdjacente : casesAdjacentes) {
 			/// si la case est vide, recommence l'opération
-			if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
-				valeur += 1;
-				/// caseDepart devient caseAdjacente,
-				/// casePrecedente a déjà été changée
-				valeursDifferentsChemins = remonteCase(plateau, caseAdjacente, couleur, valeur,
-						casePrecedente, valeursDifferentsChemins);
-			}
-			/// si la case est occupée par un pion de l'adversaire
-			else if (plateau.mapCases.get(caseAdjacente).pion == couleur) {
-				valeur += 1;
-				/// si la case est occupée par un pion du robot, rien
-				/// on ajoute la valeur du chemin effectué
-				valeursDifferentsChemins.add(valeur);
 
-			}
-			/// si la case est occupée par un pion "ami"
-			else {
-				valeur = 0;
+			/// on verifie que la case n'a pas déjà été visitée
+			if (!casesDejaVisitees.contains(caseAdjacente)) {
+				if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
+					valeur += 1;
+					/// pour pas tourner en rond dans le tablier
+					casesDejaVisitees.add(caseAdjacente);
+					/// caseDepart devient caseAdjacente,
+					/// casePrecedente a déjà été changée
+					valeursDifferentsChemins = remonteCase(plateau, caseAdjacente, couleur, valeur,
+							casePrecedente, valeursDifferentsChemins, casesDejaVisitees);
+				}
+				/// si la case est occupée par un pion de la couleur choisie
+				else if (plateau.mapCases.get(caseAdjacente).pion == couleur) {
+					valeur += 1;
+					/// si la case est occupée par un pion du robot
+					/// on crée un coup : pion qui bougera + valeur + sur quelle
+					/// case il
+					/// bouge
+					Coups coup = new Coups(caseAdjacente, valeur, casePrecedente);
+					/// on ajoute le coup à valeurDifferentsChemins
+					valeursDifferentsChemins.add(coup);
+
+				}
+				/// si la case est occupée par un pion ennemi
+				else {
+					valeur += 1;
+					/// on crée un coup, pour comparer plus tard et savoir si le
+					/// pion le
+					/// plus proche de case départ est du robot ou de
+					/// l'adversaire
+					Coups coup = new Coups(caseAdjacente, valeur, casePrecedente);
+					valeursDifferentsChemins.add(coup);
+				}
 			}
 
 		}
 
 		/// envoi les différentes valeurs
 		return valeursDifferentsChemins;
+
+	}
+
+	public static ArrayList<Coups> remonteCaseVerifie(Plateau plateau, int caseDepart, int couleur, int valeur,
+			int casePrecedente, ArrayList<Coups> valeursDifferentsChemins,
+			ArrayList<Integer> casesDejaVisitees) {
+		/// !!! récursivité
+		/// la couleur est celle que l'on veut faire venir sur caseDepart
+
+		/// récupère les cases adjacente à caseDepart
+		ArrayList<Integer> casesAdjacentes = new ArrayList<Integer>();
+		for (int element : plateau.mapCases.get(caseDepart).casesAdjacentes)
+			casesAdjacentes.add(element);
+		/// retire la case précédemment testée
+		if (casePrecedente != -1) {
+			for (int i = 0; i < casesAdjacentes.size(); i++) {
+				if (casesAdjacentes.get(i) == casePrecedente)
+					casesAdjacentes.remove(i);
+			}
+		}
+
+		casePrecedente = caseDepart;
+
+		/// parcours toutes les cases adjacente à la case
+		for (int caseAdjacente : casesAdjacentes) {
+			/// on vérifie que la case n'est pas été visitée
+			if (!casesDejaVisitees.contains(caseAdjacente)) {
+
+				/// si la case est vide, recommence l'opération
+				if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
+					valeur += 1;
+					/// pour pas tourner en rond
+					casesDejaVisitees.add(caseAdjacente);
+					/// caseDepart devient caseAdjacente,
+					/// casePrecedente a déjà été changée
+					valeursDifferentsChemins = remonteCaseVerifie(plateau, caseAdjacente, couleur,
+							valeur, casePrecedente, valeursDifferentsChemins,
+							casesDejaVisitees);
+				}
+				/// si la case est occupée par un pion de la couleur choisie
+				else if (plateau.mapCases.get(caseAdjacente).pion == couleur) {
+					valeur += 1;
+					/// si la case est occupée par un pion du robot
+					/// on crée un coup : pion qui bougera + valeur + sur quelle
+					/// case il
+					/// bouge
+					Coups coup = new Coups(caseAdjacente, valeur, casePrecedente);
+					/// on ajoute le coup à valeurDifferentsChemins
+					valeursDifferentsChemins.add(coup);
+
+				}
+				/// si la case est occupée par un pion ennemi
+				else {
+					valeur = 0;
+
+				}
+
+			}
+		}
+
+		/// envoi les différentes valeurs
+		return valeursDifferentsChemins;
+	}
+
+	public static Boolean verifieExclusion(Plateau plateau, Coups coup, ArrayList<Coups> listeCoupsAV1,
+			ArrayList<Coups> listeCoupsAV2, ArrayList<Coups> listeCoupsAV3) {
+		Boolean ok = true;
+
+		for (Coups test : listeCoupsAV1) {
+			if (test.getCoupCaseDepart() == coup.getCoupCaseDepart()) {
+				ok = false;
+			}
+		}
+		for (Coups test : listeCoupsAV2) {
+			if (test.getCoupCaseDepart() == coup.getCoupCaseDepart()) {
+				ok = false;
+			}
+		}
+		for (Coups test : listeCoupsAV3) {
+			if (test.getCoupCaseDepart() == coup.getCoupCaseDepart()) {
+				ok = false;
+			}
+		}
+
+		return ok;
 	}
 
 	public static int hasard() {

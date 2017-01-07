@@ -15,9 +15,7 @@ public class TactiqueMange {
 		ArrayList<Coups> listeCoups = new ArrayList<Coups>();
 
 		LCD.clear();
-		Sound.beep();
 		LCD.drawString("tactiqueMange", 0, 0);
-		Button.waitForAnyPress();
 
 		/// si le jeu est en mode pose
 		if (plateau.mode == 1) {
@@ -144,7 +142,7 @@ public class TactiqueMange {
 				/// remonte les cases jusqu'a trouver un pion
 				/// qui pourrai compléter le moulin
 				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
-				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurJoueur(), 0,
+				valeursDifferentsChemins = remonteCase(plateau, moulin[2], Pion.getCouleurJoueur(), 0,
 						-1, valeursDifferentsChemins);
 
 				if (!valeursDifferentsChemins.isEmpty()) {
@@ -174,7 +172,7 @@ public class TactiqueMange {
 				/// remonte les cases jusqu'a trouver un pion
 				/// qui pourrai compléter le moulin
 				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
-				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurJoueur(), 0,
+				valeursDifferentsChemins = remonteCase(plateau, moulin[1], Pion.getCouleurJoueur(), 0,
 						-1, valeursDifferentsChemins);
 
 				if (!valeursDifferentsChemins.isEmpty()) {

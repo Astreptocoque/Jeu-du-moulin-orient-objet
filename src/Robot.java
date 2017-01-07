@@ -16,22 +16,18 @@ public class Robot {
 
 		
 		if (plateau.mode == 1 && plateau.modeElimination == false) { /// pose
-			Sound.beep();
 			LCD.drawString("pose", 0, 1);
 			coupChoisi = TactiquePose.tactiquePose(plateau);
 
 		} else if (plateau.mode == 2 && plateau.modeElimination == false) { /// glisse
-			Sound.beep();
 			LCD.drawString("glisse", 0, 1);
 			coupChoisi = TactiqueGlisse.tactiqueGlisse(plateau);
 
 		} else if (plateau.mode == 3 && plateau.modeElimination == false) {/// saut
-			Sound.beep();
 			LCD.drawString("saut", 0, 1);
 			coupChoisi = TactiqueSaut.tactiqueSaut(plateau);
 
 		} else if (plateau.modeElimination == true) { /// mange
-			Sound.beep();
 			LCD.drawString("mange", 0, 1);
 			coupChoisi = TactiqueMange.tactiqueMange(plateau);
 		}
