@@ -97,8 +97,8 @@ public class Deplacements {
 	/// degrés de pré-fermeture de la pince, valeur ajustable
 	private final static int degrePreFermePince = 180;
 	/// distance en cm des cases par rapport à l'origine, valeurs ajustables
-	private final float colonne[] = { 3.5f, 8.7f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.7f, 42.5f }; // x
-	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.5f }; // y
+	private final float colonne[] = { 3.5f, 8.7f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 43f }; // x
+	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 43f }; // y
 
 	/// moteurs
 	EV3LargeRegulatedMotor moteurY1 = Hardware.moteurY1;
