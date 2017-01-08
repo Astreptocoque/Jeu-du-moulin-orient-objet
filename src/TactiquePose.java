@@ -20,30 +20,28 @@ public class TactiquePose extends OutilsTactiques {
 		if (testSuivant) {
 			testSuivant = poseBloqueMoulinDirect(plateau);
 		}
-		
-		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0){
+
+		if (plateau.getNbrPionsSurLePlateau(Pion.getCouleurRobot()) > 0) {
 			if (testSuivant) {
 				testSuivant = poseBloqueSchema(plateau);
 			}
-			
+
 			/// hasard entre les deux suivants
 			hasard = random.nextInt(2);
-			
-			if(testSuivant && hasard == 0){
+
+			if (testSuivant && hasard == 0) {
 				testSuivant = poseEffectueMoulinIndirect(plateau);
-			}
-			else if(testSuivant && hasard == 1){
+			} else if (testSuivant && hasard == 1) {
 				testSuivant = poseEffectueSchema(plateau);
 			}
-			
-			if(testSuivant && hasard == 0){
+
+			if (testSuivant && hasard == 0) {
 				testSuivant = poseEffectueSchema(plateau);
-			}
-			else if(testSuivant && hasard == 1){
+			} else if (testSuivant && hasard == 1) {
 				testSuivant = poseEffectueMoulinIndirect(plateau);
 			}
 		}
-		
+
 		if (testSuivant) {
 			LCD.refresh();
 			LCD.drawString("Pose : 6", 0, 0);
@@ -55,11 +53,11 @@ public class TactiquePose extends OutilsTactiques {
 			LCD.drawString("Pose : 7", 0, 0);
 			LCD.drawInt(caseChoisie, 0, 1);
 
-			/// on n'est pas sensé arriver ici, 
+			/// on n'est pas sensé arriver ici,
 			/// mais c'est une sécurité
 			hasard();
 		}
-		
+
 		/// met le case choisie dans un coup
 		Coups coup = new Coups(0, 0, caseChoisie);
 		return coup;
@@ -74,17 +72,20 @@ public class TactiquePose extends OutilsTactiques {
 	private static boolean poseEffectueMoulinDirect(Plateau plateau) {
 
 		boolean affirmatif = true;
-		/// copie l'original
-		int[] ligneMoulin = new int[3];
 		/// pour vérifier si 2 pions sont sur une ligne
 		int nbrPionsMoulin = 0;
 
 		/// ************** avant ********************
 
+		/// pour un peu de hasard
+		ArrayList<int[]> listeMoulins = new ArrayList<int[]>();
+		for (int[] moulin : Cases.listeMoulins) {
+			listeMoulins.add(moulin);
+		}
+		Collections.shuffle(listeMoulins);
+
 		/// passe en revue toutes les lignes
-		for (int i = 0; i < Cases.listeMoulins.length; i++) {
-			/// copie le moulin a tester
-			ligneMoulin = Cases.listeMoulins[i].clone();
+		for (int[] ligneMoulin : listeMoulins) {
 
 			/// réinitialise la variable pour chaque tour
 			nbrPionsMoulin = 0;
@@ -124,15 +125,18 @@ public class TactiquePose extends OutilsTactiques {
 	private static boolean poseBloqueMoulinDirect(Plateau plateau) {
 
 		boolean affirmatif = true;
-		/// copie l'original
-		int[] ligneMoulin = new int[3];
 		/// pour vérifier si 2 pions sont sur une ligne
 		int nbrPionsMoulin = 0;
 
+		/// pour un peu de hasard
+		ArrayList<int[]> listeMoulins = new ArrayList<int[]>();
+		for (int[] moulin : Cases.listeMoulins) {
+			listeMoulins.add(moulin);
+		}
+		Collections.shuffle(listeMoulins);
+
 		/// passe en revue toutes les lignes
-		for (int i = 0; i < Cases.listeMoulins.length; i++) {
-			/// copie le moulin a tester
-			ligneMoulin = Cases.listeMoulins[i].clone();
+		for (int[] ligneMoulin : listeMoulins) {
 
 			/// réinitialise la variable pour chaque tour
 			nbrPionsMoulin = 0;
