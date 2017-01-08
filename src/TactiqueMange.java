@@ -10,7 +10,7 @@ import lejos.hardware.lcd.LCD;
 public class TactiqueMange {
 
 	public static Coups tactiqueMange(Plateau plateau) {
-//		ArrayList<Integer> pionsRobot = pionSurPlateau(plateau, Pion.getCouleurRobot());
+		// ArrayList<Integer> pionsRobot = pionSurPlateau(plateau, Pion.getCouleurRobot());
 		ArrayList<Integer> pionsJoueur = pionSurPlateau(plateau, Pion.getCouleurJoueur());
 		ArrayList<Coups> listeCoups = new ArrayList<Coups>();
 
@@ -142,8 +142,9 @@ public class TactiqueMange {
 				/// remonte les cases jusqu'a trouver un pion
 				/// qui pourrai compléter le moulin
 				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+				ArrayList<Integer> casesDejaVisitees = new ArrayList<Integer>();
 				valeursDifferentsChemins = remonteCase(plateau, moulin[2], Pion.getCouleurJoueur(), 0,
-						-1, valeursDifferentsChemins);
+						-1, valeursDifferentsChemins, casesDejaVisitees);
 
 				if (!valeursDifferentsChemins.isEmpty()) {
 					/// tri les différentes valeur (pas très propre comme code)
@@ -172,8 +173,9 @@ public class TactiqueMange {
 				/// remonte les cases jusqu'a trouver un pion
 				/// qui pourrai compléter le moulin
 				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+				ArrayList<Integer> casesDejaVisitees = new ArrayList<Integer>();
 				valeursDifferentsChemins = remonteCase(plateau, moulin[1], Pion.getCouleurJoueur(), 0,
-						-1, valeursDifferentsChemins);
+						-1, valeursDifferentsChemins, casesDejaVisitees);
 
 				if (!valeursDifferentsChemins.isEmpty()) {
 					/// tri les différentes valeur (pas très propre comme code)
@@ -201,8 +203,9 @@ public class TactiqueMange {
 				/// remonte les cases jusqu'a trouver un pion
 				/// qui pourrai compléter le moulin
 				ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+				ArrayList<Integer> casesDejaVisitees = new ArrayList<Integer>();
 				valeursDifferentsChemins = remonteCase(plateau, moulin[0], Pion.getCouleurJoueur(), 0,
-						-1, valeursDifferentsChemins);
+						-1, valeursDifferentsChemins, casesDejaVisitees);
 
 				if (!valeursDifferentsChemins.isEmpty()) {
 					/// tri les différentes valeur (pas très propre comme code)
@@ -437,8 +440,9 @@ public class TactiqueMange {
 		/// pour chaque pion
 		for (int element : pionsJoueur) {
 			ArrayList<Integer> valeursDifferentsChemins = new ArrayList<Integer>();
+			ArrayList<Integer> casesDejaVisitees = new ArrayList<Integer>();
 			valeursDifferentsChemins = remonteCase(plateau, element, Pion.getCouleurJoueur(), 0, -1,
-					valeursDifferentsChemins);
+					valeursDifferentsChemins, casesDejaVisitees);
 
 			/// uniquement si la liste n'est pas vide. Si elle est vide, il n'y pas
 			/// d'autre pion joignable
@@ -469,7 +473,7 @@ public class TactiqueMange {
 	/// ------------------------------------
 
 	public static ArrayList<Integer> remonteCase(Plateau plateau, int caseDepart, int couleurJoueur, int valeur,
-			int casePrecedente, ArrayList<Integer> valeursDifferentsChemins) {
+			int casePrecedente, ArrayList<Integer> valeursDifferentsChemins, ArrayList<Integer> casesDejaVisitees) {
 		/// !!! récursivité
 
 		/// récupère les cases adjacente à caseDepart
@@ -489,12 +493,17 @@ public class TactiqueMange {
 		/// parcours toutes les cases adjacente à la case
 		for (int caseAdjacente : casesAdjacentes) {
 			/// si la case est vide, recommence l'opération
+			
+			/// on verifie que la case n'a pas déjà été visitée
+			if (!casesDejaVisitees.contains(caseAdjacente)) {
 			if (plateau.mapCases.get(caseAdjacente).pion == Pion.vide) {
 				valeur += 1;
+				/// pour pas tourner en rond dans le tablier
+				casesDejaVisitees.add(caseAdjacente);
 				/// caseDepart devient caseAdjacente,
 				/// casePrecedente a déjà été changée
 				valeursDifferentsChemins = remonteCase(plateau, caseAdjacente, couleurJoueur, valeur,
-						casePrecedente, valeursDifferentsChemins);
+						casePrecedente, valeursDifferentsChemins, casesDejaVisitees);
 			}
 			/// si la case est occupée par un pion de l'adversaire
 			else if (plateau.mapCases.get(caseAdjacente).pion == couleurJoueur) {
@@ -508,7 +517,7 @@ public class TactiqueMange {
 			else {
 				valeur = 0;
 			}
-
+			}
 		}
 
 		/// envoi les différentes valeurs

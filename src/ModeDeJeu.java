@@ -22,17 +22,21 @@ public class ModeDeJeu {
 				if (plateau.nbrPionsRobot > 3)
 					modeGlisse(plateau);
 				/// s'il est égal à 3, sauts
-				else if (plateau.nbrPionsRobot == 3)
+				else if (plateau.nbrPionsRobot == 3 && plateau.nbrPionsJoueur != 3)
 					modeSaut(plateau);
 				/// sinon, c'est la fin du jeu
+				else if (plateau.nbrPionsRobot == 3 && plateau.nbrPionsJoueur == 3)
+					fin = true;
 				else
 					fin = true;
 
 			} else {
 				if (plateau.nbrPionsJoueur > 3)
 					modeGlisse(plateau);
-				else if (plateau.nbrPionsJoueur == 3)
+				else if (plateau.nbrPionsJoueur == 3 && plateau.nbrPionsRobot != 3)
 					modeSaut(plateau);
+				else if (plateau.nbrPionsJoueur == 3 && plateau.nbrPionsRobot == 3)
+					fin = true;
 				else
 					fin = true;
 			}

@@ -236,7 +236,6 @@ public class TactiqueSaut {
 						/// si bloque = true, alors le pion bloque un moulin
 						if (bloque) {
 							caseArrivee = moulin[2];
-							break;
 						}
 
 					} else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
@@ -255,7 +254,6 @@ public class TactiqueSaut {
 						/// si bloque = true, alors le pion bloque un moulin
 						if (bloque) {
 							caseArrivee = moulin[1];
-							break;
 						}
 
 					} else if (plateau.mapCases.get(moulin[0]).pion == Pion.vide
@@ -275,7 +273,6 @@ public class TactiqueSaut {
 						/// si bloque = true, alors le pion bloque un moulin
 						if (bloque) {
 							caseArrivee = moulin[0];
-							break;
 						}
 					}
 				}
@@ -636,11 +633,10 @@ public class TactiqueSaut {
 				Collections.shuffle(casesPossibles);
 				caseArrivee = casesPossibles.get(random.nextInt(casesPossibles.size()));
 			}
-
-			/// set le coup
-			coup.setCoupCaseArrivee(caseArrivee);
-			coup.setValeur(0);
 		}
+		/// set le coup
+		coup.setCoupCaseArrivee(caseArrivee);
+		coup.setValeur(0);
 
 		return coup;
 	}
