@@ -77,7 +77,7 @@ public class TactiqueSaut {
 					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurJoueur()) {
 
 				/// pour l'argument, les pions déjà dans le moulin
-				int[] pionsMoulin = { moulin[0], moulin[1] };
+				Integer[] pionsMoulin = { moulin[0], moulin[1] };
 				coup = deuxPionsAlignesCaseOccupeeSuite(plateau, pionsMoulin, pionsRobot, coup);
 
 				/// si la 2ème case est occupée
@@ -86,7 +86,7 @@ public class TactiqueSaut {
 					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
 
 				/// pour l'argument, les pions déjà dans le moulin
-				int[] pionsMoulin = { moulin[0], moulin[2] };
+				Integer[] pionsMoulin = {( moulin[0]),moulin[2] };
 				coup = deuxPionsAlignesCaseOccupeeSuite(plateau, pionsMoulin, pionsRobot, coup);
 
 				/// si la 1ère case est occupée
@@ -95,7 +95,7 @@ public class TactiqueSaut {
 					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
 
 				/// pour l'argument, les pions déjà dans le moulin
-				int[] pionsMoulin = { moulin[1], moulin[2] };
+				Integer[] pionsMoulin = { moulin[1], moulin[2] };
 				coup = deuxPionsAlignesCaseOccupeeSuite(plateau, pionsMoulin, pionsRobot, coup);
 			}
 		}
@@ -214,7 +214,7 @@ public class TactiqueSaut {
 						}
 					}
 				}
-
+				coup  = new Coups();
 				coup.setCoupCaseDepart(pionsSeuls[random.nextInt(pionsSeuls.length)]);
 				coup.setValeur(0);
 				int caseArrivee = 0;
@@ -371,6 +371,7 @@ public class TactiqueSaut {
 						pionSeul = pion;
 					}
 				}
+				coup = new Coups();
 				coup.setCoupCaseDepart(pionSeul);
 				coup.setValeur(0);
 
@@ -447,6 +448,7 @@ public class TactiqueSaut {
 				}
 				int caseArrivee = casesLibres.get(random.nextInt(casesLibres.size()));
 				/// set le coup
+				coup = new Coups();
 				coup.setCoupCaseArrivee(caseArrivee);
 				coup.setCoupCaseDepart(caseDepart);
 				coup.setValeur(0);
@@ -495,6 +497,7 @@ public class TactiqueSaut {
 				if (pionsPossibles.isEmpty()) {
 					/// on prend un pion au hasard
 					caseDepart = pionsRobot.get(random.nextInt(pionsRobot.size()));
+					coup = new Coups();
 					coup.setCoupCaseDepart(caseDepart);
 					/// on choisit la case arrivée
 					coup = troisPionsMoulinCaseArrivee(plateau, coup);
@@ -502,6 +505,7 @@ public class TactiqueSaut {
 					/// sinon on prend un pion au hasard dans les possibles
 				} else {
 					caseDepart = pionsPossibles.get(random.nextInt(pionsPossibles.size()));
+					coup = new Coups();
 					coup.setCoupCaseDepart(caseDepart);
 					/// on choisit la case d'arrivée
 					coup = troisPionsMoulinCaseArrivee(plateau, coup);
@@ -663,7 +667,7 @@ public class TactiqueSaut {
 		return coup;
 	}
 
-	private static Coups deuxPionsAlignesCaseOccupeeSuite(Plateau plateau, int[] pionsMoulin,
+	private static Coups deuxPionsAlignesCaseOccupeeSuite(Plateau plateau, Integer[] pionsMoulin,
 			ArrayList<Integer> pionsRobot, Coups coup) {
 		/// prend le pion qui n'est pas encore dans le moulin
 		int pion3;
@@ -768,6 +772,7 @@ public class TactiqueSaut {
 				caseArrivee = casesLibres.get(random.nextInt(casesLibres.size()));
 			}
 
+			coup = new Coups(caseDepart, 0, caseArrivee);
 		}
 
 		return coup;
