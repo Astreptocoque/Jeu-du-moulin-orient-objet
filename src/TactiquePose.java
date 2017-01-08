@@ -31,11 +31,11 @@ public class TactiquePose extends OutilsTactiques {
 
 			if (testSuivant && hasard == 0) {
 				testSuivant = poseEffectueMoulinIndirect(plateau);
-			} else if (testSuivant && hasard == 1) {
+			} else if (testSuivant && hasard == 0) {
 				testSuivant = poseEffectueSchema(plateau);
 			}
 
-			if (testSuivant && hasard == 0) {
+			if (testSuivant && hasard == 1) {
 				testSuivant = poseEffectueSchema(plateau);
 			} else if (testSuivant && hasard == 1) {
 				testSuivant = poseEffectueMoulinIndirect(plateau);
