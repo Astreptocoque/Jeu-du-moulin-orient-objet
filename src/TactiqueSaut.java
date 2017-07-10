@@ -1,6 +1,7 @@
 import java.awt.LinearGradientPaint;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Random;
 
 public class TactiqueSaut {
@@ -86,7 +87,7 @@ public class TactiqueSaut {
 					&& plateau.mapCases.get(moulin[2]).pion == Pion.getCouleurRobot()) {
 
 				/// pour l'argument, les pions déjà dans le moulin
-				Integer[] pionsMoulin = {( moulin[0]),moulin[2] };
+				Integer[] pionsMoulin = { (moulin[0]), moulin[2] };
 				coup = deuxPionsAlignesCaseOccupeeSuite(plateau, pionsMoulin, pionsRobot, coup);
 
 				/// si la 1ère case est occupée
@@ -190,8 +191,138 @@ public class TactiqueSaut {
 			/// maintenant on regarde le nbr de pion bloqués
 			/// si aucun
 			if (nombrePionsBloques.isEmpty()) {
+				/// on regarde si on peut bloquer un moulin
+				/// pour un peu de hasard
+				ArrayList<int[]> listeMoulins = new ArrayList<int[]>();
+				for (int[] moulin : Cases.listeMoulins) {
+					listeMoulins.add(moulin);
+				}
+				Collections.shuffle(listeMoulins);
+				ArrayList<Integer> casesPossibles = new ArrayList<Integer>();
 
+				/// on parcourt les moulins
+				for (int[] moulin : listeMoulins) {
+					/// si y'a effectivement des moulins
+					if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+							&& plateau.mapCases.get(moulin[1]).pion == Pion
+									.getCouleurJoueur()
+							&& plateau.mapCases.get(moulin[2]).pion == Pion.vide) {
+
+						casesPossibles.add(moulin[2]);
+
+					} else if (plateau.mapCases.get(moulin[0]).pion == Pion.getCouleurJoueur()
+							&& plateau.mapCases.get(moulin[1]).pion == Pion.vide
+							&& plateau.mapCases.get(moulin[2]).pion == Pion
+									.getCouleurJoueur()) {
+
+						casesPossibles.add(moulin[1]);
+
+					} else if (plateau.mapCases.get(moulin[0]).pion == Pion.vide
+							&& plateau.mapCases.get(moulin[1]).pion == Pion
+									.getCouleurJoueur()
+							&& plateau.mapCases.get(moulin[2]).pion == Pion
+									.getCouleurJoueur()) {
+
+						casesPossibles.add(moulin[0]);
+
+					}
+				}
+				/// si il y en a
+				if (!casesPossibles.isEmpty()) {
+					/// caseArrivee = un emplacement au hasard
+					int caseArrivee = casesPossibles.get(random.nextInt(casesPossibles.size()));
+					/// caseDepart = un des trois pions
+					int caseDepart = pionsRobot.get(random.nextInt(pionsRobot.size()));
+					/// on crée le coup
+					coup.setCoupCaseArrivee(caseArrivee);
+					coup.setCoupCaseDepart(caseDepart);
+				}
+				/// si'il y a en a pas
+				else {
+					int[] casesArriveePossiblesInt = new int[2];
+					Hashtable <Integer, int[]>pionsPossibles = new Hashtable<Integer, int[]>();
+					ArrayList<Integer> pionsPossiblesCles = new ArrayList<Integer>();
+					/// on met deux pions côte à côte
+					int[] ligne;
+					/// on regarde les 3 pions
+					for (int pion : pionsRobot) {
+						/// première ligne
+						ligne = plateau.mapCases.get(pion).casesMoulins[0].clone();
+						/// si elle est vide
+						if (plateau.mapCases.get(ligne[0]).pion == Pion.vide
+								&& plateau.mapCases.get(ligne[1]).pion == Pion.vide) {
+							casesArriveePossiblesInt[0] = ligne[0];
+							casesArriveePossiblesInt[1] = ligne[1];
+							/// on ajoute le pion car il a une ligne libre
+							pionsPossibles.put(pion, casesArriveePossiblesInt);
+							pionsPossiblesCles.add(pion);
+						}
+						/// seconde ligne
+						ligne = plateau.mapCases.get(pion).casesMoulins[1].clone();
+						/// si elle est vide
+						if (plateau.mapCases.get(ligne[0]).pion == Pion.vide
+								&& plateau.mapCases.get(ligne[1]).pion == Pion.vide) {
+							casesArriveePossiblesInt[0] = ligne[0];
+							casesArriveePossiblesInt[1] = ligne[1];
+							/// on ajoute le pion car il a une ligne libre
+							pionsPossibles.put(pion, casesArriveePossiblesInt);
+							pionsPossiblesCles.add(pion);
+						}
+					}
+					int caseArrivee = 0;
+					/// si pion possibles n'est pas vide, alors au moins un pion est sur unel ligne vide
+					if (!pionsPossibles.isEmpty()) {
+						/// on prend un pion au hasard parmi les 2 autres
+						ArrayList<Integer> pionsRobotCopie = new ArrayList<Integer>();
+						for(Integer pion : pionsRobot){
+							pionsRobotCopie.add(pion);
+						}
+						/// on enleve le pions qui a une ligne libre
+						int pionCle = pionsPossiblesCles.get(random.nextInt(pionsPossiblesCles.size()));
+						pionsRobotCopie.remove(pionCle);
+						int caseDepart = pionsRobotCopie.get(random.nextInt(pionsRobotCopie.size()));
+						caseArrivee = pionsPossibles.get(pionCle)[random.nextInt(2)];
+						coup.setCoupCaseArrivee(caseArrivee);
+						coup.setCoupCaseDepart(caseDepart);
+					
+					}
+					/// si il n'y a pas de ligne libre
+					else {
+						ArrayList<Integer> casesArriveePossibles = new ArrayList<Integer>();
+						
+						/// on cherche une ligne libre n'importe ou
+						for (int[] moulin : Cases.listeMoulins) {
+							if (plateau.mapCases.get(moulin[0]).pion == Pion.vide
+									&& plateau.mapCases
+											.get(moulin[1]).pion == Pion.vide
+									&& plateau.mapCases.get(
+											moulin[2]).pion == Pion.vide) {
+								casesArriveePossibles.add(moulin[0]);
+								casesArriveePossibles.add(moulin[1]);
+								casesArriveePossibles.add(moulin[2]);
+							}
+						}
+						/// si il y a des lignes libres
+						if (!casesArriveePossibles.isEmpty()) {
+							caseArrivee = casesArriveePossibles.get(
+									random.nextInt(casesArriveePossibles.size()));
+						}
+						/// sinon au hasard dans une case libre
+						else {
+							for (int i = 1; i < 25; i++) {
+								if (plateau.mapCases.get(i).pion == Pion.vide) {
+									casesArriveePossibles.add(i);
+								}
+							}
+							caseArrivee = casesArriveePossibles.get(
+									random.nextInt(casesArriveePossibles.size()));
+						}
+					}
+					coup.setCoupCaseArrivee(caseArrivee);
+					coup.setCoupCaseDepart(pionsRobot.get(random.nextInt(pionsRobot.size())));
+				}
 			}
+
 			/// si 1
 			else if (nombrePionsBloques.size() == 1) {
 				/// à corriger
@@ -201,7 +332,7 @@ public class TactiqueSaut {
 				int pionSeulBloque = nombrePionsBloques.get(0);
 				int[] pionsSeuls = new int[2];
 				for (int pion = 0; pion < pionsRobot.size(); pion++) {
-					if (!pionsRobot.contains(pion)) {
+					if (pionsRobot.get(pion) == pionSeulBloque) {
 						if (pion == 0) {
 							pionsSeuls[0] = pionsRobot.get(1);
 							pionsSeuls[1] = pionsRobot.get(2);
@@ -214,7 +345,7 @@ public class TactiqueSaut {
 						}
 					}
 				}
-				coup  = new Coups();
+				coup = new Coups();
 				coup.setCoupCaseDepart(pionsSeuls[random.nextInt(pionsSeuls.length)]);
 				coup.setValeur(0);
 				int caseArrivee = 0;
@@ -286,7 +417,7 @@ public class TactiqueSaut {
 					ArrayList<Integer> casesArriveePossibles = new ArrayList<Integer>();
 
 					/// pour pionsSeuls
-					for (int pion = 0; pion < pionsSeuls.length; pion++) {
+					for (int pion : pionsSeuls) {
 						casesLignes.clear();
 						int[] ligne = new int[2];
 						/// première ligne
@@ -353,7 +484,6 @@ public class TactiqueSaut {
 				}
 				/// si on a un premier coup, alors on fait pas le second
 			}
-
 			/// si 2
 			else if (nombrePionsBloques.size() == 2)
 

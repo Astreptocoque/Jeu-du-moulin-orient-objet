@@ -110,7 +110,6 @@ public class TactiqueGlisse {
 		LCD.clear();
 		LCD.drawString("glissade", 0, 0);
 		LCD.drawString("coup" + coupChoisi.getCoupCaseDepart(), 0, 1);
-		Sound.beep();
 		return coupChoisi;
 	}
 

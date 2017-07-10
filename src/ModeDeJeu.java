@@ -61,7 +61,7 @@ public class ModeDeJeu {
 					/// joueur. Doit être à 42
 		
 		/// 18 car 18 pions à poser
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 18; i++) {
 			/// réglage du mode en tant que pose (1)
 			plateau.mode = 1;
 			plateau.modeElimination = false;
