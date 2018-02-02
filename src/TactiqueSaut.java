@@ -1,4 +1,3 @@
-import java.awt.LinearGradientPaint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -8,8 +7,6 @@ public class TactiqueSaut {
 
 	public static Coups tactiqueSaut(Plateau plateau) {
 		ArrayList<Integer> pionsRobot = pionSurPlateau(plateau, Pion.getCouleurRobot());
-		ArrayList<Integer> pionsJoueur = pionSurPlateau(plateau, Pion.getCouleurJoueur());
-
 		/// on crée le coup
 		Coups coup = null;
 

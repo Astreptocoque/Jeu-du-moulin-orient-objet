@@ -1,13 +1,9 @@
 import java.util.HashMap;
-import java.util.Map;
 
 public class Plateau {
 	/// contient les informations du plateau comme le nombre de moulins
 	/// ouverts/fermés de chaque joueur, etc...
 
-	/// variable d'instances
-	private int nbrMoulinsFermesJoueur;
-	private int nbrMoulinsFermesRobot;
 	/// contient les cases du plateau
 	HashMap<Integer, Cases> mapCases;
 	/// nbr de pions restant pour chaque joueur
@@ -19,10 +15,6 @@ public class Plateau {
 
 	/// constructeur
 	public Plateau() {
-		/// gère les moulins
-		this.nbrMoulinsFermesJoueur = 0;
-		this.nbrMoulinsFermesRobot = 0;
-
 		/// ajoute les cases de départ dans tabCases
 		ajouteCases();
 
@@ -38,11 +30,9 @@ public class Plateau {
 
 	/// pour les moulins
 	public void setNbrMoulinsFermesJoueur() {
-		this.nbrMoulinsFermesJoueur ++;
 	}
 
 	public void setNbrMoulinsFermesRobot() {
-		this.nbrMoulinsFermesRobot ++;
 	}
 
 	/// pour le nbr total de pion

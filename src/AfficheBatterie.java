@@ -3,6 +3,7 @@ import lejos.hardware.lcd.LCD;
 import lejos.internal.ev3.EV3Battery;
 import lejos.utility.Delay;
 
+@SuppressWarnings("restriction")
 public class AfficheBatterie implements Runnable {
 	EV3Battery batt = new EV3Battery();
 	DecimalFormat df = new DecimalFormat("#.##");

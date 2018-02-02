@@ -1,10 +1,6 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
-
-import lejos.hardware.Button;
-import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 
 public class TactiqueGlisse {
@@ -298,9 +294,6 @@ public class TactiqueGlisse {
 
 	public static void robotMoulin(Plateau plateau, ArrayList<Coups> listeCoups, ArrayList<Coups> listeCoupsAV1,
 			ArrayList<Coups> listeCoupsAV2, ArrayList<Coups> listeCoupsAV3) {
-		/// si le robot a des moulins
-		int modeGlisse = 3;
-
 		/// parcours tous les possibilités de moulins
 		for (int[] moulin : Cases.listeMoulins) {
 			/// s'il y a un moulin

@@ -1,6 +1,4 @@
 import java.io.IOException;
-
-import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 
@@ -117,7 +115,6 @@ public class ModeDeJeu {
 			for(int test = 1; test < 25;test++){
 				verification[test -1 ] = Integer.toString(test) + " : " +  Integer.toString(plateau.mapCases.get(test).pion);
 			}
-			int rien = verification.length;
 		}
 
 	}
@@ -128,7 +125,6 @@ public class ModeDeJeu {
 		for(int test = 1; test < 25;test++){
 			verification[test -1 ] = Integer.toString(test) + " : " +  Integer.toString(plateau.mapCases.get(test).pion);
 		}
-		int rien = verification.length;
 		/// réglage du mode en tant que glisse (2)
 		plateau.mode = 2;
 		plateau.modeElimination = false;
