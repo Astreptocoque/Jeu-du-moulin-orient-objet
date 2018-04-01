@@ -75,7 +75,7 @@ public class Deplacements {
 
 	/// Degrés a faire en moins sur la distance de retour
 	/// Sécurité pour ne pas "défoncer" le capteur tactile
-	private final static int degreEnmoinsDeplacement = 80;
+	private final static int degreEnmoinsDeplacement = 160;
 	/// vitesse de déplacements
 	private final static int vitesseMax = 700;
 	/// vitesse du cadrage
@@ -89,15 +89,15 @@ public class Deplacements {
 	/// acceleration de base
 	private final static int acceleration = 900;
 	/// échelle de conversion cm/degrés
-	private final static float echelle = 96;
+	private final static float echelle = 95;
 	/// degrés pour faire descendre la pince
-	private final static int degreDescendLevePince = 560;
+	private final static int degreDescendLevePince = 550;
 	/// degrés pour fermer la pince, ne pas changer (sauf micro-ajustements)
-	private final static int degreFermePince = 260;
+	private final static int degreFermePince = 250;
 	/// degrés de pré-fermeture de la pince, valeur ajustable
 	private final static int degrePreFermePince = 176;
 	/// distance en cm des cases par rapport à l'origine, valeurs ajustables
-	private final float colonne[] = { 3.5f, 8.7f, 13.8f, 18.8f, 23.5f, 28.5f, 33.5f, 38.5f, 42.5f }; // x
+	private final float colonne[] = { 3.5f, 9f, 14f, 19f, 24f, 29f, 34f, 39f, 44f }; // x
 	private final float ligne[] = { 1.5f, 6.7f, 11.5f, 16.5f, 21.5f, 26.5f, 31.5f, 36.5f, 42.6f }; // y
 
 	/// moteurs
@@ -474,7 +474,7 @@ public class Deplacements {
 		moteurY1.rotate(-160);
 		moteurY2.rotate(-160);
 		moteurY1.endSynchronization();
-		moteurX.rotate(350, true);
+		moteurX.rotate(360, true);
 		moteurY2.waitComplete();
 		moteurLevePince.rotate(450);
 
@@ -501,12 +501,13 @@ public class Deplacements {
 				infini = false;
 			}
 		}
-
+		
+		moteurX.rotate(-360, false);
 		moteurY1.startSynchronization();
 		moteurY1.rotate(160);
 		moteurY2.rotate(160);
 		moteurY1.endSynchronization();
-		moteurX.rotate(-350, true);
+		
 		moteurY2.waitComplete();
 
 	}
